@@ -1,0 +1,146 @@
+
+using UnityEngine;
+using System.Collections.Generic;
+using Leap;
+
+
+
+
+
+public class GrabTool : ManipulationHandTool 
+{	
+
+//	Vector3 palmNormal = Vector3.zero;
+	Vector3 palmPosition = Vector3.zero;
+	Vector3 lastPalmPosition = Vector3.zero;
+	float TIME_OUT_MAX_TIME  = 2.0f;
+	float clearTimeOut = 2.0f;
+
+
+
+	
+	public override void Start () {
+		name = "grab";
+		workingHandIdx = 0;
+		base.Start();
+		mode = HandTool.HandToolMode.Enabled;
+		radius = 1.0f;
+		strength = 1.0f;
+		clearTimeOut = TIME_OUT_MAX_TIME;
+	}
+
+
+	public override void CostumGUI(){
+
+	}
+
+	public override void ManipulateVertices (Bounds toolBounds, Transform transform)
+	{
+
+	}
+
+	public override void ManipulateVertices(RaycastHit hit, float radius){
+		foreach(int v_idx in selectedVertices.Keys ){
+			float distance = selectedVertices[v_idx];
+			Vector3 tmp = target.transform.localToWorldMatrix *  vertices[v_idx];
+			Vector3 vertex =  tmp + target.transform.position;
+
+			Vector3 moveDelta = (palmPosition -lastPalmPosition);
+
+
+			float force = 1.0f - ( Mathf.Clamp01( distance / radius ) );
+
+			Vector3 direction = moveDelta * force * strength;
+			vertex += direction;
+
+			colors[v_idx] = ManipulationColor();
+
+			// transform vertex back
+			tmp = vertex - target.transform.position;
+			vertices[v_idx] = target.transform.worldToLocalMatrix * tmp;
+		}
+		PushMeshData();
+	}
+	public override void Update () {
+
+	}
+
+//	public override void Update () 
+//	{
+//
+//
+//
+//		base.Update();
+//		
+//
+//		if(!hand.IsValid){
+//			return; // --- OUT --->
+//		}
+//
+//		if(HandTool.HandToolMode.Disabled == mode){
+//			return;
+//		}
+//		// ---- out --->
+//
+//
+//		lastPalmPosition = palmPosition;
+//		palmPosition = hand.PalmPosition.ToUnityTranslated();
+//
+//		//update radius:
+//		radius = hand.SphereRadius * Leap.UnityVectorExtension.ScaleFactor;
+//
+//
+////		int fingerCount = hand.Fingers.Count;
+//
+////		if(fingerCount == 0) // hand is closed, manipulation here
+//		if(hand.GrabStrength > 0.8f)
+//		{ 
+//			mode = HandToolMode.Manipulate;
+//			// calculate hand hit
+//			ManipulateVertices(handhit, radius);
+//			return; // ---- out --->
+//		}
+//
+//
+////		Vector3 rayStart = 10.0f* hand.PalmPosition.ToUnityTranslated().normalized;
+////		Vector3 rayEnd = hand.PalmNormal.ToUnityTranslated().normalized;
+//
+//		Vector3 rayStart = palm.transform.position;
+//		Vector3 rayEnd = -palm.transform.up;
+//		
+////		Debug.DrawLine(rayStart, palm.transform.position, Color.green);
+////		Debug.DrawLine(palm.transform.position, rayEnd, Color.yellow);
+//		
+//		ray = new Ray(rayStart, rayEnd);
+//
+//
+////		Debug.DrawLine(ray.origin, ray.origin+ray.direction, Color.yellow);
+//
+//		if(Physics.Raycast(ray, out handhit) 
+//		   && handhit.collider.tag  == "Touchable"
+////		   && handhit.distance <= MinActivationDistance
+////		   && palm.transform.position.magnitude < MinActivationDistance
+//		   )
+//		{
+//
+//
+////			if(fingerCount >= 3) { // hand is open
+//			if(hand.GrabStrength < 0.2f){
+//				mode = HandToolMode.Select;
+//				SelectVertices(handhit, radius);
+//
+//			}
+//		}else{
+//			if(clearTimeOut > 0.0f){
+//				clearTimeOut -= Time.deltaTime;
+//			}else {
+//				clearTimeOut = TIME_OUT_MAX_TIME;
+//				ClearSelection();
+//			}
+//		}
+//	}
+
+	public override void OnDestroy(){
+		base.OnDestroy();
+	}
+}

@@ -1,0 +1,260 @@
+﻿
+
+using UnityEngine;
+using System.Collections.Generic;
+
+
+
+public class Node {
+
+	public int id;
+	public bool isLeaf;
+	public bool isEmpty;
+	public List<int>vertices;
+	public Node[] children;
+	public Node parent;
+	public Bounds bounds;
+	public int depth;
+
+
+
+	public Node(){
+
+		vertices = new List<int>();
+		children = new Node[8];
+		isLeaf = true;
+		isEmpty = true;
+		bounds = new Bounds();
+	}
+
+	public Node(List<int>vertices, Bounds bounds, bool isLeaf){
+		this.vertices = vertices;
+		this.bounds = bounds;
+		this.isLeaf = isLeaf;
+		this.children = new Node[8];
+		this.isEmpty = true;
+	}
+}
+
+public class Octree {
+
+	public Node root;
+	public int depth;
+	public Bounds bounds;
+	public Dictionary<int,Node> taggedVertices;
+	public List<Node> nodes;
+
+	static int MAX_VERTEX_COUNT = 32;
+
+	public Octree(Mesh mesh, Transform transf){
+
+		nodes = new List<Node>();
+
+		root = new Node();
+		root.bounds = transf.renderer.bounds;
+		root.parent = root;
+
+
+
+
+		Vector3[] vertices = mesh.vertices;
+
+		taggedVertices = new Dictionary<int, Node>();
+
+
+		for(int i = 0; i < vertices.Length; i++){
+			root.vertices.Add(i);
+			taggedVertices.Add(i, null);
+		}
+
+		depth = 4;
+		CreateTree(root,transf,vertices, depth);
+
+	}
+
+	public void UpdateTree(int v_idx, Vector3 vertex){
+		Node oldNode = taggedVertices[v_idx];
+
+		if(null == oldNode) return; // --- OUT --->
+
+		// remove vertex from the tree:
+		Node parent = oldNode.parent;
+		while(parent != parent.parent){
+			parent.vertices.Remove(v_idx);
+			parent = parent.parent;
+		}
+
+		oldNode.vertices.Remove(v_idx);
+
+		// add vertex to the tree:
+
+
+	}
+
+
+
+	
+
+	public bool InsertVertex(Node root, Vector3 point, int v_idx){
+		if( root.bounds.Contains(point) ){
+			root.vertices.Add(v_idx);
+			root.isEmpty = false;
+			return true;
+		}
+		return false;
+	}
+
+	public bool TraverseInsert(Node root, Vector3 point, int v_idx){
+		bool inserted = InsertVertex(root, point, v_idx);
+		if( inserted  ){
+			for(int childIdx = 0; childIdx < root.children.Length; childIdx++){
+				Node child = root.children[childIdx];
+				if(null == child){
+					child = CreateNode(childIdx, root.bounds); 
+				}
+				inserted = TraverseInsert(child, point, v_idx);
+				if(inserted) {
+					root.children[childIdx] = child;
+					break;
+				}
+			}
+
+			root.vertices.Add(v_idx);
+			taggedVertices[v_idx] = root;
+		}
+		return inserted;
+	}
+
+	private Node CreateNode(int childIdx, Bounds rootBounds){
+		Vector3 extends = root.bounds.extents/2;
+
+		switch(childIdx){
+		case 2:
+		case 3:
+			extends.x = -extends.x;
+			break;
+		case 4:
+		case 5:
+			extends.y = -extends.y;
+			break;
+		case 6:
+		case 7:
+			extends.x = -extends.x;
+			extends.y = -extends.y;
+			break;
+		default: break;
+		}
+		
+		if(childIdx % 2 != 0){
+			extends = extends * -1;
+		}
+
+		Vector3 childCenter = root.bounds.center + extends;
+		Vector3 childSize = root.bounds.size/2;
+		Bounds childBounds = new Bounds(childCenter, childSize);
+		Node node = new Node(new List<int>(), childBounds, true);
+		node.id = childIdx;
+		node.isEmpty = true;
+
+		return node;
+	}
+	
+	public void CreateTree(Node root, Transform transform, Vector3[] vertices, int depth){
+		Bounds bounds = root.bounds;
+		root.bounds = bounds;
+
+		--depth;
+
+		if(depth < 0){
+			return; // --- OUT--->
+		}
+
+
+		for(int i = 0; i < 8; i++){
+
+			Node child = CreateNode(i, root.bounds);
+
+
+			foreach(int v_idx in root.vertices){
+
+				Vector3 vertex = transform.TransformPoint(vertices[v_idx]);
+
+
+
+				if(InsertVertex(child, vertex, v_idx) ){
+					root.children[i] = child;
+					child.parent = root;
+					root.isLeaf = false;
+				}
+
+//				if( child.bounds.Contains(vertex) ){
+//
+//					child.vertices.Add(v_idx);
+//					child.isEmpty = false;
+//
+//					nodes.Add(child);
+//					taggedVertices[v_idx] = child;
+//
+//					root.children[i] = child;
+//					child.parent = root;
+//					root.isLeaf = false;
+//				}
+
+
+			}
+
+			if(!child.isEmpty){
+				CreateTree(child,transform, vertices,  depth);
+			}
+			
+		}
+	}
+
+	public static void DrawTree(Octree octree){
+	
+		foreach(Node node in octree.nodes){
+			Gizmos.DrawWireCube(node.bounds.center, node.bounds.size);
+		}
+	}
+	public static void DrawTree(Node root){
+		foreach(Node child in root.children){
+			if(child == null) {
+				continue; // out -->
+			}
+			DrawTree(child);
+			Debug.DrawLine(root.bounds.center, child.bounds.center, Color.blue);
+
+		}
+//		Gizmos.DrawWireSphere(root.bounds.center,root.bounds.size.magnitude);
+		Gizmos.DrawWireCube(root.bounds.center, root.bounds.size);
+	}
+
+	public static void DrawTree(Node root, Transform transf, Vector3[] vertices){
+
+
+//			foreach(int v_idx in root.vertices){
+//				Vector3 vertex = transf.TransformPoint(vertices[v_idx]);
+//				Debug.DrawLine(root.bounds.center, vertex, Color.red);
+//			}
+
+		
+		if(root.isLeaf){
+			foreach(int v_idx in root.vertices){
+				Vector3 vertex = transf.TransformPoint(vertices[v_idx]);
+				Debug.DrawLine(root.bounds.center, vertex, Color.red);
+			}
+		}else{
+			foreach(Node child in root.children){
+				if(child == null) {
+					continue; // out -->
+				}
+				//DrawTree(child);
+				DrawTree(child, transf, vertices);
+				Debug.DrawLine(root.bounds.center, child.bounds.center, Color.blue);
+			}
+		}
+
+
+		Gizmos.DrawWireCube(root.bounds.center, root.bounds.size);
+	}
+}
