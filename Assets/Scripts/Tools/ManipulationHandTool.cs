@@ -52,37 +52,37 @@ public abstract class ManipulationHandTool : HandTool
 	}
 
 
-	void OnDrawGizmos()
-	{
-		Gizmos.color = Color.yellow;
-		//Gizmos.DrawWireCube(target.transform.position, target.transform.renderer.bounds.size);
-//		if(octree != null){
-//			//			Octree.DrawTree(octree.root, target.transform, vertices);
-//			Octree.DrawTree(octree.root);
-//
+//	void OnDrawGizmos()
+//	{
+//		Gizmos.color = Color.yellow;
+//		//Gizmos.DrawWireCube(target.transform.position, target.transform.renderer.bounds.size);
+////		if(octree != null){
+////			//			Octree.DrawTree(octree.root, target.transform, vertices);
+////			Octree.DrawTree(octree.root);
+////
+////		}
+//		Gizmos.color = Color.red;
+//		if(toolBounds != null){
+//			Gizmos.DrawWireCube(toolBounds.center, toolBounds.size);
 //		}
-		Gizmos.color = Color.red;
-		if(toolBounds != null){
-			Gizmos.DrawWireCube(toolBounds.center, toolBounds.size);
-		}
-
-//		Gizmos.DrawWireSphere(palm.transform.position, radius);
-
 //
-//		if(toolBounds != null && octree != null){
+////		Gizmos.DrawWireSphere(palm.transform.position, radius);
 //
-		foreach(Node node in selectedNodes){
-			if(node.isLeaf) Gizmos.color = Color.blue;
-			else Gizmos.color = Color.yellow;
-//				if(node.bounds.Intersects(toolBounds) ){
-//				if(node.bounds.IntersectRay(ray) ){
-//					if(node.isLeaf){
-//						Gizmos.color = Color.blue;
-//					}
-			Gizmos.DrawWireCube(node.bounds.center, node.bounds.size);
-		}
-
-	}
+////
+////		if(toolBounds != null && octree != null){
+////
+//		foreach(Node node in selectedNodes){
+//			if(node.isLeaf) Gizmos.color = Color.blue;
+//			else Gizmos.color = Color.yellow;
+////				if(node.bounds.Intersects(toolBounds) ){
+////				if(node.bounds.IntersectRay(ray) ){
+////					if(node.isLeaf){
+////						Gizmos.color = Color.blue;
+////					}
+//			Gizmos.DrawWireCube(node.bounds.center, node.bounds.size);
+//		}
+//
+//	}
 
 
 	public void PullMeshData()

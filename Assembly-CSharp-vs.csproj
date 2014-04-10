@@ -61,6 +61,10 @@
      <Compile Include="Assets\Scripts\Mesh\Octree.cs" />
      <Compile Include="Assets\Scripts\Mesh\TargetObjectScript.cs" />
      <Compile Include="Assets\Scripts\ObjExporter.cs" />
+     <Compile Include="Assets\Scripts\SculptMesh\Octree.cs" />
+     <Compile Include="Assets\Scripts\SculptMesh\SculptMesh.cs" />
+     <Compile Include="Assets\Scripts\SculptMesh\Triangle.cs" />
+     <Compile Include="Assets\Scripts\SculptMesh\Vertex.cs" />
      <Compile Include="Assets\Scripts\TestScript.cs" />
      <Compile Include="Assets\Scripts\Tools\GrabTool.cs" />
      <Compile Include="Assets\Scripts\Tools\HandTool.cs" />
@@ -68,6 +72,7 @@
      <Compile Include="Assets\Scripts\Tools\NavigationHandTool.cs" />
      <Compile Include="Assets\Scripts\Tools\PointingTool.cs" />
      <Compile Include="Assets\Scripts\Tools\ShadowTool.cs" />
+     <Compile Include="Assets\Scripts\Utils\Geometry.cs" />
      <Compile Include="Assets\Scripts\Utils\MathHelper.cs" />
      <Compile Include="Assets\TargetTransformer.cs" />
      <None Include="Assets\Shaders\MultipleLights.shader" />
