@@ -63,6 +63,7 @@
      <Compile Include="Assets\Scripts\ObjExporter.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\Octree.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\SculptMesh.cs" />
+     <Compile Include="Assets\Scripts\SculptMesh\Sculpter.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\Triangle.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\Vertex.cs" />
      <Compile Include="Assets\Scripts\TestScript.cs" />

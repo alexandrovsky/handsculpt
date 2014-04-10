@@ -9,24 +9,23 @@
 // ------------------------------------------------------------------------------
 using System;
 using UnityEngine;
-namespace Sculpt
-{
+namespace Sculpt{
 	public class Triangle
-	{
-		public int id;
-		public Vector3 normal;
-		public Bounds aabb;
-		public Octree leaf;
-		public int posInLeaf;
+{
+	public int id;
+	public Vector3 normal;
+	public Bounds aabb;
+	public Octree leaf;
+	public int posInLeaf;
 
-		public Triangle(int id)
-		{
-			this.id = id;
-			this.normal = Vector3.forward;
-			this.aabb = new Bounds();
-			this.leaf = null;
-			this.posInLeaf = -1;
-		}
+	public Triangle(int id)
+	{
+		this.id = id;
+		this.normal = Vector3.forward;
+		this.aabb = new Bounds();
+		this.leaf = null;
+		this.posInLeaf = -1;
 	}
+}
 }
 

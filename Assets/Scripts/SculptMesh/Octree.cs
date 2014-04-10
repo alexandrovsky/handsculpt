@@ -21,6 +21,8 @@ namespace Sculpt{
 		public Bounds aabbLoose;
 		public Bounds aabbSplit;
 		public  List<int> iTris = null;
+		
+		public static List<Octree> selectedNodes = new List<Octree>();
 
 		public Octree (Octree parent, int depth)
 		{
@@ -187,6 +189,24 @@ namespace Sculpt{
 			children.Add(child6);
 			children.Add(child7);
 
+		}
+
+		public List<int> intersectRay(Ray ray){
+			if(this.aabbLoose.IntersectRay(ray) ){
+				Octree.selectedNodes.Add(this);
+				if(this.children.Count == 8 ){
+					List<int> iTriangles = new List<int>();
+					foreach(Octree child in children){
+						iTriangles.AddRange(child.intersectRay(ray) );
+					}
+					return iTriangles;
+				}else{
+					return iTris;
+				}
+
+			}else{
+				return new List<int>();
+			}
 		}
 	}
 }

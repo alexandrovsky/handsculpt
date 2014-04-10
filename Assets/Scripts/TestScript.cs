@@ -56,7 +56,7 @@ public class TestScript : MonoBehaviour {
 
 	void OnGUI(){
 
-		GUI.TextField(new Rect(300, 100, 200, 20), "octree node count " + octree.nodes.Count);
+//		GUI.TextField(new Rect(300, 100, 200, 20), "octree node count " + octree.nodes.Count);
 	}
 
 

@@ -35,6 +35,9 @@ public abstract class ManipulationHandTool : HandTool
 
 	public RaycastHit hit;
 	public Ray ray;
+
+
+
 	public List<Node> selectedNodes = new List<Node>();
 	public Octree octree = null;
 	public float minDistance;

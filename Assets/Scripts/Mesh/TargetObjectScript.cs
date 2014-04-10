@@ -26,7 +26,7 @@ public class TargetObjectScript: MonoBehaviour {
 
 		pullMeshData();
 		pullInitMeshData();
-		octree = new Octree(mesh, transform);
+//		octree = new Octree(mesh, transform);
 	}
 	
 	// Update is called once per frame

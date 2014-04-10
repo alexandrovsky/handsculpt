@@ -63,7 +63,8 @@ public class PointingTool : ManipulationHandTool {
 	}
 
 	public override void Update () 
-	{if(Input.GetMouseButtonDown(0))
+	{
+		if(Input.GetMouseButtonDown(0))
 		{	
 			ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			if(Physics.Raycast(ray, out hit) ){
