@@ -31,10 +31,47 @@ public class Geometry
 
 //			Bounds aabb2 = new Bounds();
 		aabb.SetMinMax(min, max);
-
-		
 	}
 
+//	public static bool boundsIntersectSphere(Bounds aabb, Vector3 c, float r){
+//
+//		Vector3 min = aabb.min,
+//		max = aabb.max;
+//		float vx = c[0],
+//		vy = c[1],
+//		vz = c[2];
+//		float dx = 0.0f,
+//		dy = 0.0f,
+//		dz = 0.0f;
+//		
+//		if (min[0] > vx) dx = min[0] - vx;
+//		else if (max[0] < vx) dx = max[0] - vx;
+//		else dx = 0.0f;
+//		
+//		if (min[1] > vy) dy = min[1] - vy;
+//		else if (max[1] < vy) dy = max[1] - vy;
+//		else dy = 0.0f;
+//		
+//		if (min[2] > vz) dz = min[2] - vz;
+//		else if (max[2] < vz) dz = max[2] - vz;
+//		else dz = 0.0f;
+//		
+//		return (dx * dx + dy * dy + dz * dz) < r;
+//
+//	}
+
+	public static bool boundsIntersectSphere(Bounds aabb, Vector3 c, float r){
+		return StaticTest(aabb.min, aabb.max, c, r);
+	}
+	public static bool StaticTest(Vector3 aabbMin, Vector3 aabbMax, Vector3 sphereCenter, float sphereRadius)
+	{
+		Vector3 closestPointInAabb = Vector3.Min(Vector3.Max(sphereCenter, aabbMin), aabbMax);
+		float distanceSquared = (closestPointInAabb - sphereCenter).sqrMagnitude;
+		
+		// The AABB and the sphere overlap if the closest point within the rectangle is
+		// within the sphere's radius
+		return distanceSquared < (sphereRadius );//* sphereRadius);
+	}
 }
 
 

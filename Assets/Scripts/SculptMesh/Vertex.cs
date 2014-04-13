@@ -11,25 +11,28 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Sculpt{
 	public class Vertex
-{
-	public int id;
-	public List<int> tIndices;
-	public List<int> ringVertices;
-
-	public Vertex (int id)
 	{
-		this.id = id;
-		tIndices = new List<int>();
-		ringVertices = new List<int>();
-	}
+		public static long TagMask = 0;
 
-	public Vertex copy(){
-		Vertex newV = new Vertex(this.id);
-		newV.tIndices = this.tIndices.ToList();
-		newV.ringVertices = this.ringVertices.ToList();
+		public int id;
+		public long tagFlag;
+		public List<int> tIndices;
+		public List<int> ringVertices;
 
-		return newV;
+		public Vertex (int id)
+		{
+			this.id = id;
+			tIndices = new List<int>();
+			ringVertices = new List<int>();
+		}
+
+		public Vertex copy(){
+			Vertex newV = new Vertex(this.id);
+			newV.tIndices = this.tIndices.ToList();
+			newV.ringVertices = this.ringVertices.ToList();
+
+			return newV;
+		}
 	}
-}
 }
 

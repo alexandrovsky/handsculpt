@@ -208,6 +208,27 @@ namespace Sculpt{
 				return new List<int>();
 			}
 		}
+
+
+		public List<int> intersectSphere(Vector3 center, float radius, List<Octree> leavesHit){
+			float dist = Vector3.Distance(this.aabbSplit.center, center);
+			if(Geometry.boundsIntersectSphere(this.aabbSplit,center,radius*radius) ){
+				if(this.children.Count == 8 ){
+					List<int> iTriangles = new List<int>();
+					foreach(Octree child in children){
+						List<int> iTris = child.intersectSphere(center, radius, leavesHit);
+						iTriangles.AddRange(iTris);
+					}
+					return iTriangles;
+				}else{
+					leavesHit.Add(this);
+					return this.iTris;
+				}
+			}else{
+				return new List<int>();
+			}
+		}
+
 	}
 }
 
