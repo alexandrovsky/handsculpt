@@ -13,9 +13,11 @@ namespace Sculpt{
 	public class Vertex
 	{
 		public static long TagMask = 0;
+		public static long SculptMask = 0;
 
 		public int id;
 		public long tagFlag;
+		public long sculptFlag;
 		public List<int> tIndices;
 		public List<int> ringVertices;
 

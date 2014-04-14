@@ -191,6 +191,28 @@ namespace Sculpt{
 
 		}
 
+		/** Add triangle in the octree, subdivide the cell if necessary */
+		public void addTriangle(Triangle tri)
+		{
+			if (this.aabbSplit.Contains(tri.aabb.center))
+			{
+				this.aabbLoose.Encapsulate(tri.aabb);
+				List<Octree> children = this.children;
+				if (children.Count == 8)
+				{
+					for (var i = 0; i < 8; ++i){
+						children[i].addTriangle(tri);
+					}
+				}
+				else
+				{
+					tri.posInLeaf = this.iTris.Count;
+					tri.leaf = this;
+					this.iTris.Add(tri.id);
+				}
+			}
+		}
+
 		public List<int> intersectRay(Ray ray){
 			if(this.aabbLoose.IntersectRay(ray) ){
 				Octree.selectedNodes.Add(this);
@@ -210,8 +232,10 @@ namespace Sculpt{
 		}
 
 
+
+
 		public List<int> intersectSphere(Vector3 center, float radius, List<Octree> leavesHit){
-			float dist = Vector3.Distance(this.aabbSplit.center, center);
+
 			if(Geometry.boundsIntersectSphere(this.aabbSplit,center,radius*radius) ){
 				if(this.children.Count == 8 ){
 					List<int> iTriangles = new List<int>();

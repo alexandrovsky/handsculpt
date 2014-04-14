@@ -18,9 +18,9 @@ public class Geometry
 
 	public static void triangleAabb(Vector3 v1, Vector3 v2, Vector3 v3, out Bounds aabb){
 		aabb = new Bounds();
-//			aabb.Encapsulate(v1);
-//			aabb.Encapsulate(v2);
-//			aabb.Encapsulate(v3);
+//		aabb.center = v1;
+//		aabb.Encapsulate(v2);
+//		aabb.Encapsulate(v3);
 
 
 		Vector3 min = Vector3.Min(v1, v2);
@@ -28,41 +28,18 @@ public class Geometry
 
 		Vector3 max = Vector3.Min(v1, v2);
 		max = Vector3.Max(max, v3);
-
-//			Bounds aabb2 = new Bounds();
-		aabb.SetMinMax(min, max);
+//		aabb.SetMinMax(min, max);
+		aabb.center = (min + max) * 0.5f;
+		aabb.Encapsulate(v1);
+		aabb.Encapsulate(v2);
+		aabb.Encapsulate(v3);
 	}
-
-//	public static bool boundsIntersectSphere(Bounds aabb, Vector3 c, float r){
-//
-//		Vector3 min = aabb.min,
-//		max = aabb.max;
-//		float vx = c[0],
-//		vy = c[1],
-//		vz = c[2];
-//		float dx = 0.0f,
-//		dy = 0.0f,
-//		dz = 0.0f;
-//		
-//		if (min[0] > vx) dx = min[0] - vx;
-//		else if (max[0] < vx) dx = max[0] - vx;
-//		else dx = 0.0f;
-//		
-//		if (min[1] > vy) dy = min[1] - vy;
-//		else if (max[1] < vy) dy = max[1] - vy;
-//		else dy = 0.0f;
-//		
-//		if (min[2] > vz) dz = min[2] - vz;
-//		else if (max[2] < vz) dz = max[2] - vz;
-//		else dz = 0.0f;
-//		
-//		return (dx * dx + dy * dy + dz * dz) < r;
-//
-//	}
 
 	public static bool boundsIntersectSphere(Bounds aabb, Vector3 c, float r){
 		return StaticTest(aabb.min, aabb.max, c, r);
 	}
+
+	//http://blog.nuclex-games.com/tutorials/collision-detection/static-sphere-vs-aabb/
 	public static bool StaticTest(Vector3 aabbMin, Vector3 aabbMax, Vector3 sphereCenter, float sphereRadius)
 	{
 		Vector3 closestPointInAabb = Vector3.Min(Vector3.Max(sphereCenter, aabbMin), aabbMax);
