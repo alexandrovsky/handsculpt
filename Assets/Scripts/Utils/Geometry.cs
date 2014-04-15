@@ -18,17 +18,12 @@ public class Geometry
 
 	public static void triangleAabb(Vector3 v1, Vector3 v2, Vector3 v3, out Bounds aabb){
 		aabb = new Bounds();
-//		aabb.center = v1;
-//		aabb.Encapsulate(v2);
-//		aabb.Encapsulate(v3);
-
 
 		Vector3 min = Vector3.Min(v1, v2);
 		min = Vector3.Min(min, v3);
 
 		Vector3 max = Vector3.Min(v1, v2);
 		max = Vector3.Max(max, v3);
-//		aabb.SetMinMax(min, max);
 		aabb.center = (min + max) * 0.5f;
 		aabb.Encapsulate(v1);
 		aabb.Encapsulate(v2);

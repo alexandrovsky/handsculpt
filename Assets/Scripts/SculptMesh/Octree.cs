@@ -36,6 +36,7 @@ namespace Sculpt{
 
 		public void build(SculptMesh mesh, List<int> iTris){
 
+			this.aabbLoose.SetMinMax(this.aabbSplit.min, this.aabbSplit.max);
 			this.iTris = iTris;
 			int nbTriangles = this.iTris.Count;
 			if(nbTriangles > Octree.maxTriangles && depth < Octree.maxDepth){
@@ -102,6 +103,7 @@ namespace Sculpt{
 			for(int i = 0; i < iTris.Count; i++){
 				int iTri = iTris[i];
 				Triangle t = triangles[iTri];
+
 				Vector3 tCenter = t.aabb.center;
 
 				if(tCenter.x > cen.x){
@@ -188,6 +190,8 @@ namespace Sculpt{
 			children.Add(child5);
 			children.Add(child6);
 			children.Add(child7);
+
+			this.iTris.Clear();
 
 		}
 
