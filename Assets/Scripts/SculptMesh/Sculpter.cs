@@ -29,6 +29,9 @@ namespace Sculpt{
 		public Tool tool;
 		Ray ray = new Ray();
 		SculptMesh sculptMesh;
+
+		Camera camera;
+
 		void OnDrawGizmos(){
 			Gizmos.color = Color.green;
 			Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * 100);
@@ -40,6 +43,7 @@ namespace Sculpt{
 			sculptMesh = GetComponent<SculptMesh>();
 			tool = Tool.BRUSH;
 			Debug.Log("sculpter");
+			camera = Camera.main;
 		}
 		
 		// Update is called once per frame
@@ -64,9 +68,36 @@ namespace Sculpt{
 				if(radius < 0) radius = 0.05f;
 			}
 
+			bool rotate = false;
+			float angle = 5;
+			float rotationSpeed = 10;
+			Vector3 axis = camera.transform.up;
+			if(Input.GetKey(KeyCode.LeftArrow)){
+				rotate = true;
+			}
+			if(Input.GetKey(KeyCode.RightArrow)){
+				rotate = true;
+				angle = -angle;
+			}
+
+			if(Input.GetKey(KeyCode.UpArrow)){
+				rotate = true;
+				axis = camera.transform.right;
+			}
+			if(Input.GetKey(KeyCode.DownArrow)){
+				rotate = true;
+				axis = camera.transform.right;
+				angle = -angle;
+			}
+
+
+			if(rotate){
+				camera.transform.RotateAround(sculptMesh.transform.position, axis, rotationSpeed * angle * Time.deltaTime);
+			}
+
 //			if(Input.GetMouseButtonDown(0))
 			{
-				Camera camera = Camera.main;
+
 				Vector3 mousePos = Input.mousePosition;
 				ray = camera.ScreenPointToRay(mousePos);
 				sculptMesh.intersectRayMesh(ray);
