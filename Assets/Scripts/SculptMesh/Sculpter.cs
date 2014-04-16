@@ -282,7 +282,8 @@ namespace Sculpt{
 					
 					fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 
-					v += dragDirection * fallOff; // * Time.deltaTime;
+
+					v += dragDirection * fallOff * Time.deltaTime;
 					Debug.DrawLine(v, v + dragDirection * fallOff, Color.blue);
 
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
