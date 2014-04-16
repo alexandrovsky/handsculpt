@@ -30,6 +30,8 @@ namespace Sculpt{
 		Ray ray = new Ray();
 		SculptMesh sculptMesh;
 
+		public bool activated;
+
 		Camera camera;
 
 		void OnDrawGizmos(){
@@ -41,11 +43,38 @@ namespace Sculpt{
 		// Use this for initialization
 		void Start () {
 			sculptMesh = GetComponent<SculptMesh>();
-			tool = Tool.BRUSH;
+			tool = Tool.SMOOTH;
 			Debug.Log("sculpter");
 			camera = Camera.main;
 		}
-		
+
+		void rotate(){
+			bool rotate = false;
+			float angle = 5;
+			float rotationSpeed = 10;
+			Vector3 axis = camera.transform.up;
+			if(Input.GetKey(KeyCode.LeftArrow)){
+				rotate = true;
+			}
+			if(Input.GetKey(KeyCode.RightArrow)){
+				rotate = true;
+				angle = -angle;
+			}
+			
+			if(Input.GetKey(KeyCode.UpArrow)){
+				rotate = true;
+				axis = camera.transform.right;
+			}
+			if(Input.GetKey(KeyCode.DownArrow)){
+				rotate = true;
+				axis = camera.transform.right;
+				angle = -angle;
+			}
+			if(rotate){
+				camera.transform.RotateAround(sculptMesh.transform.position, axis, rotationSpeed * angle * Time.deltaTime);
+			}
+		}
+
 		// Update is called once per frame
 		void Update () {
 		
@@ -68,51 +97,28 @@ namespace Sculpt{
 				if(radius < 0) radius = 0.05f;
 			}
 
-			bool rotate = false;
-			float angle = 5;
-			float rotationSpeed = 10;
-			Vector3 axis = camera.transform.up;
-			if(Input.GetKey(KeyCode.LeftArrow)){
-				rotate = true;
-			}
-			if(Input.GetKey(KeyCode.RightArrow)){
-				rotate = true;
-				angle = -angle;
-			}
+			rotate();
+//			
 
-			if(Input.GetKey(KeyCode.UpArrow)){
-				rotate = true;
-				axis = camera.transform.right;
-			}
-			if(Input.GetKey(KeyCode.DownArrow)){
-				rotate = true;
-				axis = camera.transform.right;
-				angle = -angle;
-			}
-
-
-			if(rotate){
-				camera.transform.RotateAround(sculptMesh.transform.position, axis, rotationSpeed * angle * Time.deltaTime);
-			}
-
-//			if(Input.GetMouseButtonDown(0))
-			{
-
-				Vector3 mousePos = Input.mousePosition;
-				ray = camera.ScreenPointToRay(mousePos);
-				sculptMesh.intersectRayMesh(ray);
+			Vector3 mousePos = Input.mousePosition;
+			ray = camera.ScreenPointToRay(mousePos);
+			sculptMesh.intersectRayMesh(ray);
 //				this.radius = 1.0f;
 
 
-				List<int> pickedVertices = sculptMesh.pickVerticesInSphere(this.radius);
-				Vector3 center = sculptMesh.intersectionPoint;
-				float intensity = 1.0f;
-//				if(Input.GetMouseButton(0) )
-				{
-					sculpt(camera.transform.forward, pickedVertices, 
-				       sculptMesh.intersectionPoint, sculptMesh.worldRadiusSqr, intensity,this.tool);
-				}
+			float r = this.radius; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
+
+			List<int> pickedVertices = sculptMesh.pickVerticesInSphere(r);
+//			Vector3 center = sculptMesh.intersectionPoint;
+			float intensity = 1.0f;
+			if(Input.GetMouseButton(0) ){
+				this.activated = true;
+			}else{
+				this.activated = false;
 			}
+			sculpt(camera.transform.forward, pickedVertices, 
+			       sculptMesh.intersectionPoint, sculptMesh.worldRadiusSqr, intensity,this.tool);
+
 			sculptMesh.pushMeshData();
 		}
 
@@ -171,6 +177,7 @@ namespace Sculpt{
 				case Tool.DRAG:
 					break;
 				case Tool.SMOOTH:
+					smooth(iVertsInFront, intensity);
 					break;
 				}
 			}
@@ -199,17 +206,59 @@ namespace Sculpt{
 				fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 				fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
 
-				if(Input.GetMouseButton(0) ){
+//				if(Input.GetMouseButton(0) )
+				if(this.activated)
+				{
 					v -= aNormal * fallOff;
 				}
 
 				sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 				sculptMesh.colorArray[v_idx] = SELECTED;
 			}
+		}
+		/** Smooth a group of vertices. New position is given by simple averaging
+		 *  used the laplasian algorithm from:
+		 * http://wiki.unity3d.com/index.php?title=MeshSmoother
+		 */
+		public void smooth(List<int>iVerts, float intensity){
+			int nbVerts = iVerts.Count;
+
+			for (var i = 0; i < nbVerts; ++i){
+
+				Vector3 n = Vector3.zero;
+
+				int v_idx = iVerts[i];
+				Vertex vertex = sculptMesh.vertices[v_idx];
+
+				Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
+
+				if(vertex.ringVertices.Count > 0){
+					for(int j = 0; j < vertex.ringVertices.Count; j++){
+						Vector3 ringV = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[vertex.ringVertices[j]]); 
+						n += ringV;
+					}
+					n *= 1.0f/vertex.ringVertices.Count;
+					
+					if(this.activated)
+					{
+						Vector3 d = (n - v) * intensity;
+						v += d;
+					}
+				}else{
+					Debug.Log("vertex has no ring");
+				}
+
+				
+				sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
+				sculptMesh.colorArray[v_idx] = SELECTED;
+
+			}
 
 		}
 
+		/** Smooth a group of vertices. New position is given by simple averaging */
 
+		
 
 	}
 }
