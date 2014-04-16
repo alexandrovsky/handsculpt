@@ -3,6 +3,10 @@
 		_MainTex ("Base (RGB)", 2D) = "green" {}
 	}
 	SubShader {
+//		Pass{
+//			Cull Off
+//		}
+	
 		Tags { "RenderType"="Opaque" }
 		LOD 200
 		
@@ -34,6 +38,7 @@
         }
 
 		ENDCG
+		
 	} 
 	FallBack "Diffuse"
 }

@@ -44,6 +44,10 @@ public class MathHelper
 		return C;
 	}
 
+
+
+
+
 	//This function returns a point which is a projection from a point to a plane.
 	public static Vector3 ProjectPointOnPlane(Vector3 planeNormal, Vector3 planePoint, Vector3 point){
 		
