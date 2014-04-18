@@ -17,7 +17,6 @@ namespace Leap {
 	public static class UnityVectorExtension
 	{
 		public static float ScaleFactor =  0.02f;
-		public static float ScaleFactor2 =  0.02f;
 		public static Vector3 InputScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
 		public static Vector3 InputOffset = new Vector3(0, 0, 0);
 		

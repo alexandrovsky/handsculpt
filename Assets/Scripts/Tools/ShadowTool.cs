@@ -5,23 +5,27 @@ public class ShadowTool : ManipulationHandTool
 {
 
 
+
 	public override void Start () {
 		name = "shadow";
 		workingHandIdx = 0;
 		base.Start();
 		mode = HandTool.HandToolMode.Enabled;
 
-
-
-		//deactivatePalm();
+//		deactivatePalm();
 	}
 	
 	public override void CostumGUI(){
 
 		GUILayout.TextField( "dist: " + hand.PalmPosition.ToUnityTranslated().magnitude);
+		GUILayout.BeginVertical();{
+			GUILayout.TextField("Min Activation Distance: " + MinActivationDistance);
+			MinActivationDistance = GUILayout.HorizontalSlider(MinActivationDistance, 0.01f, 12.0f);
+		}GUILayout.EndVertical();
+		
 	}
-
-
+	
+	
 
 
 
@@ -40,6 +44,15 @@ public class ShadowTool : ManipulationHandTool
 		}else{
 			ray = new Ray(palm.transform.position, -palm.transform.up);
 		}
+
+
+
+		if(hand.PalmPosition.ToUnityTranslated().magnitude < MinActivationDistance ){
+			sculpter.activated = true;
+		}else{
+			sculpter.activated = false;
+		}
+		
 //		Vector3 screenPoint = mainCamera.WorldToScreenPoint(palm.transform.position);
 //		ray = mainCamera.ScreenPointToRay(screenPoint);
 //
@@ -47,7 +60,8 @@ public class ShadowTool : ManipulationHandTool
 
 
 		sculptMesh.intersectRayMesh(ray);
-		float radius = sculpter.radius; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
+
+		float radius = sculpter.radius * hand.SphereRadius * Leap.UnityVectorExtension.ScaleFactor; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
 		
 		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
 		Vector3 center = sculptMesh.intersectionPoint;
@@ -60,10 +74,6 @@ public class ShadowTool : ManipulationHandTool
 		sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, true);
 		
 		sculptMesh.pushMeshData();
-
-
-		                                  
-
 
 	}
 
