@@ -24,7 +24,6 @@ public abstract class ManipulationHandTool : HandTool
 	protected Sculpter sculpter;
 	protected SculptMesh sculptMesh;
 	public Ray ray;
-	public float minDistance;
 
 
 

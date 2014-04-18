@@ -18,77 +18,16 @@ public class ShadowTool : ManipulationHandTool
 	
 	public override void CostumGUI(){
 
-		GUILayout.TextField( "min distance: " + minDistance);
+		GUILayout.TextField( "dist: " + hand.PalmPosition.ToUnityTranslated().magnitude);
 	}
 
 
-	public void ManipulateVertices(Bounds toolBounds, Transform transform)
-	{
 
-//		foreach(int v_idx in selectedVertices.Keys ){
-//			// float distance = selectedVertices[v_idx];
-//			Vector3 vertex = transform.TransformPoint( vertices[v_idx] );
-//
-////			vertex += palm.transform.up * 0.2f * Time.deltaTime;
-////
-////			Node containerNode = octree.taggedVertices[v_idx];
-////			if(! containerNode.bounds.Contains(vertex) ){
-////
-////				containerNode.bounds.Encapsulate(vertex);
-////
-//////				containerNode.parent.bounds.Encapsulate(containerNode.bounds);
-////				Node parent = containerNode.parent;
-////				while(parent != parent.parent){
-////					parent.parent.bounds.Encapsulate(parent.bounds);
-////					parent = parent.parent;
-////				}
-////				octree.root.bounds.Encapsulate(parent.bounds);
-////			} 
-//
-////			// -- begin manipulation vertex:
-////			// flatten:
-////			float distanceFromHitPlane = MathHelper.SignedDistancePlanePoint(hit.normal.normalized, hit.point, vertex);
-////			
-////			
-////			Vector3 direction = hit.normal.normalized * distanceFromHitPlane - hit.normal.normalized * maxDistanceFromHit;
-////			vertex -= direction * strength * Time.deltaTime;
-//			
-//			//			Debug.DrawLine(vertex,vertex + direction, Color.cyan);
-//			
-//			// ---- end manipulation vertex
-//			colors[v_idx] = ManipulationColor();
-//			vertices[v_idx] = transform.InverseTransformPoint(vertex);
-//		}
-//		PushMeshData();
-
-	}
-
-
-	public  void ManipulateVertices(RaycastHit hit, float radius){
-//		foreach(int v_idx in selectedVertices.Keys ){
-//			// float distance = selectedVertices[v_idx];
-//			Vector3 vertex = hit.transform.TransformPoint( vertices[v_idx] );
-//
-//			// -- begin manipulation vertex:
-//			// flatten:
-//			float distanceFromHitPlane = MathHelper.SignedDistancePlanePoint(hit.normal.normalized, hit.point, vertex);
-//
-//
-//			Vector3 direction = hit.normal.normalized * distanceFromHitPlane - hit.normal.normalized * maxDistanceFromHit;
-//			vertex -= direction * strength * Time.deltaTime;
-//
-////			Debug.DrawLine(vertex,vertex + direction, Color.cyan);
-//
-//			// ---- end manipulation vertex
-//			colors[v_idx] = ManipulationColor();
-//			vertices[v_idx] = hit.transform.InverseTransformPoint(vertex);
-//		}
-//		PushMeshData();
-	}
 
 
 	public override void Update ()
 	{
+		sculpter.clearColors();
 		base.Update();
 
 		if( ! hand.IsValid 
@@ -96,31 +35,34 @@ public class ShadowTool : ManipulationHandTool
 		{
 			return; // --- OUT --->
 		}
+		if( target.renderer.bounds.Contains(palm.transform.position) ){
+			ray = new Ray(palm.transform.position, palm.transform.up);
+		}else{
+			ray = new Ray(palm.transform.position, -palm.transform.up);
+		}
+//		Vector3 screenPoint = mainCamera.WorldToScreenPoint(palm.transform.position);
+//		ray = mainCamera.ScreenPointToRay(screenPoint);
+//
+//		Debug.DrawLine(ray.origin, palm.transform.position, Color.green);
 
 
+		sculptMesh.intersectRayMesh(ray);
+		float radius = sculpter.radius; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
+		
+		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
+		Vector3 center = sculptMesh.intersectionPoint;
+		
+		float intensity = sculpter.intensity;
+		
+		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
+		                center, radius, intensity, Sculpt.Tool.SMOOTH);
+		
+		sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, true);
+		
+		sculptMesh.pushMeshData();
 
-//		toolBounds.extents = palm.transform.renderer.bounds.extents * radius;
-//
-//
-//
-////		ray = new Ray(octree.root.bounds.center,  palm.transform.position); // marc fragen
-////		ray = new Ray(palm.transform.position, -palm.transform.up);
-//
-//
-//		Vector3 screenPoint = Camera.main.WorldToScreenPoint(palm.transform.position);
-////		ray = Camera.main.ScreenPointToRay(screenPoint);
-//
-//
-//		ray = new Ray(octree.root.bounds.center,  palm.transform.position); // marc fragen
-//
-//		Debug.DrawLine(ray.origin, ray.direction * 10, Color.green);
-//
-//		SelectVertices(ray, octree.root);
-////
-////		if(palm.transform.position.magnitude < MinActivationDistance){
-////			ManipulateVertices(toolBounds, target.transform);
-////		}
 
+		                                  
 
 
 	}

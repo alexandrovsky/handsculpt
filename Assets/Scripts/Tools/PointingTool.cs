@@ -32,7 +32,9 @@ public class PointingTool : ManipulationHandTool {
 		sculpter.clearColors();
 		base.Update();
 
-		if(!hand.IsValid){
+		if( ! hand.IsValid 
+		   || HandTool.HandToolMode.Disabled == mode)
+		{
 			return; // --- OUT --->
 		}
 
