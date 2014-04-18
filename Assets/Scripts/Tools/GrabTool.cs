@@ -107,6 +107,8 @@ public class GrabTool : ManipulationHandTool
 		
 		if( !hand.IsValid || HandTool.HandToolMode.Disabled == mode)
 		{
+			selectedVertices.Clear();
+			iVertsSelected.Clear();
 			return; // --- OUT --->
 		}
 
