@@ -11,7 +11,7 @@ public class ShadowTool : ManipulationHandTool
 		workingHandIdx = 0;
 		base.Start();
 		mode = HandTool.HandToolMode.Enabled;
-
+		sculpter.tool = Sculpt.Tool.SMOOTH;
 //		deactivatePalm();
 	}
 	
@@ -34,16 +34,19 @@ public class ShadowTool : ManipulationHandTool
 		sculpter.clearColors();
 		base.Update();
 
-		if( ! hand.IsValid 
-		   || HandTool.HandToolMode.Disabled == mode)
+		if( !hand.IsValid || HandTool.HandToolMode.Disabled == mode)
 		{
 			return; // --- OUT --->
 		}
-		if( target.renderer.bounds.Contains(palm.transform.position) ){
-			ray = new Ray(palm.transform.position, palm.transform.up);
-		}else{
-			ray = new Ray(palm.transform.position, -palm.transform.up);
-		}
+
+//		ray = new Ray(sculptMesh.octree.aabbSplit.center,  palm.transform.up);
+		ray = new Ray(sculptMesh.octree.aabbSplit.center,  palm.transform.position);
+		Debug.DrawLine(ray.origin, ray.origin + ray.direction, Color.green);
+//		if( target.renderer.bounds.Contains(palm.transform.position) ){
+//			ray = new Ray(palm.transform.position, palm.transform.up);
+//		}else{
+//			ray = new Ray(palm.transform.position, -palm.transform.up);
+//		}
 
 
 

@@ -14,10 +14,10 @@ namespace Sculpt{
 		public Color[] colorArray;
 
 		int[] indexArray; // triangle ideces
-		Octree octree;
+		public Octree octree;
 
 		MeshFilter meshFilter;
-		Mesh mesh;
+		public Mesh mesh;
 
 
 		List<int> iTrisCandidates; // candidates for picking;

@@ -53,6 +53,7 @@
      <None Include="Assets\Shaders\TestSurfaceShader.shader" />
      <None Include="Assets\Shaders\SpecularInput.shader" />
      <None Include="Assets\Shaders\SelectVertexColorShader.shader" />
+     <None Include="Assets\Shaders\TestSurfaceShader2.shader" />
      <None Include="Assets\Shaders\SpecularInputFrag.shader" />
      <None Include="Assets\Shaders\Velvet.shader" />
  <Reference Include="Assets\_Plugins\LeapCSharp.NET3.5">

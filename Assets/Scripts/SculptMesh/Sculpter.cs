@@ -27,7 +27,7 @@ namespace Sculpt{
 
 		public Tool tool;
 		Ray ray = new Ray();
-		Vector3 dragDir = Vector3.zero;
+		public Vector3 dragDir = Vector3.zero;
 		Vector3 dragInitPos;
 		Vector3 center;
 		SculptMesh sculptMesh;
@@ -206,8 +206,6 @@ namespace Sculpt{
 				if(sculptMesh.vertices[idx].sculptFlag == vertexSculptMask){
 					iVertsInRadius.Add(idx);
 
-
-
 					Vector3 v = transform.TransformPoint(sculptMesh.vertexArray[idx]);
 					Vector3 n = transform.TransformPoint(sculptMesh.normalArray[idx]);
 					if(Vector3.Dot(eyeDir, n) <= 0.0f ){
@@ -260,7 +258,7 @@ namespace Sculpt{
 					fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 					fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
 
-					v -= aNormal * fallOff;
+					v -= aNormal * fallOff * Time.deltaTime;
 
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 					sculptMesh.colorArray[v_idx] = ACTIVATED;
@@ -272,7 +270,7 @@ namespace Sculpt{
 			}
 		}
 
-		public void drag(Vector3 center, Vector3 dragDirection, List<int> iVerts, float radius){
+		public void drag(Vector3 center, Vector3 dragDirection, List<int> iVerts,  float radius){
 			int nbVerts = iVerts.Count;
 			for(int i = 0; i < nbVerts; i++){
 				int v_idx = iVerts[i];
@@ -336,7 +334,7 @@ namespace Sculpt{
 						Debug.Log("vertex has no ring");
 					}
 
-					
+
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 					sculptMesh.colorArray[v_idx] = ACTIVATED;
 				}else{

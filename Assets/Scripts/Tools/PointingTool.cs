@@ -17,6 +17,7 @@ public class PointingTool : ManipulationHandTool {
 		workingHandIdx = 0;
 		base.Start();
 		mode = HandTool.HandToolMode.Enabled;
+		sculpter.tool = Sculpt.Tool.BRUSH;
 
 	}
 
@@ -57,7 +58,7 @@ public class PointingTool : ManipulationHandTool {
 		float intensity = sculpter.intensity;
 
 		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
-		                center, radius, intensity, Sculpt.Tool.BRUSH);
+		                center, radius, intensity, sculpter.tool);
 		
 		sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, true);
 		

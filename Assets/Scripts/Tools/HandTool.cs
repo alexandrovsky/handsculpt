@@ -48,8 +48,8 @@ public abstract class HandTool : MonoBehaviour {
 	//Vector3 offset = new Vector3(0.0f, 0.0f, 0.0f);
 	
 	
-	protected Quaternion lastRotation = Quaternion.identity;
-	protected Vector3 lastPosition = Vector3.zero;
+	protected Quaternion lastPalmRotation = Quaternion.identity;
+	protected Vector3 lastPalmPosition = Vector3.zero;
 
 
 	protected LeapUnityHandController controller = null;
@@ -83,8 +83,8 @@ public abstract class HandTool : MonoBehaviour {
 	public abstract void CostumGUI();
 
 	public void activatePalm(){
-		Collider collider = palm.GetComponent<Collider>();
-		collider.enabled = true;
+//		Collider collider = palm.GetComponent<Collider>();
+//		collider.enabled = true;
 
 		palm.SetActive(true);
 	}
@@ -99,11 +99,11 @@ public abstract class HandTool : MonoBehaviour {
 	public virtual void Update()
 	{
 		// save last state before transformation:
-		lastRotation.Set(transform.rotation.x,
+		lastPalmRotation.Set(transform.rotation.x,
 						 transform.rotation.y,
 						 transform.rotation.z,
 						 transform.rotation.w );
-		lastPosition.Set(transform.position.x,
+		lastPalmPosition.Set(transform.position.x,
 						transform.position.y,
 						transform.position.z);
 		

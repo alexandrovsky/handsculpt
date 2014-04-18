@@ -57,7 +57,7 @@ namespace Sculpt{
 				for(int i = 0; i < nbTriangles; i++){
 					Triangle t = triangles[iTris[i]];
 					t.leaf = this;
-					t.posInLeaf = i;
+
 
 					Vector3 tMin = t.aabb.min;
 					Vector3 tMax = t.aabb.max;
@@ -210,7 +210,6 @@ namespace Sculpt{
 				}
 				else
 				{
-					tri.posInLeaf = this.iTris.Count;
 					tri.leaf = this;
 					this.iTris.Add(tri.id);
 				}
