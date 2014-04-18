@@ -14,6 +14,8 @@ public class Gui : MonoBehaviour {
 
 	GameObject target;
 	GameObject hands;
+
+
 	SculptMesh sculptMesh;
 	Sculpter sculpter;
 	LeapUnityHandController handController;
@@ -119,8 +121,21 @@ public class Gui : MonoBehaviour {
 			{
 				mouseMode = GUILayout.Toggle(mouseMode, "mouse enabled");
 				sculpter.enabled = mouseMode;
-			}
+				GUILayout.Label("Current Tool " + sculpter.tool );
+				GUILayout.BeginVertical();{
+					GUILayout.TextField("intesity:" + sculpter.intensity);
+					sculpter.intensity = GUILayout.HorizontalSlider(sculpter.intensity, 0.01f, 1.0f);
+				}GUILayout.EndVertical();
+				
+				
+				GUILayout.BeginVertical();{
+					GUILayout.TextField("radius: " + sculpter.radius);
+					sculpter.radius = GUILayout.HorizontalSlider(sculpter.radius, 0.01f, 12.0f);
+				}GUILayout.EndVertical();
 
+
+			}
+			GUILayout.Label("-----");
 			if(!mouseMode){
 				GUILayout.Label("Hand assign " + handController.assignMode );
 				GUILayout.BeginHorizontal();
@@ -137,6 +152,41 @@ public class Gui : MonoBehaviour {
 					handController.assignMode = LeapUnityHandController.HandAssignMode.Right;
 				}
 				GUILayout.EndHorizontal();
+
+				GUILayout.Label("-----");
+
+				if( GUILayout.Button( "pointing") ){
+					instantiateManipulationTool(m_pointingToolPrefab);
+				}
+				if( GUILayout.Button( "shadow") ){
+					instantiateManipulationTool(m_shadowToolPrefab);
+				}
+				if( GUILayout.Button("grab") ){
+					instantiateManipulationTool(m_grabToolPrefab);
+				}
+
+				if( GUILayout.Button( "Apply Navigation Tool") )
+				{
+					instantiateNavigationTool(m_navigationToolPrefab);
+				}
+				GUILayout.Label("-----");
+				if(currentNavigationTool != null){
+					HandTool handTool = currentNavigationTool.GetComponent<HandTool>();
+					GUILayout.BeginVertical();{
+						handTool.CostumGUI();
+					}GUILayout.EndVertical();
+				}
+
+				if(currentManipulationTool != null){
+					HandTool handTool = currentManipulationTool.GetComponent<HandTool>();
+					GUILayout.BeginVertical();{
+						handTool.CostumGUI();
+					}GUILayout.EndVertical();
+					
+				}
+
+			}else{
+				// set the tool with the mouse
 			}
 
 			//GameObject hands = GameObject.Find("Leap Hands");	
@@ -148,59 +198,7 @@ public class Gui : MonoBehaviour {
 //			}
 
 
-			if( GUILayout.Button( "pointing") ){
-				instantiateManipulationTool(m_pointingToolPrefab);
-			}
-			if( GUILayout.Button( "shadow") ){
-				instantiateManipulationTool(m_shadowToolPrefab);
-			}
-			if( GUILayout.Button("grab") ){
-				instantiateManipulationTool(m_grabToolPrefab);
-			}
-			
 
-
-
-//			if(currentManipulationTool != null){
-//				HandTool handTool = currentManipulationTool.GetComponent<HandTool>();
-//				GUILayout.TextField("current tool " + handTool.name);
-//
-//				GUILayout.BeginVertical();{
-//					GUILayout.TextField("strength:" + handTool.strength);
-//					handTool.strength = GUILayout.HorizontalSlider(handTool.strength, 0.01f, 1.0f);
-//				}GUILayout.EndVertical();
-//
-//
-//				GUILayout.BeginVertical();{
-//					GUILayout.TextField("radius: " + handTool.radius);
-//					handTool.radius = GUILayout.HorizontalSlider(handTool.radius, 0.0f, 12.0f);
-//				}GUILayout.EndVertical();
-//
-//
-//				GUILayout.BeginVertical();{
-//					GUILayout.TextField("min activation dist:" + handTool.MinActivationDistance);
-//					handTool.MinActivationDistance = GUILayout.HorizontalSlider(handTool.MinActivationDistance, 0.5f, 5.0f);
-//				}GUILayout.EndVertical();
-//
-//				GUILayout.BeginVertical();{
-//					handTool.CostumGUI();
-//				}GUILayout.EndVertical();
-//
-//			}
-
-
-			if( GUILayout.Button( "Apply Navigation Tool") )
-			{
-				instantiateNavigationTool(m_navigationToolPrefab);
-			}
-
-			if(currentNavigationTool != null){
-				HandTool handTool = currentNavigationTool.GetComponent<HandTool>();
-				
-				GUILayout.BeginVertical();{
-					handTool.CostumGUI();
-				}GUILayout.EndVertical();
-			}
 
 			GUILayout.EndArea();
 			

@@ -11,13 +11,13 @@ public class NavigationHandTool : HandTool {
 	float sensitivity = 0.25f;
 	float rotationSpeed = 0.5f;
 	float scaleSpeed = 1.0f;
-	Camera mainCamera;
+
 	Camera handCamera;
 
 	public override void Start () {
 		name = "navi";
 		workingHandIdx = 1;
-		mainCamera = Camera.main;
+
 		handCamera = GameObject.Find("HandCamera").GetComponent<Camera>();
 		base.Start();
 	}

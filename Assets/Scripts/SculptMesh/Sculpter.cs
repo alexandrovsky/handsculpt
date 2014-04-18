@@ -15,15 +15,11 @@ namespace Sculpt{
 
 		public bool enabled;
 
-		float radius = 1.0f;
+		public float radius = 1.0f;
+		public float intensity = 1.0f;
 
-		float detailSubdivision = 0.75f; //maximal edge length before we subdivide it
-		float detailDecimation = 0.1f; //minimal edge length before we collapse it (dependent of detailSubdivision)
 
-		float d2Min = 0.0f; 			// uniform refinement of mesh (min edge length)
-		float d2Max = 0.0f; 			// uniform refinement of mesh (max edge length)
-		float d2Thickness = 0.5f; 	// distance between 2 vertices before split/merge
-		float d2Move = 0.0f; 		// max displacement of vertices per step
+
 
 		List<int> iVertsSelected = new List<int>();
 		List<int> iTrisSelected = new List<int>();
@@ -38,7 +34,7 @@ namespace Sculpt{
 
 		public bool activated;
 
-		Camera camera;
+		Camera mainCamera;
 
 		void OnDrawGizmos(){
 //			Gizmos.color = Color.green;
@@ -51,14 +47,14 @@ namespace Sculpt{
 			sculptMesh = GetComponent<SculptMesh>();
 			tool = Tool.DRAG;
 			Debug.Log("sculpter");
-			camera = Camera.main;
+			mainCamera = Camera.main;
 		}
 
 		void rotate(){
 			bool rotate = false;
 			float angle = 5;
 			float rotationSpeed = 10;
-			Vector3 axis = camera.transform.up;
+			Vector3 axis = mainCamera.transform.up;
 			if(Input.GetKey(KeyCode.LeftArrow)){
 				rotate = true;
 			}
@@ -69,31 +65,35 @@ namespace Sculpt{
 			
 			if(Input.GetKey(KeyCode.UpArrow)){
 				rotate = true;
-				axis = camera.transform.right;
+				axis = mainCamera.transform.right;
 			}
 			if(Input.GetKey(KeyCode.DownArrow)){
 				rotate = true;
-				axis = camera.transform.right;
+				axis = mainCamera.transform.right;
 				angle = -angle;
 			}
 			if(rotate){
-				camera.transform.RotateAround(sculptMesh.transform.position, axis, rotationSpeed * angle * Time.deltaTime);
+				mainCamera.transform.RotateAround(sculptMesh.transform.position, axis, rotationSpeed * angle * Time.deltaTime);
 			}
 		}
 
-		// Update is called once per frame
+
+		public void clearColors(){
+			for(int i = 0; i < sculptMesh.colorArray.Length; i++){
+				sculptMesh.colorArray[i] = CLEAR;
+			}
+		}
+
 		void Update () {
 		
 			if(!enabled)return; //  >---OUT--->
 
-			for(int i = 0; i < sculptMesh.colorArray.Length; i++){
-				sculptMesh.colorArray[i] = CLEAR;
-			}
+
+			clearColors();
 
 			// handle input
 
 			Vector3 mousePos = Input.mousePosition;
-			Vector3 mouseWorldPos = camera.ScreenToWorldPoint(mousePos);
 
 
 			if(Input.GetMouseButtonDown(0)){
@@ -130,7 +130,7 @@ namespace Sculpt{
 //			
 
 
-			this.ray = camera.ScreenPointToRay(mousePos);
+			this.ray = mainCamera.ScreenPointToRay(mousePos);
 
 			bool dragging = false;
 			if(this.tool == Tool.DRAG && activated){
@@ -143,7 +143,7 @@ namespace Sculpt{
 //			center = sculptMesh.intersectionPoint;
 			if(!dragging){
 				sculptMesh.intersectRayMesh(ray);
-				float r = this.radius; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
+				float r = this.radius; // * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 				pickedVertices = sculptMesh.pickVerticesInSphere(r);
 
 			}else{
@@ -152,16 +152,13 @@ namespace Sculpt{
 			}
 //				this.radius = 1.0f;
 
-			float intensity = 1.0f;
 
 
 
-
-
-//			Debug.DrawLine(camera.transform.position, mouseWorldPos, Color.cyan);
+//			Debug.DrawLine(mainCamera.transform.position, mouseWorldPos, Color.cyan);
 //			Debug.DrawLine(center, center + dragDir, Color.cyan);
 
-			sculpt(camera.transform.forward, pickedVertices, 
+			sculpt(mainCamera.transform.forward, pickedVertices, 
 			       center, sculptMesh.worldRadiusSqr, intensity,this.tool);
 
 			sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, !dragging);

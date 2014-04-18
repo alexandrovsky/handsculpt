@@ -16,11 +16,10 @@ public abstract class HandTool : MonoBehaviour {
 		SwitchedDisabled
 	
 	};
-	
-	public float MinActivationDistance;
 
-	public float radius = 1.0f; 	// the influence radius of the tool
-	public float strength = 0.2f;	// the overall strength of the tool
+	public Camera mainCamera;
+
+	public float MinActivationDistance;
 
 	public HandToolMode m_mode = HandToolMode.Disabled;
 	public HandToolMode mode{
@@ -63,6 +62,7 @@ public abstract class HandTool : MonoBehaviour {
 	
 	public virtual void Start()
 	{	
+		mainCamera = Camera.main;
 		//transform.localPosition = offset;
 		target = GameObject.Find("Target");
 		
