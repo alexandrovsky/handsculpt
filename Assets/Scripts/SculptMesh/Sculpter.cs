@@ -13,6 +13,8 @@ namespace Sculpt{
 		public static Color SELECTED = Color.yellow;
 		public static Color ACTIVATED = Color.red;
 
+		public bool enabled;
+
 		float radius = 1.0f;
 
 		float detailSubdivision = 0.75f; //maximal edge length before we subdivide it
@@ -31,6 +33,7 @@ namespace Sculpt{
 		Ray ray = new Ray();
 		Vector3 dragDir = Vector3.zero;
 		Vector3 dragInitPos;
+		Vector3 center;
 		SculptMesh sculptMesh;
 
 		public bool activated;
@@ -81,6 +84,8 @@ namespace Sculpt{
 		// Update is called once per frame
 		void Update () {
 		
+			if(!enabled)return; //  >---OUT--->
+
 			for(int i = 0; i < sculptMesh.colorArray.Length; i++){
 				sculptMesh.colorArray[i] = CLEAR;
 			}
@@ -135,14 +140,15 @@ namespace Sculpt{
 
 
 
-			Vector3 center = sculptMesh.intersectionPoint;
+//			center = sculptMesh.intersectionPoint;
 			if(!dragging){
 				sculptMesh.intersectRayMesh(ray);
 				float r = this.radius; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
 				pickedVertices = sculptMesh.pickVerticesInSphere(r);
-				center = sculptMesh.intersectionPoint;
+
 			}else{
 				updateDragDir();
+				center = sculptMesh.intersectionPoint;
 			}
 //				this.radius = 1.0f;
 
@@ -156,7 +162,9 @@ namespace Sculpt{
 //			Debug.DrawLine(center, center + dragDir, Color.cyan);
 
 			sculpt(camera.transform.forward, pickedVertices, 
-			       sculptMesh.intersectionPoint, sculptMesh.worldRadiusSqr, intensity,this.tool);
+			       center, sculptMesh.worldRadiusSqr, intensity,this.tool);
+
+			sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, !dragging);
 
 			sculptMesh.pushMeshData();
 		}
@@ -167,11 +175,12 @@ namespace Sculpt{
 			Vector3 ip = sculptMesh.intersectionPoint;
 			Vector3 proj = MathHelper.ProjectPointOnLine(ray.origin, ray.direction, ip);
 			this.dragDir = proj - ip;
+
 			if(dragDir.magnitude < 0.2f){
 				this.dragDir = Vector3.zero;
 			}
 			Debug.DrawLine(ip, proj, Color.green );
-			Debug.Log(dragDir);
+//			Debug.Log("drag dir:" + dragDir);
 
 		}
 
@@ -226,7 +235,7 @@ namespace Sculpt{
 					break;
 				}
 			}
-			sculptMesh.updateMesh(iTrisSelected, iVertsSelected);
+
 		}
 
 		/** Brush stroke, move vertices along a direction computed by their averaging normals */
@@ -276,7 +285,8 @@ namespace Sculpt{
 				{
 					Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
 					Vector3 delta = v - center;
-					
+
+
 					float dist = delta.magnitude/radius;
 					float fallOff = dist * dist;
 					

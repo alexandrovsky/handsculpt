@@ -386,10 +386,11 @@ namespace Sculpt{
 			mesh.colors = this.colorArray;
 		}
 
-		public void updateMesh(List<int> iTris, List<int> iVerts){
-			updateTrianglesAabbAndNormal(iTris);
-			updateOctree(iTris);
-
+		public void updateMesh(List<int> iTris, List<int> iVerts, bool bUpdateOctree){
+			if(bUpdateOctree){
+				updateTrianglesAabbAndNormal(iTris);
+				updateOctree(iTris);
+			}
 			pushMeshData();
 
 

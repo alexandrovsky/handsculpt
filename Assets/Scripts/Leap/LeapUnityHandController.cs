@@ -26,6 +26,13 @@ using Leap;
 
 public class LeapUnityHandController : MonoBehaviour 
 {	
+
+	public enum HandAssignMode{
+		Dynamic,
+		Left,
+		Right
+	}
+
 	public GameObject[]				m_palms		= null;
 	public GameObject[]				m_fingers	= null;
 	public GameObject[]				m_hands 	= null;
@@ -38,6 +45,10 @@ public class LeapUnityHandController : MonoBehaviour
 	//corresponding gameobject invisible & set the id to -1.
 	private int[]					m_fingerIDs = null;
 	private int[]					m_handIDs	= null;
+
+	public HandAssignMode assignMode = HandAssignMode.Left;
+
+	
 	
 	public void SetCollidable( GameObject obj, bool collidable )
 	{
@@ -147,9 +158,30 @@ public class LeapUnityHandController : MonoBehaviour
 
 	void OnHandFound( Hand h )
 	{
-		// first hand mode:
 
-		int index = Array.FindIndex(m_handIDs, id => id == -1);
+		int index = 0;
+		switch(assignMode){
+		case HandAssignMode.Dynamic:
+			index = Array.FindIndex(m_handIDs, id => id == -1);
+			break;
+		case HandAssignMode.Left:
+			if(h.IsLeft){
+				index = 0;
+			}else{
+				index = 1;
+			}
+			break;
+		case HandAssignMode.Right:
+			if(h.IsRight){
+				index = 0;
+			}else{
+				index = 1;
+			}
+			break;
+		}
+
+
+
 		if( index != -1 )
 		{
 			m_handIDs[index] = h.Id;
@@ -157,7 +189,7 @@ public class LeapUnityHandController : MonoBehaviour
 		}
 
 		//--- righthanded mode:
-//		int index = 0;
+
 //		if(h.IsLeft){
 //			index = 1;
 //		}
