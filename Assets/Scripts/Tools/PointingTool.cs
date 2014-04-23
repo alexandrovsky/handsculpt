@@ -57,6 +57,9 @@ public class PointingTool : ManipulationHandTool {
 
 		float intensity = sculpter.intensity;
 
+		if(invert){
+			intensity *= -1;
+		}
 		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
 		                center, radius, intensity, sculpter.tool);
 		

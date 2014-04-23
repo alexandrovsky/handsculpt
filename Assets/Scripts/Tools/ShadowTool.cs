@@ -22,7 +22,13 @@ public class ShadowTool : ManipulationHandTool
 			GUILayout.TextField("Min Activation Distance: " + MinActivationDistance);
 			MinActivationDistance = GUILayout.HorizontalSlider(MinActivationDistance, 0.01f, 12.0f);
 		}GUILayout.EndVertical();
-		
+
+		GUILayout.TextField( "Selection Mode: " + selectionMode);
+		GUILayout.BeginHorizontal();
+		if(GUILayout.Button("1") ) selectionMode = SelectionMode.CENTER_TO_PALM_UP;
+		if(GUILayout.Button("2") ) selectionMode = SelectionMode.CENTER_TO_PALM_POS;
+		if(GUILayout.Button("3") ) selectionMode = SelectionMode.PALM_POS_TO_PALM_UP;
+		GUILayout.EndHorizontal();
 	}
 	
 	
@@ -39,15 +45,25 @@ public class ShadowTool : ManipulationHandTool
 			return; // --- OUT --->
 		}
 
-//		ray = new Ray(sculptMesh.octree.aabbSplit.center,  palm.transform.up);
-		ray = new Ray(sculptMesh.octree.aabbSplit.center,  palm.transform.position);
-		Debug.DrawLine(ray.origin, ray.origin + ray.direction, Color.green);
-//		if( target.renderer.bounds.Contains(palm.transform.position) ){
-//			ray = new Ray(palm.transform.position, palm.transform.up);
-//		}else{
-//			ray = new Ray(palm.transform.position, -palm.transform.up);
-//		}
+		switch(selectionMode){
+		case SelectionMode.CENTER_TO_PALM_UP:
+			ray = new Ray(sculptMesh.octree.aabbSplit.center,  palm.transform.up);
+			break;
+		case SelectionMode.CENTER_TO_PALM_POS:
+			ray = new Ray(sculptMesh.octree.aabbSplit.center,  palm.transform.position);
+			break;
+		case SelectionMode.PALM_POS_TO_PALM_UP:
+			if( target.renderer.bounds.Contains(palm.transform.position) ){
+				ray = new Ray(palm.transform.position, palm.transform.up);
+			}else{
+				ray = new Ray(palm.transform.position, -palm.transform.up);
+			}
+			break;
+		default:
+			break;
+		}
 
+		Debug.DrawLine(ray.origin, ray.origin + ray.direction, Color.green);
 
 
 		if(hand.PalmPosition.ToUnityTranslated().magnitude < MinActivationDistance ){
@@ -64,7 +80,7 @@ public class ShadowTool : ManipulationHandTool
 
 		sculptMesh.intersectRayMesh(ray);
 
-		float radius = sculpter.radius * hand.SphereRadius * Leap.UnityVectorExtension.ScaleFactor; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
+		float radius = sculpter.radius * (hand.SphereRadius/10.0f) * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 		
 		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
 		Vector3 center = sculptMesh.intersectionPoint;
@@ -85,7 +101,7 @@ public class ShadowTool : ManipulationHandTool
 
 
 	public override void OnDestroy(){
-		activatePalm();
+//		activatePalm();
 		base.OnDestroy();
 	}
 }

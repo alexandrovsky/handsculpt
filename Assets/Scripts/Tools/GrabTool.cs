@@ -127,22 +127,23 @@ public class GrabTool : ManipulationHandTool
 			mode = HandToolMode.Select;
 			sculpter.activated = false;
 			grabInitPos = palm.transform.position;
-			Vector3 screenPoint = mainCamera.WorldToScreenPoint(palm.transform.position);
-			ray = mainCamera.ScreenPointToRay(screenPoint);
+//			Vector3 screenPoint = mainCamera.WorldToScreenPoint(palm.transform.position);
+//			ray = mainCamera.ScreenPointToRay(screenPoint);
+//
 
 
+			if( target.renderer.bounds.Contains(palm.transform.position) ){
+				ray = new Ray(palm.transform.position, palm.transform.up);
+			}else{
+				ray = new Ray(palm.transform.position, -palm.transform.up);
+			}
 
-//			if( target.renderer.bounds.Contains(palm.transform.position) ){
-//				ray = new Ray(palm.transform.position, palm.transform.up);
-//			}else{
-//				ray = new Ray(palm.transform.position, -palm.transform.up);
-//			}
 			Debug.DrawRay(ray.origin, ray.direction, Color.red);
 
 
 			sculptMesh.intersectRayMesh(ray);
 			
-			this.radius = sculpter.radius * hand.SphereRadius * Leap.UnityVectorExtension.ScaleFactor; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
+			float radius = sculpter.radius * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 			
 			this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
 			selectedVertices.Clear();
@@ -155,8 +156,6 @@ public class GrabTool : ManipulationHandTool
 				selectedVertices.Add(v_idx, dist);
 
 				sculptMesh.colorArray[ iVertsSelected[i] ] = Sculpter.SELECTED;
-
-
 			}
 		}
 

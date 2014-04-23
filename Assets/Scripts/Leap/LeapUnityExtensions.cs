@@ -16,7 +16,7 @@ namespace Leap {
 	//Leap coordinates are in cm, so the .02f scaling factor means 1cm of hand motion = .02m scene motion
 	public static class UnityVectorExtension
 	{
-		public static float ScaleFactor =  0.02f;
+		public static float ScaleFactor =  1.0f;//0.02f;
 		public static Vector3 InputScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
 		public static Vector3 InputOffset = new Vector3(0, 0, 0);
 		

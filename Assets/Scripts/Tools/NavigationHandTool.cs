@@ -9,8 +9,8 @@ public class NavigationHandTool : HandTool {
 	bool invertedScaling = false;
 //	bool continuousRotation = true;
 	float sensitivity = 0.25f;
-	float rotationSpeed = 0.5f;
-	float scaleSpeed = 1.0f;
+	float rotationSpeed = 0.75f;
+	float scaleSpeed = 2.5f;
 
 	Camera handCamera;
 
@@ -44,9 +44,10 @@ public class NavigationHandTool : HandTool {
 	// Update is called once per frame
 	public override void Update () {
 		base.Update();
-		
+		Debug.Log("hand: " + hand.PalmPosition.ToUnityTranslated() );
 
 		if(!hand.IsValid){
+			Debug.Log("hand: invalid" + hand.PalmPosition.ToUnityTranslated() );
 			return; // --- out here --->
 		}
 
@@ -86,9 +87,9 @@ public class NavigationHandTool : HandTool {
 
 		float posZ = hand.PalmPosition.ToUnityScaled().z;
 //		float dir = 0.0f;
-//		if(Mathf.Abs(posZ) < sensitivity){
-//			return false; // --- OUT --->
-//		}
+		if(Mathf.Abs(posZ) < sensitivity){
+			return false; // --- OUT --->
+		}
 //		dir = posZ > 0.0f ? 1.0f : -1.0f;
 
 		mainCamera.fieldOfView += posZ * scaleSpeed * Time.deltaTime;

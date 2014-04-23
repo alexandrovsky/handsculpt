@@ -71,12 +71,20 @@ public abstract class HandTool : MonoBehaviour {
 		palm = controller.m_palms[workingHandIdx];
 		
 		LeapInput.HandUpdated += new LeapInput.HandUpdatedHandler(OnHandUpdated);
+		LeapInput.HandLost += new LeapInput.ObjectLostHandler(OnHandLost);
 	}
 
 
 	void OnHandUpdated( Hand hand ){
 		if(hand.Id == controller.HandIdForIndex(workingHandIdx) ){
 			this.hand = hand;
+		} 	
+	}
+
+
+	void OnHandLost(int lostID){
+		if(hand.Id == lostID ){
+			this.hand = Leap.Hand.Invalid;
 		} 	
 	}
 

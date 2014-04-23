@@ -9,9 +9,9 @@ namespace Sculpt{
 	}
 	public class Sculpter : MonoBehaviour {
 
-		public static Color CLEAR = Color.white;
-		public static Color SELECTED = Color.yellow;
-		public static Color ACTIVATED = Color.red;
+		public static Color CLEAR = Color.gray;
+		public static Color SELECTED = (CLEAR + Color.yellow) * 0.5f;
+		public static Color ACTIVATED = (CLEAR + Color.red) * 0.5f;
 
 		public bool enabled;
 
@@ -258,7 +258,7 @@ namespace Sculpt{
 					fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 					fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
 
-					v -= aNormal * fallOff * Time.deltaTime;
+					v -= aNormal * fallOff; // * Time.deltaTime;
 
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 					sculptMesh.colorArray[v_idx] = ACTIVATED;
