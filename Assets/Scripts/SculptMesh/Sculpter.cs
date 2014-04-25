@@ -163,16 +163,20 @@ namespace Sculpt{
 
 
 
-//			center = sculptMesh.intersectionPoint;
-			if(!dragging){
-				sculptMesh.intersectRayMesh(ray);
-				float r = this.radius; // * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
-				pickedVertices = sculptMesh.pickVerticesInSphere(r);
+			center = sculptMesh.intersectionPoint;
+			sculptMesh.intersectRayMesh(ray);
+			float r = this.radius; // * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
+			pickedVertices = sculptMesh.pickVerticesInSphere(r);
 
-			}else{
-				updateDragDir();
-				center = sculptMesh.intersectionPoint;
-			}
+//			if(!dragging){
+//				sculptMesh.intersectRayMesh(ray);
+//				float r = this.radius; // * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
+//				pickedVertices = sculptMesh.pickVerticesInSphere(r);
+//
+//			}else{
+//				updateDragDir();
+//				center = sculptMesh.intersectionPoint;
+//			}
 //				this.radius = 1.0f;
 
 
@@ -219,14 +223,13 @@ namespace Sculpt{
 
 
 
-			// topology here....
-			if(activated){
-				setAdaptiveParameters(radius*radius);
-				topo.center = sculptMesh.intersectionPoint;
-				Debug.DrawLine(mainCamera.transform.position,topo.center);
-				topo.Subdivision(iTrisSelected, d2Max);
-
-			}
+//			// topology here....
+//			if(activated){
+//				setAdaptiveParameters(radius*radius);
+//				topo.center = sculptMesh.intersectionPoint;
+//				Debug.DrawLine(mainCamera.transform.position,topo.center);
+//				topo.Subdivision(iTrisSelected, d2Max);
+//			}
 
 
 
@@ -289,7 +292,7 @@ namespace Sculpt{
 					fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 					fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
 
-					v -= aNormal * fallOff * Time.deltaTime;
+					v -= aNormal * fallOff * Time.deltaTime * 10;
 
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 					sculptMesh.colorArray[v_idx] = ACTIVATED;
