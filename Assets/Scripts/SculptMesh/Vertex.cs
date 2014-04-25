@@ -35,6 +35,34 @@ namespace Sculpt{
 
 			return newV;
 		}
+
+		/** Replace triangle */
+		public void replaceTriangle(int iTriOld,int iTriNew)
+		{
+			int nbTris = tIndices.Count;
+			for (int i = 0; i < nbTris; ++i)
+			{
+				if (iTriOld == this.tIndices[i])
+				{
+					tIndices[i] = iTriNew;
+					return;
+				}
+			}
+		}
+
+		/** Replace ring vertex */
+		public void replaceRingVertex(int iVerOld, int iVerNew)
+		{
+			int nbVerts = ringVertices.Count;
+			for (var i = 0; i < nbVerts; ++i)
+			{
+				if (iVerOld == this.ringVertices[i])
+				{
+					ringVertices[i] = iVerNew;
+					return;
+				}
+			}
+		}
 	}
 }
 

@@ -13,7 +13,7 @@ namespace Sculpt{
 		public Vector3[] normalArray;
 		public Color[] colorArray;
 
-		int[] indexArray; // triangle ideces
+		public int[] indexArray; // triangle ideces
 		public Octree octree;
 
 		MeshFilter meshFilter;
@@ -570,6 +570,66 @@ namespace Sculpt{
 			return iTris;
 		}
 
+
+		/** Get more triangles (n-ring) */
+		public void expandsTriangles(List<int>iTris, int nRing)
+		{
+			long triangleTagMask = ++Triangle.tagMask;
+			int nbTris = iTris.Count;
+			int[] iAr = this.indexArray;
+			int i = 0;
+			int j = 0;
+			for (i = 0; i < nbTris; ++i){
+				triangles[iTris[i]].tagFlag = triangleTagMask;
+			}
+			int iBegin = 0;
+			while (nRing > 0)
+			{
+				--nRing;
+				for (i = iBegin; i < nbTris; ++i)
+				{
+					int ind = iTris[i] * 3;
+					List<int> iTris1 = vertices[ind].tIndices;
+					List<int> iTris2 = vertices[ind + 1].tIndices;
+					List<int> iTris3 = vertices[ind + 2].tIndices;
+					int nbTris1 = iTris1.Count;
+					int nbTris2 = iTris2.Count;
+					int nbTris3 = iTris3.Count;
+
+					for (j = 0; j < nbTris1; ++j)
+					{
+						Triangle t1 = triangles[iTris1[j]];
+						if (t1.tagFlag != triangleTagMask)
+						{
+							t1.tagFlag = triangleTagMask;
+							iTris.Add(iTris1[j]);
+						}
+					}
+					for (j = 0; j < nbTris2; ++j)
+					{
+						Triangle t2 = triangles[iTris2[j]];
+						if (t2.tagFlag != triangleTagMask)
+						{
+							t2.tagFlag = triangleTagMask;
+							iTris.Add(iTris2[j]);
+						}
+					}
+					for (j = 0; j < nbTris3; ++j)
+					{
+						Triangle t3 = triangles[iTris3[j]];
+						if (t3.tagFlag != triangleTagMask)
+						{
+							t3.tagFlag = triangleTagMask;
+							iTris.Add(iTris3[j]);
+						}
+					}
+				}
+				iBegin = nbTris;
+				nbTris = iTris.Count;
+			}
+		}
+
+
 		/** Compute average normal of a group of vertices with culling */
 		public Vector3 areaNormal(List<int>iVerts)
 		{
@@ -603,6 +663,5 @@ namespace Sculpt{
 			}
 			return aCenter * (1.0f/nbVerts);
 		}
-
 	}
 }
