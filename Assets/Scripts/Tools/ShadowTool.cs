@@ -12,6 +12,7 @@ public class ShadowTool : ManipulationHandTool
 		base.Start();
 		mode = HandTool.HandToolMode.Enabled;
 		sculpter.tool = Sculpt.Tool.SMOOTH;
+		MinActivationDistance = 4.0f;
 //		deactivatePalm();
 	}
 	
