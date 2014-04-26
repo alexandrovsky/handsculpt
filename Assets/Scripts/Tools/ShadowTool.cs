@@ -73,13 +73,6 @@ public class ShadowTool : ManipulationHandTool
 		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
 		Vector3 center = sculptMesh.intersectionPoint;
 
-		if(iVertsSelected.Count > 0){
-			gizmoPos = sculptMesh.intersectionPoint;
-			gizmoRadius = radius;
-		}else{
-			gizmoPos = ray.origin + ray.direction;
-			gizmoRadius = radius * radius / mainCamera.transform.position.magnitude;
-		}
 
 
 		float intensity = sculpter.intensity;

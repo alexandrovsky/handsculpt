@@ -45,14 +45,38 @@ public abstract class ManipulationHandTool : HandTool
 		base.Start();
 		sculpter = target.GetComponent<Sculpter>();
 		sculptMesh = target.GetComponent<SculptMesh>();
-		createSelector();
+
 	}
 
 	public void createSelector(){
 		destroySelector();
 		selector = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		selector.renderer.material.shader = Shader.Find("Transparent/Diffuse");
 		selector.renderer.material.color = Sculpt.Sculpter.CLEAR;
+
 	}
+
+	public void updateSelector(float radius){
+		if(iVertsSelected.Count > 0){
+			gizmoPos = sculptMesh.intersectionPoint;
+			gizmoRadius = radius * radius;
+			selector.renderer.material.color = new Color(Sculpter.SELECTED.r,
+			                                             Sculpter.SELECTED.g,
+			                                             Sculpter.SELECTED.b, 
+			                                             0.25f);
+		}else{
+			gizmoPos = ray.origin + ray.direction;
+			gizmoRadius = radius * radius / mainCamera.transform.position.magnitude;
+			selector.renderer.material.color = new Color(Sculpter.CLEAR.r,
+			                                             Sculpter.CLEAR.g,
+			                                             Sculpter.CLEAR.b, 
+			                                             0.75f);
+		}
+		
+		selector.transform.position = gizmoPos;
+		selector.transform.localScale = Vector3.one * gizmoRadius;
+	}
+
 	public void destroySelector(){
 		if(selector != null){
 			GameObject.Destroy(selector);
