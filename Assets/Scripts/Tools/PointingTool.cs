@@ -64,12 +64,15 @@ public class PointingTool : ManipulationHandTool {
 
 		if(iVertsSelected.Count > 0){
 			gizmoPos = sculptMesh.intersectionPoint;
-			gizmoRadius = radius;
+			gizmoRadius = radius * radius;
 		}else{
 			gizmoPos = ray.origin + ray.direction;
 			gizmoRadius = radius * radius / mainCamera.transform.position.magnitude;
 		}
-		
+
+		selector.transform.position = gizmoPos;
+		selector.transform.localScale = Vector3.one * gizmoRadius;
+
 		float intensity = sculpter.intensity;
 
 		if(invert){

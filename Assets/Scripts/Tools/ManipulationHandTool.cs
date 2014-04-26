@@ -34,6 +34,7 @@ public abstract class ManipulationHandTool : HandTool
 
 	public Vector3 gizmoPos = Vector3.zero;
 	public float gizmoRadius = 1.0f;
+	public GameObject selector = null;
 
 	protected List<int> iVertsSelected = new List<int>();
 	protected List<int> iTrisSelected = new List<int>();
@@ -44,8 +45,20 @@ public abstract class ManipulationHandTool : HandTool
 		base.Start();
 		sculpter = target.GetComponent<Sculpter>();
 		sculptMesh = target.GetComponent<SculptMesh>();
+		createSelector();
 	}
 
+	public void createSelector(){
+		destroySelector();
+		selector = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		selector.renderer.material.color = Sculpt.Sculpter.CLEAR;
+	}
+	public void destroySelector(){
+		if(selector != null){
+			GameObject.Destroy(selector);
+			selector = null;
+		}
+	}
 	void OnDrawGizmos(){
 
 		Gizmos.DrawWireSphere(gizmoPos, gizmoRadius);
@@ -71,6 +84,11 @@ public abstract class ManipulationHandTool : HandTool
 		                                0.0f);
 		ray = Camera.main.ScreenPointToRay (screenPos);
 		return ray;
+	}
+
+	public override void OnDestroy(){
+		destroySelector();
+		base.OnDestroy();
 	}
 }
 
