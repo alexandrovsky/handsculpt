@@ -30,7 +30,7 @@ public class PointingTool : ManipulationHandTool {
 
 	public override void Update () 
 	{
-		sculpter.clearColors();
+		sculpter.clear();
 		base.Update();
 
 		if( ! hand.IsValid 
@@ -42,6 +42,12 @@ public class PointingTool : ManipulationHandTool {
 
 		Leap.Vector tipPos = hand.Fingers.Frontmost.StabilizedTipPosition;
 		ray = CalculateRay(tipPos);
+
+
+//		int fIdx = controller.IndexForFingerId(hand.Fingers.Frontmost.Id);
+//		GameObject finger = controller.m_fingers[fIdx];
+//		ray = new Ray(palm.transform.position, finger.transform.position);
+//		Debug.DrawLine(palm.transform.position, finger.transform.position);
 
 		if(tipPos.z + POINTING_Z_OFFSET < 0.0f ){
 			sculpter.activated = true;
@@ -55,6 +61,14 @@ public class PointingTool : ManipulationHandTool {
 		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
 		Vector3 center = sculptMesh.intersectionPoint;
 
+		if(iVertsSelected.Count > 0){
+			gizmoPos = sculptMesh.intersectionPoint;
+			gizmoRadius = radius;
+		}else{
+			gizmoPos = ray.origin + ray.direction;
+			gizmoRadius = radius * radius / mainCamera.transform.position.magnitude;
+		}
+		
 		float intensity = sculpter.intensity;
 
 		if(invert){

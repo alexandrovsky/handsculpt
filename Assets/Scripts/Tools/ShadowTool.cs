@@ -23,12 +23,12 @@ public class ShadowTool : ManipulationHandTool
 			MinActivationDistance = GUILayout.HorizontalSlider(MinActivationDistance, 0.01f, 12.0f);
 		}GUILayout.EndVertical();
 
-		GUILayout.TextField( "Selection Mode: " + selectionMode);
-		GUILayout.BeginHorizontal();
-		if(GUILayout.Button("1") ) selectionMode = SelectionMode.CENTER_TO_PALM_UP;
-		if(GUILayout.Button("2") ) selectionMode = SelectionMode.CENTER_TO_PALM_POS;
-		if(GUILayout.Button("3") ) selectionMode = SelectionMode.PALM_POS_TO_PALM_UP;
-		GUILayout.EndHorizontal();
+//		GUILayout.TextField( "Selection Mode: " + selectionMode);
+//		GUILayout.BeginHorizontal();
+//		if(GUILayout.Button("1") ) selectionMode = SelectionMode.EYE_TO_PALM_POS;
+//		if(GUILayout.Button("2") ) selectionMode = SelectionMode.CENTER_TO_PALM_POS;
+//		if(GUILayout.Button("3") ) selectionMode = SelectionMode.PALM_POS_TO_PALM_UP;
+//		GUILayout.EndHorizontal();
 	}
 	
 	
@@ -37,7 +37,7 @@ public class ShadowTool : ManipulationHandTool
 
 	public override void Update ()
 	{
-		sculpter.clearColors();
+		sculpter.clear();
 		base.Update();
 
 		if( !hand.IsValid || HandTool.HandToolMode.Disabled == mode)
@@ -45,22 +45,14 @@ public class ShadowTool : ManipulationHandTool
 			return; // --- OUT --->
 		}
 
-		switch(selectionMode){
-		case SelectionMode.CENTER_TO_PALM_UP:
-			ray = new Ray(sculptMesh.octree.aabbSplit.center,  palm.transform.up);
-			break;
-		case SelectionMode.CENTER_TO_PALM_POS:
-			ray = new Ray(sculptMesh.octree.aabbSplit.center,  palm.transform.position);
-			break;
-		case SelectionMode.PALM_POS_TO_PALM_UP:
-			if( target.renderer.bounds.Contains(palm.transform.position) ){
-				ray = new Ray(palm.transform.position, palm.transform.up);
-			}else{
-				ray = new Ray(palm.transform.position, -palm.transform.up);
-			}
-			break;
-		default:
-			break;
+		/*
+		 * check ray in both directions:
+		 * first up, because otherwise, i could collect backfaces!
+		 */
+		ray = new Ray(palm.transform.position, palm.transform.up);
+		if(!sculptMesh.intersectRayMesh(ray) ){
+			ray = new Ray(palm.transform.position, -palm.transform.up);
+			sculptMesh.intersectRayMesh(ray);
 		}
 
 		Debug.DrawLine(ray.origin, ray.origin + ray.direction, Color.green);
@@ -72,19 +64,23 @@ public class ShadowTool : ManipulationHandTool
 			sculpter.activated = false;
 		}
 		
-//		Vector3 screenPoint = mainCamera.WorldToScreenPoint(palm.transform.position);
-//		ray = mainCamera.ScreenPointToRay(screenPoint);
-//
-//		Debug.DrawLine(ray.origin, palm.transform.position, Color.green);
 
-
-		sculptMesh.intersectRayMesh(ray);
+//		sculptMesh.intersectRayMesh(ray);
 
 		float radius = sculpter.radius * (hand.SphereRadius/10.0f) * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 		
 		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
 		Vector3 center = sculptMesh.intersectionPoint;
-		
+
+		if(iVertsSelected.Count > 0){
+			gizmoPos = sculptMesh.intersectionPoint;
+			gizmoRadius = radius;
+		}else{
+			gizmoPos = ray.origin + ray.direction;
+			gizmoRadius = radius * radius / mainCamera.transform.position.magnitude;
+		}
+
+
 		float intensity = sculpter.intensity;
 		
 		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 

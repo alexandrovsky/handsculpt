@@ -102,7 +102,7 @@ public class GrabTool : ManipulationHandTool
 	public override void Update () 
 	{
 
-		sculpter.clearColors();
+		sculpter.clear();
 		base.Update();
 		
 		if( !hand.IsValid || HandTool.HandToolMode.Disabled == mode)

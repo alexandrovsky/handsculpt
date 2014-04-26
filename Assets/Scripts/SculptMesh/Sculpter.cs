@@ -13,7 +13,7 @@ namespace Sculpt{
 		public static Color SELECTED = (CLEAR + Color.yellow) * 0.5f;
 		public static Color ACTIVATED = (CLEAR + Color.red) * 0.5f;
 
-		public bool enabled;
+		public bool isEnabled;
 
 		public float radius = 1.0f;
 		public float intensity = 1.0f;
@@ -38,6 +38,8 @@ namespace Sculpt{
 
 		Camera mainCamera;
 
+		Vector3 gizmoPos = Vector3.zero;
+		float gizmoRadius = 1.0f;
 
 		float d2Min = 0.0f; //uniform refinement of mesh (min edge length)
 		float d2Max = 0.0f; //uniform refinement of mesh (max edge length)
@@ -51,6 +53,9 @@ namespace Sculpt{
 		void OnDrawGizmos(){
 //			Gizmos.color = Color.green;
 //			Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * 100);
+
+//			Gizmos.DrawWireSphere(gizmoPos, gizmoRadius);
+
 
 		}
 
@@ -101,18 +106,19 @@ namespace Sculpt{
 		}
 
 
-		public void clearColors(){
+		public void clear(){
 			for(int i = 0; i < sculptMesh.colorArray.Length; i++){
 				sculptMesh.colorArray[i] = CLEAR;
 			}
+
 		}
 
 		void Update () {
 		
-			if(!enabled)return; //  >---OUT--->
+			if(!isEnabled)return; //  >---OUT--->
 
 
-			clearColors();
+			clear();
 
 			// handle input
 
@@ -167,6 +173,15 @@ namespace Sculpt{
 			sculptMesh.intersectRayMesh(ray);
 			float r = this.radius; // * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 			pickedVertices = sculptMesh.pickVerticesInSphere(r);
+
+			Debug.Log("picked verticec" + pickedVertices.Count);
+			if(pickedVertices.Count > 0){
+				gizmoPos = sculptMesh.intersectionPoint;
+				gizmoRadius = radius;
+			}else{
+				gizmoPos = ray.origin + ray.direction;
+				gizmoRadius = radius * radius / mainCamera.transform.position.magnitude;
+			}
 
 //			if(!dragging){
 //				sculptMesh.intersectRayMesh(ray);

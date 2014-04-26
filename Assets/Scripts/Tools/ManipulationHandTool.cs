@@ -16,14 +16,14 @@ using Sculpt;
 public abstract class ManipulationHandTool : HandTool
 {
 	public enum SelectionMode{
-		CENTER_TO_PALM_UP,
+		EYE_TO_PALM_POS,
 		CENTER_TO_PALM_POS,
 		PALM_POS_TO_PALM_UP
 	}
 
 	protected TargetObjectScript tos;
 
-	public SelectionMode selectionMode = SelectionMode.CENTER_TO_PALM_UP; // for witchin betee
+	public SelectionMode selectionMode = SelectionMode.PALM_POS_TO_PALM_UP; // for witchin betee
 
 	public int vertexWithMaxDistance = 0;
 	public float maxDistanceFromHit = 0.0f;
@@ -32,6 +32,8 @@ public abstract class ManipulationHandTool : HandTool
 	public Ray ray;
 
 
+	public Vector3 gizmoPos = Vector3.zero;
+	public float gizmoRadius = 1.0f;
 
 	protected List<int> iVertsSelected = new List<int>();
 	protected List<int> iTrisSelected = new List<int>();
@@ -44,7 +46,10 @@ public abstract class ManipulationHandTool : HandTool
 		sculptMesh = target.GetComponent<SculptMesh>();
 	}
 
-//	void OnDrawGizmos(){
+	void OnDrawGizmos(){
+
+		Gizmos.DrawWireSphere(gizmoPos, gizmoRadius);
+
 //		Gizmos.color = Color.green;
 ////		Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * 100);
 //		Leap.InteractionBox iBox = LeapInput.Frame.InteractionBox;
@@ -55,7 +60,7 @@ public abstract class ManipulationHandTool : HandTool
 //		Vector3 normalizedPosition = iBox.NormalizePoint(tipPos).ToUnity();
 //		Gizmos.DrawLine(center, tipPos.ToUnity() );
 //		
-//	}
+	}
 
 
 	public Ray CalculateRay(Leap.Vector pos){

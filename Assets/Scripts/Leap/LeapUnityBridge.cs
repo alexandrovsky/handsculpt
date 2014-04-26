@@ -124,8 +124,8 @@ public class LeapUnityBridge : MonoBehaviour
 			behavior.m_palms[i] = CreatePalm(behavior.m_hands[2], i); // apply to unknown hand	
 		}
 
-
-		hands.transform.position = new Vector3(0.0f, -5.0f, 0.0f);
+#warning hands transform here!!!
+		hands.transform.position = new Vector3(0.0f, -5.0f, -3.0f);
 		/* moved to FingerTemplate in the scene.
 		foreach( GameObject fingerTip in GameObject.FindGameObjectsWithTag("FingerTip") )
 		{

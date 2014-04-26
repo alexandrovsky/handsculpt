@@ -120,7 +120,7 @@ public class Gui : MonoBehaviour {
 			// mouse mode
 			{
 				mouseMode = GUILayout.Toggle(mouseMode, "mouse enabled");
-				sculpter.enabled = mouseMode;
+				sculpter.isEnabled = mouseMode;
 				GUILayout.Label("Current Tool " + sculpter.tool );
 				GUILayout.BeginVertical();{
 					GUILayout.TextField("intesity:" + sculpter.intensity);

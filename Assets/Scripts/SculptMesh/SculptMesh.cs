@@ -413,7 +413,8 @@ namespace Sculpt{
 			}
 		}
 
-		public void intersectRayMesh(Ray ray){
+		public bool intersectRayMesh(Ray ray){
+			bool intersected = false;
 			Octree.selectedNodes.Clear();
 	//		foreach(int iTri in iTrisCandidates){
 	//			
@@ -430,6 +431,8 @@ namespace Sculpt{
 
 			float minDist = Mathf.Infinity;
 			this.pickedTriangle = -1;
+			this.intersectionPoint = Vector3.zero;
+
 			foreach(int iTri in iTrisCandidates){
 
 				Triangle t = triangles[iTri];
@@ -473,6 +476,7 @@ namespace Sculpt{
 
 				}
 				if(-1 != this.pickedTriangle){
+					intersected = true;
 					this.worldRadiusSqr = 1.0f;
 				}else{
 					this.worldRadiusSqr = 0.0f;
@@ -480,6 +484,7 @@ namespace Sculpt{
 			}
 
 			mesh.colors = colorArray;
+			return intersected;
 		}
 
 

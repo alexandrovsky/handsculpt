@@ -157,7 +157,7 @@ namespace Sculpt
 			Vector3 v1 = Vector3.zero;
 			Vector3 v2 = Vector3.zero;
 			Vector3 v3 = Vector3.zero;
-			Vector3 tmp = Vector3.zero;
+
 
 
 			Vector3[] vAr = mesh.vertexArray;

@@ -1,26 +1,36 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SculptMesh/Sculpter.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SculptMesh/SculptMesh.cs">
     <Files>
-      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="292" Column="4" />
-      <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="225" Column="3" />
-      <File FileName="Assets/Scripts/Utils/Geometry.cs" Line="60" Column="1" />
-      <File FileName="Assets/Scripts/Utils/MathHelper.cs" Line="12" Column="4" />
-      <File FileName="Assets/Scripts/SculptMesh/Vertex.cs" Line="65" Column="4" />
-      <File FileName="Assets/Scripts/Gui.cs" Line="105" Column="1" />
-      <File FileName="Assets/Scripts/Mesh/MeshTopologyTriangles.cs" Line="96" Column="21" />
-      <File FileName="Assets/Scripts/Mesh/MeshTopology.cs" Line="244" Column="21" />
-      <File FileName="Assets/Scripts/SculptMesh/SculptMesh.cs" Line="382" Column="3" />
+      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="171" Column="31" />
+      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Utils/Geometry.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Utils/MathHelper.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/SculptMesh/Vertex.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Gui.cs" Line="123" Column="17" />
+      <File FileName="Assets/Scripts/Mesh/MeshTopologyTriangles.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Mesh/MeshTopology.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/PointingTool.cs" Line="33" Column="17" />
+      <File FileName="Assets/Scripts/Leap/LeapUnityHandController.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/HandTool.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Leap/LeapUnityBridge.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Leap/LeapInput.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/GrabTool.cs" Line="105" Column="17" />
+      <File FileName="Assets/Scripts/Tools/ShadowTool.cs" Line="40" Column="17" />
+      <File FileName="Assets/Scripts/SculptMesh/SculptMesh.cs" Line="429" Column="41" />
+      <File FileName="Assets/Scripts/SculptMesh/Octree.cs" Line="219" Column="3" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Scripts" expanded="True">
+              <Node name="Leap" expanded="True" />
               <Node name="SculptMesh" expanded="True">
-                <Node name="Sculpter.cs" selected="True" />
+                <Node name="SculptMesh.cs" selected="True" />
               </Node>
-              <Node name="Utils" expanded="True" />
+              <Node name="Tools" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -30,10 +40,10 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/dimi/development/handsculpt/Assets/Scripts/Mesh/TargetObjectScript.cs" line="43" />
-      <Breakpoint enabled="false" file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="691" />
-      <Breakpoint enabled="false" file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="699" />
-      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="669" />
-      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Sculpter.cs" line="434" />
+      <Breakpoint enabled="false" file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="693" />
+      <Breakpoint enabled="false" file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="701" />
+      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="671" />
+      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Sculpter.cs" line="459" />
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Topology.cs" line="109" />
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Topology.cs" line="95" />
     </BreakpointStore>

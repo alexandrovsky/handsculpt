@@ -125,7 +125,15 @@ public class LeapUnityHandController : MonoBehaviour
 	public int FingerIdForIndex(int index){
 		return m_fingerIDs[index];
 	}
-	
+
+	public int IndexForFingerId(int fingerId){
+		return Array.FindIndex(m_fingerIDs, id => id == fingerId);
+	}
+
+	public int IndexForHandId(int handId){
+		return Array.FindIndex(m_handIDs, id => id == handId);
+	}
+
 	//When an object is found, we find our first inactive game object, activate it, and assign it to the found id
 	//When lost, we deactivate the object & set it's id to -1
 	//When updated, load the new data
