@@ -13,7 +13,7 @@ public class ShadowTool : ManipulationHandTool
 		mode = HandTool.HandToolMode.Enabled;
 		sculpter.tool = Sculpt.Tool.SMOOTH;
 		MinActivationDistance = 4.0f;
-//		deactivatePalm();
+		activatePalm();
 	}
 	
 	public override void CostumGUI(){
@@ -23,13 +23,6 @@ public class ShadowTool : ManipulationHandTool
 			GUILayout.TextField("Min Activation Distance: " + MinActivationDistance);
 			MinActivationDistance = GUILayout.HorizontalSlider(MinActivationDistance, 0.01f, 12.0f);
 		}GUILayout.EndVertical();
-
-//		GUILayout.TextField( "Selection Mode: " + selectionMode);
-//		GUILayout.BeginHorizontal();
-//		if(GUILayout.Button("1") ) selectionMode = SelectionMode.EYE_TO_PALM_POS;
-//		if(GUILayout.Button("2") ) selectionMode = SelectionMode.CENTER_TO_PALM_POS;
-//		if(GUILayout.Button("3") ) selectionMode = SelectionMode.PALM_POS_TO_PALM_UP;
-//		GUILayout.EndHorizontal();
 	}
 	
 	
@@ -64,9 +57,7 @@ public class ShadowTool : ManipulationHandTool
 		}else{
 			sculpter.activated = false;
 		}
-		
 
-//		sculptMesh.intersectRayMesh(ray);
 
 		float radius = sculpter.radius * (hand.SphereRadius/10.0f) * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 		

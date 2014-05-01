@@ -93,11 +93,10 @@ public class Gui : MonoBehaviour {
 //				tos.Subdivide();
 //			}
 
-//			if( GUILayout.Button("Reset") ){
-//				GameObject target = GameObject.Find("Target");
-//				TargetObjectScript tos = target.GetComponent<TargetObjectScript>();
-//				tos.ResetMesh();
-//			}
+			if( GUILayout.Button("Reset") ){
+				SculptMesh sculptMesh = target.GetComponent<Sculpt.SculptMesh>();
+				sculptMesh.resetMesh();
+			}
 			{
 
 				SculptMesh sculptMesh = target.GetComponent<Sculpt.SculptMesh>();

@@ -12,13 +12,17 @@ namespace Sculpt{
 		public Vector3[] vertexArray;
 		public Vector3[] normalArray;
 		public Color[] colorArray;
-
 		public int[] indexArray; // triangle ideces
+
 		public Octree octree;
 
 		MeshFilter meshFilter;
 		public Mesh mesh;
 
+		public Vector3[] vertexArrayReset;
+		public Vector3[] normalArrayReset;
+		public Color[] colorArrayReset;
+		public int[] indexArrayReset;
 
 		List<int> iTrisCandidates; // candidates for picking;
 		List<int> iTrisInCells;
@@ -197,6 +201,36 @@ namespace Sculpt{
 			iTrisInCells = new List<int>();
 			leavesUpdate = new List<Octree>();
 			pickedVertices = new List<int>();
+
+			initMesh();
+
+
+			this.vertexArrayReset = new Vector3	[vertexArray.Length];
+			this.colorArrayReset  = new Color	[colorArray.Length];
+			this.normalArrayReset = new Vector3	[normalArray.Length];
+			this.indexArrayReset  = new int		[indexArray.Length];
+
+			System.Array.Copy(this.vertexArray, this.vertexArrayReset, vertexArray.Length);
+			System.Array.Copy(this.colorArray,  this.colorArrayReset,  colorArray.Length);
+			System.Array.Copy(this.normalArray, this.normalArrayReset, normalArray.Length);
+			System.Array.Copy(this.indexArray,  this.indexArrayReset,  indexArray.Length);
+
+		}
+
+		public void resetMesh(){
+
+			mesh.vertices = this.vertexArrayReset;
+			mesh.colors = this.colorArrayReset;
+			mesh.normals = this.normalArrayReset;
+			mesh.triangles = this.indexArrayReset;
+
+			vertices = new List<Vertex>();
+			triangles = new List<Triangle>();
+			iTrisCandidates = new List<int>();
+			iTrisInCells = new List<int>();
+			leavesUpdate = new List<Octree>();
+			pickedVertices = new List<int>();
+
 			initMesh();
 		}
 

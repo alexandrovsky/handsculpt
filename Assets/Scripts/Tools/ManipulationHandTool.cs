@@ -64,6 +64,7 @@ public abstract class ManipulationHandTool : HandTool
 			                                             Sculpter.SELECTED.g,
 			                                             Sculpter.SELECTED.b, 
 			                                             0.25f);
+			selector.SetActive(false);
 		}else{
 			gizmoPos = ray.origin + ray.direction;
 			gizmoRadius = radius * radius / mainCamera.transform.position.magnitude;
@@ -71,6 +72,7 @@ public abstract class ManipulationHandTool : HandTool
 			                                             Sculpter.CLEAR.g,
 			                                             Sculpter.CLEAR.b, 
 			                                             0.75f);
+			selector.SetActive(true);
 		}
 		
 		selector.transform.position = gizmoPos;
@@ -85,7 +87,7 @@ public abstract class ManipulationHandTool : HandTool
 	}
 	void OnDrawGizmos(){
 
-		Gizmos.DrawWireSphere(gizmoPos, gizmoRadius);
+//		Gizmos.DrawWireSphere(gizmoPos, gizmoRadius);
 
 //		Gizmos.color = Color.green;
 ////		Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * 100);

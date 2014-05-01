@@ -123,7 +123,6 @@ public abstract class HandTool : MonoBehaviour {
 	
 	public virtual void OnDestroy() {
 		print(name +" script was destroyed");
-		activatePalm();
     }
 }
 

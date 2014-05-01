@@ -44,14 +44,12 @@ public class PointingTool : ManipulationHandTool {
 
 
 		Leap.Vector tipPos = hand.Fingers.Frontmost.StabilizedTipPosition;
-//		ray = CalculateRay(tipPos);
+		ray = CalculateRay(tipPos);
 
 
-		int fIdx = controller.IndexForFingerId(hand.Fingers.Frontmost.Id);
-		GameObject finger = controller.m_fingers[fIdx];
-		Vector3 fingerPos = new Vector3(finger.transform.position.x, finger.transform.position.y, -finger.transform.position.z);
-		ray = new Ray(mainCamera.transform.position, fingerPos);
-//		Debug.DrawLine(palm.transform.position, finger.transform.position);
+//		int fIdx = controller.IndexForFingerId(hand.Fingers.Frontmost.Id);
+//		GameObject finger = controller.m_fingers[fIdx];
+
 
 		if(tipPos.z + POINTING_Z_OFFSET < 0.0f ){
 			sculpter.activated = true;
@@ -81,7 +79,7 @@ public class PointingTool : ManipulationHandTool {
 	}
 
 	public override void OnDestroy(){
-		activatePalm();
+//		activatePalm();
 		base.OnDestroy();
 
 	}
