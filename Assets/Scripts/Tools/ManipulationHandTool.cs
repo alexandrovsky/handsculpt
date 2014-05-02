@@ -89,12 +89,15 @@ public abstract class ManipulationHandTool : HandTool
 
 //		Gizmos.DrawWireSphere(gizmoPos, gizmoRadius);
 
-//		Gizmos.color = Color.green;
+		Gizmos.color = Color.green;
 ////		Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * 100);
-//		Leap.InteractionBox iBox = LeapInput.Frame.InteractionBox;
-//		Vector3 center = iBox.Center.ToUnity();
-//		Vector3 size = new Vector3(iBox.Width, iBox.Height, iBox.Depth);
-//		Gizmos.DrawWireCube(center, size);
+		Leap.InteractionBox iBox = LeapInput.Frame.InteractionBox;
+		Vector3 center = iBox.Center.ToUnityTranslated();
+		Leap.Vector size = new Leap.Vector(iBox.Width, iBox.Height, iBox.Depth);
+		Gizmos.DrawWireCube(center, size.ToUnityTranslated() );
+		Gizmos.DrawWireSphere(center, 0.2f);
+		Gizmos.DrawWireSphere(hand.PalmPosition.ToUnityTranslated(), 0.2f);
+		Gizmos.DrawLine(hand.PalmPosition.ToUnityTranslated(), center);
 //		Leap.Vector tipPos = hand.Fingers.Frontmost.StabilizedTipPosition;
 //		Vector3 normalizedPosition = iBox.NormalizePoint(tipPos).ToUnity();
 //		Gizmos.DrawLine(center, tipPos.ToUnity() );

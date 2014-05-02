@@ -12,7 +12,7 @@ public class ShadowTool : ManipulationHandTool
 		base.Start();
 		mode = HandTool.HandToolMode.Enabled;
 		sculpter.tool = Sculpt.Tool.SMOOTH;
-		MinActivationDistance = 4.0f;
+		MinActivationDistance = 2.0f;
 		activatePalm();
 	}
 	
@@ -39,6 +39,8 @@ public class ShadowTool : ManipulationHandTool
 			return; // --- OUT --->
 		}
 
+
+
 		/*
 		 * check ray in both directions:
 		 * first up, because otherwise, i could collect backfaces!
@@ -52,7 +54,13 @@ public class ShadowTool : ManipulationHandTool
 		Debug.DrawLine(ray.origin, ray.origin + ray.direction, Color.green);
 
 
-		if(hand.PalmPosition.ToUnityTranslated().magnitude < MinActivationDistance ){
+
+		Leap.InteractionBox iBox = LeapInput.Frame.InteractionBox;
+		Vector3 iBoxCenter = iBox.Center.ToUnityTranslated();
+		Vector3 handPos = hand.PalmPosition.ToUnityTranslated();
+
+		if(Vector3.Distance(iBoxCenter, handPos) < MinActivationDistance){
+//		if(hand.PalmPosition.ToUnityTranslated().magnitude < MinActivationDistance ){
 			sculpter.activated = true;
 		}else{
 			sculpter.activated = false;
