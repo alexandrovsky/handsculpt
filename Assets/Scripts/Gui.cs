@@ -3,7 +3,12 @@ using System.Collections;
 using Sculpt;
 
 public class Gui : MonoBehaviour {
-	
+
+	public Texture2D m_redTexture = null;
+	public Texture2D m_greenTexture = null;
+	public Texture2D m_greyTexture = null;
+
+
 	public GameObject m_navigationToolPrefab = null;
 	public GameObject m_grabToolPrefab = null;
 	public GameObject m_pointingToolPrefab = null;
@@ -197,10 +202,34 @@ public class Gui : MonoBehaviour {
 //			}
 
 
-
-
 			GUILayout.EndArea();
-			
+
+			// hand status:
+			GUILayout.BeginArea(new Rect(Screen.width/2, Screen.height-100, 50, 50));
+
+			//GUILayout.BeginHorizontal();
+			if(currentNavigationTool != null){
+				HandTool handTool = currentNavigationTool.GetComponent<HandTool>();
+				if(handTool.hand.IsValid){
+					GUILayout.Label(m_greenTexture);
+				}else{
+					GUILayout.Label(m_greyTexture);
+				}
+			}
+			GUILayout.EndArea();
+
+			GUILayout.BeginArea(new Rect(Screen.width/2-50, Screen.height-100, 50, 50));
+			if(currentManipulationTool != null){
+				HandTool handTool = currentManipulationTool.GetComponent<HandTool>();
+				if(handTool.hand.IsValid){
+					GUILayout.Label(m_redTexture);
+				}else{
+					GUILayout.Label(m_greyTexture);
+				}
+			}
+
+			//GUILayout.EndHorizontal();
+			GUILayout.EndArea();
 		}
 	}
 	float angleV = 0.0f;

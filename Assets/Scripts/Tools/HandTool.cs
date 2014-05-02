@@ -54,7 +54,7 @@ public abstract class HandTool : MonoBehaviour {
 
 	protected LeapUnityHandController controller = null;
 	
-	protected Leap.Hand hand = Leap.Hand.Invalid;
+	public Leap.Hand hand = Leap.Hand.Invalid;
 	protected GameObject palm = null;
 	
 	
