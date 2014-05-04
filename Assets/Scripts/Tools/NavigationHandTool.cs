@@ -22,6 +22,21 @@ public class NavigationHandTool : HandTool {
 		base.Start();
 	}
 
+
+//	void OnDrawGizmos(){
+//		
+//		Gizmos.color = Color.green;
+//
+//		Leap.InteractionBox iBox = LeapInput.Frame.InteractionBox;
+//		Vector3 center = iBox.Center.ToUnityTranslated();
+//		Leap.Vector size = new Leap.Vector(iBox.Width, iBox.Height, iBox.Depth);
+//		Gizmos.DrawWireCube(center, size.ToUnityTranslated() );
+//		Gizmos.DrawWireSphere(center, 0.2f);
+//		Gizmos.DrawWireSphere(hand.PalmPosition.ToUnityTranslated(), 0.2f);
+//		Gizmos.DrawLine(hand.PalmPosition.ToUnityTranslated(), center);
+//
+//	}
+
 	public override void CostumGUI(){
 
 		GUILayout.BeginVertical();{
@@ -38,6 +53,7 @@ public class NavigationHandTool : HandTool {
 			GUILayout.TextField("sensitivity: " + sensitivity);
 			sensitivity = GUILayout.HorizontalSlider(sensitivity, 0.01f, 1.0f);
 		}GUILayout.EndVertical();
+		invertedScaling = GUILayout.Toggle(invertedScaling, "invert scaling");
 		GUILayout.TextField("grab strength: " + hand.GrabStrength);
 	}
 	
@@ -92,7 +108,8 @@ public class NavigationHandTool : HandTool {
 		}
 //		dir = posZ > 0.0f ? 1.0f : -1.0f;
 
-		mainCamera.fieldOfView += posZ * scaleSpeed * Time.deltaTime;
+		float inv = invertedScaling? -1.0f:1.0f;
+		mainCamera.fieldOfView += posZ * scaleSpeed * Time.deltaTime * inv;
 		handCamera.fieldOfView = mainCamera.fieldOfView;
 //		mainCamera.transform.position += mainCamera.transform.forward * dir * scaleSpeed * Time.deltaTime;
 		return true;
