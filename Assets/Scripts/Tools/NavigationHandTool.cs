@@ -93,7 +93,7 @@ public class NavigationHandTool : HandTool {
 			// rotation:
 			if(!rotate() ){
 				// scale:
-				scale();
+				//scale();
 			}
 
 			// move the children back
