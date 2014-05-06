@@ -99,19 +99,18 @@ public class Gui : MonoBehaviour {
 //			}
 
 			if( GUILayout.Button("Reset") ){
-				SculptMesh sculptMesh = target.GetComponent<Sculpt.SculptMesh>();
+
 				sculptMesh.resetMesh();
 			}
 			{
-
-				SculptMesh sculptMesh = target.GetComponent<Sculpt.SculptMesh>();
-
 				GUILayout.TextField( "verts count: " + sculptMesh.vertices.Count);
 				GUILayout.TextField( "tris count: " + sculptMesh.triangles.Count);
 
 				GUILayout.TextField( "scale: " + target.transform.localScale);
-
 			}
+
+			sculptMesh.drawDebug = GUILayout.Toggle(sculptMesh.drawDebug, "Debug");
+
 			GUILayout.EndArea();
 
 
@@ -212,6 +211,7 @@ public class Gui : MonoBehaviour {
 				HandTool handTool = currentNavigationTool.GetComponent<HandTool>();
 				if(handTool.hand.IsValid){
 					GUILayout.Label(m_greenTexture);
+
 				}else{
 					GUILayout.Label(m_greyTexture);
 				}

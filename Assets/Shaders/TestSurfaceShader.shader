@@ -3,12 +3,15 @@
 		_MainTex ("Base (RGB)", 2D) = "green" {}
 	}
 	SubShader {
-//		Pass{
-//			Cull Off
-//		}
+
+	Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
+    Blend SrcAlpha OneMinusSrcAlpha
+    //Cull Off
+    LOD 200
+
 	
-		Tags { "RenderType"="Opaque" }
-		LOD 200
+	Tags { "RenderType"="Opaque" }
+	LOD 200
 		
 		CGPROGRAM
 		#pragma surface surf BlinnPhong
@@ -32,7 +35,6 @@
             half4 c = tex2D (_MainTex, IN.uv_MainTex);
 
             o.Albedo =  c.rgb * IN.color.rgb; // vertex RGB
-
             o.Alpha = c.a * IN.color.a; // vertex Alpha
 
         }

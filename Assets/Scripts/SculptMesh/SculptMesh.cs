@@ -52,9 +52,9 @@ namespace Sculpt{
 
 //			drawLeavesUpdate();
 //			drawITrisInCells();
-			drawITrisCandidates();
+			//drawITrisCandidates();
 			drawOctree(this.octree);
-//			drawTriangleAabbs();
+			drawTriangleAabbs();
 		}
 
 

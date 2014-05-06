@@ -31,6 +31,8 @@ public abstract class ManipulationHandTool : HandTool
 	protected SculptMesh sculptMesh;
 	public Ray ray;
 
+	public static int radiusQueueSize = 10;
+	protected List<float> radiusQueue = new List<float>();
 
 	public Vector3 gizmoPos = Vector3.zero;
 	public float gizmoRadius = 1.0f;

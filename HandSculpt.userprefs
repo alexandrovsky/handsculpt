@@ -1,19 +1,24 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Tools/NavigationHandTool.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Tools/HandTool.cs">
     <Files>
+      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="19" Column="25" />
       <File FileName="Assets/Scripts/SculptMesh/SculptMesh.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/ShadowTool.cs" Line="15" Column="28" />
-      <File FileName="Assets/Scripts/Tools/ManipulationHandTool.cs" Line="88" Column="1" />
-      <File FileName="Assets/Scripts/Tools/PointingTool.cs" Line="52" Column="3" />
+      <File FileName="Assets/Scripts/Tools/ShadowTool.cs" Line="81" Column="49" />
+      <File FileName="Assets/Scripts/Tools/ManipulationHandTool.cs" Line="35" Column="46" />
+      <File FileName="Assets/Scripts/Tools/PointingTool.cs" Line="61" Column="33" />
       <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Utils/Geometry.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gui.cs" Line="208" Column="65" />
-      <File FileName="Assets/Scripts/Tools/GrabTool.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/GrabTool.cs" Line="23" Column="18" />
       <File FileName="Assets/Scripts/Mesh/TargetObjectScript.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/HandTool.cs" Line="57" Column="8" />
-      <File FileName="Assets/Scripts/Leap/LeapUnityBridge.cs" Line="45" Column="39" />
-      <File FileName="Assets/Scripts/Tools/NavigationHandTool.cs" Line="26" Column="5" />
+      <File FileName="Assets/Scripts/Tools/HandTool.cs" Line="63" Column="57" />
+      <File FileName="Assets/Scripts/Leap/LeapUnityBridge.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/NavigationHandTool.cs" Line="112" Column="16" />
+      <File FileName="Assets/Shaders/TestSurfaceShader.shader" Line="8" Column="5" />
+      <File FileName="Assets/Shaders/Velvet.shader" Line="9" Column="12" />
+      <File FileName="Assets/Scripts/Leap/LeapInput.cs" Line="44" Column="48" />
+      <File FileName="Assets/Scripts/Leap/LeapUnityHandController.cs" Line="167" Column="28" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -24,7 +29,7 @@
               <Node name="Mesh" expanded="True" />
               <Node name="SculptMesh" expanded="True" />
               <Node name="Tools" expanded="True">
-                <Node name="NavigationHandTool.cs" selected="True" />
+                <Node name="HandTool.cs" selected="True" />
               </Node>
             </Node>
             <Node name="Shaders" expanded="True" />
@@ -42,8 +47,7 @@
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Sculpter.cs" line="467" />
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Topology.cs" line="109" />
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Topology.cs" line="95" />
-      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/Tools/ManipulationHandTool.cs" line="38" />
-      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/Tools/HandTool.cs" line="99" />
+      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/Tools/ManipulationHandTool.cs" line="40" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

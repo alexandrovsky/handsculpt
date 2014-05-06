@@ -59,7 +59,11 @@ public abstract class HandTool : MonoBehaviour {
 	
 	
 	protected GameObject target = null;
-	
+
+	public static float ACTIVATION_DELAY_TIME_IN_SECS = 2.0f;
+	protected float activationDelay;
+
+
 	public virtual void Start()
 	{	
 		mainCamera = Camera.main;
@@ -72,15 +76,28 @@ public abstract class HandTool : MonoBehaviour {
 		
 		LeapInput.HandUpdated += new LeapInput.HandUpdatedHandler(OnHandUpdated);
 		LeapInput.HandLost += new LeapInput.ObjectLostHandler(OnHandLost);
+		LeapInput.HandFound += new LeapInput.HandFoundHandler(OnHandFound);
 	}
 
 
 	void OnHandUpdated( Hand hand ){
+
+		if(activationDelay < ACTIVATION_DELAY_TIME_IN_SECS){
+			return; // OUT -->
+		}
+
 		if(hand.Id == controller.HandIdForIndex(workingHandIdx) ){
 			this.hand = hand;
 		} 	
 	}
 
+	void OnHandFound( Hand h ){
+
+		if(hand.Id == controller.HandIdForIndex(workingHandIdx) ){
+			activationDelay = 0.0f;
+		}
+
+	}
 
 	void OnHandLost(int lostID){
 		if(hand.Id == lostID ){
@@ -104,6 +121,10 @@ public abstract class HandTool : MonoBehaviour {
 
 	public virtual void Update()
 	{
+		if(activationDelay < ACTIVATION_DELAY_TIME_IN_SECS){
+			activationDelay += Time.deltaTime;
+		}
+
 		// save last state before transformation:
 		lastPalmRotation.Set(transform.rotation.x,
 						 transform.rotation.y,

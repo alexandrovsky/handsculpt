@@ -12,6 +12,7 @@ public class GrabTool : ManipulationHandTool
 	float radius;
 	Vector3 grabInitPos = Vector3.zero;
 	Dictionary<int, float> selectedVertices;
+
 	public override void Start () {
 		name = "grab";
 		workingHandIdx = 0;
@@ -19,6 +20,7 @@ public class GrabTool : ManipulationHandTool
 		mode = HandTool.HandToolMode.Enabled;
 		sculpter.tool = Sculpt.Tool.DRAG;
 		selectedVertices = new Dictionary<int, float>();
+		activatePalm();
 	}
 
 
@@ -110,7 +112,7 @@ public class GrabTool : ManipulationHandTool
 		}
 
 
-		sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, !sculpter.activated);
+		sculptMesh.updateMesh(sculpter.iTrisSelected, sculpter.iVertsSelected, !sculpter.activated);
 		sculptMesh.pushMeshData();
 
 	}

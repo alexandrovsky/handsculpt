@@ -9,20 +9,20 @@ namespace Sculpt{
 	}
 	public class Sculpter : MonoBehaviour {
 
-		public static Color CLEAR = Color.gray;
+		public static Color CLEAR = new Color(0.5f,0.5f,0.5f,0.9f);
 		public static Color SELECTED = (CLEAR + Color.yellow) * 0.5f;
 		public static Color ACTIVATED = (CLEAR + Color.red) * 0.5f;
 
 		public bool isEnabled;
 
 		public float radius = 1.0f;
-		public float intensity = 1.0f;
+		public float intensity = 0.5f;
 
 
 
 
-		List<int> iVertsSelected = new List<int>();
-		List<int> iTrisSelected = new List<int>();
+		public List<int> iVertsSelected = new List<int>();
+		public List<int> iTrisSelected = new List<int>();
 		List<int> pickedVertices = new List<int>();
 
 		Topology topo;
@@ -140,10 +140,10 @@ namespace Sculpt{
 				this.activated = false;
 			}
 
-			if( Input.GetKeyDown(KeyCode.H) )
-			{
-				sculptMesh.drawDebug = !sculptMesh.drawDebug;
-			}
+//			if( Input.GetKeyDown(KeyCode.D) )
+//			{
+//				sculptMesh.drawDebug = !sculptMesh.drawDebug;
+//			}
 
 			if( Input.GetKeyDown(KeyCode.Plus) )
 			{
@@ -312,7 +312,7 @@ namespace Sculpt{
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 					sculptMesh.colorArray[v_idx] = ACTIVATED;
 				}else{
-					sculptMesh.colorArray[v_idx] = SELECTED;
+					sculptMesh.colorArray[v_idx] = Color.Lerp(SELECTED, ACTIVATED, intensity); // (SELECTED*(1-intensity) + ACTIVATED*intensity);
 				}
 
 
@@ -387,7 +387,7 @@ namespace Sculpt{
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 					sculptMesh.colorArray[v_idx] = ACTIVATED;
 				}else{
-					sculptMesh.colorArray[v_idx] = SELECTED;
+					sculptMesh.colorArray[v_idx] = Color.Lerp(SELECTED, ACTIVATED, intensity);
 				}
 
 			}

@@ -43,7 +43,8 @@ public class PointingTool : ManipulationHandTool {
 		}
 
 
-		Leap.Vector tipPos = hand.Fingers.Frontmost.StabilizedTipPosition;
+		//Leap.Vector tipPos = hand.Fingers.Frontmost.StabilizedTipPosition;
+		Leap.Vector tipPos = hand.Fingers.Frontmost.TipPosition;
 		ray = CalculateRay(tipPos);
 
 
@@ -51,11 +52,13 @@ public class PointingTool : ManipulationHandTool {
 //		GameObject finger = controller.m_fingers[fIdx];
 
 
+
 		if(tipPos.z + POINTING_Z_OFFSET < 0.0f ){
 			sculpter.activated = true;
 		}else{
 			sculpter.activated = false;
 		}
+
 
 		sculptMesh.intersectRayMesh(ray);
 		float radius = sculpter.radius; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
@@ -70,10 +73,23 @@ public class PointingTool : ManipulationHandTool {
 		if(invert){
 			intensity *= -1;
 		}
+
+
+		// smooth transition
+		if(!sculpter.activated){
+			int clamp = Mathf.Clamp((int)(tipPos.z + POINTING_Z_OFFSET), 0, 100);
+			intensity = 1.0f - (clamp/100.0f);
+//			Debug.Log("intsity:" + intensity);
+		}
+
+
 		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
 		                center, radius, intensity, sculpter.tool);
-		
-		sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, true);
+
+		this.iTrisSelected = sculpter.iTrisSelected;
+		this.iVertsSelected = sculpter.iVertsSelected;
+
+		sculptMesh.updateMesh(sculpter.iTrisSelected, sculpter.iVertsSelected, true);
 		
 		sculptMesh.pushMeshData();
 	}

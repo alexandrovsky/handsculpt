@@ -8,7 +8,8 @@ public class NavigationHandTool : HandTool {
 
 	bool invertedScaling = false;
 //	bool continuousRotation = true;
-	float sensitivity = 0.25f;
+	float scaleSensitivity = 0.25f;
+	float rotationSensitivity = 0.25f;
 	float rotationSpeed = 0.75f;
 	float scaleSpeed = 2.5f;
 
@@ -39,6 +40,12 @@ public class NavigationHandTool : HandTool {
 
 	public override void CostumGUI(){
 
+
+		GUILayout.BeginVertical();{
+			GUILayout.TextField("Rotation sensitivity: " + rotationSensitivity);
+			rotationSensitivity = GUILayout.HorizontalSlider(rotationSensitivity, 0.01f, 1.0f);
+		}GUILayout.EndVertical();
+
 		GUILayout.BeginVertical();{
 			GUILayout.TextField("Rotation speed: " + rotationSpeed);
 			rotationSpeed = GUILayout.HorizontalSlider(rotationSpeed, 0.01f, 2.0f);
@@ -50,8 +57,8 @@ public class NavigationHandTool : HandTool {
 		}GUILayout.EndVertical();
 
 		GUILayout.BeginVertical();{
-			GUILayout.TextField("sensitivity: " + sensitivity);
-			sensitivity = GUILayout.HorizontalSlider(sensitivity, 0.01f, 1.0f);
+			GUILayout.TextField("Scale sensitivity: " + scaleSensitivity);
+			scaleSensitivity = GUILayout.HorizontalSlider(scaleSensitivity, 0.01f, 1.0f);
 		}GUILayout.EndVertical();
 		invertedScaling = GUILayout.Toggle(invertedScaling, "invert scaling");
 		GUILayout.TextField("grab strength: " + hand.GrabStrength);
@@ -60,10 +67,10 @@ public class NavigationHandTool : HandTool {
 	// Update is called once per frame
 	public override void Update () {
 		base.Update();
-		Debug.Log("hand: " + hand.PalmPosition.ToUnityTranslated() );
+//		Debug.Log("hand: " + hand.PalmPosition.ToUnityTranslated() );
 
 		if(!hand.IsValid){
-			Debug.Log("hand: invalid" + hand.PalmPosition.ToUnityTranslated() );
+//			Debug.Log("hand: invalid" + hand.PalmPosition.ToUnityTranslated() );
 			return; // --- out here --->
 		}
 
@@ -103,7 +110,7 @@ public class NavigationHandTool : HandTool {
 
 		float posZ = hand.PalmPosition.ToUnityScaled().z;
 //		float dir = 0.0f;
-		if(Mathf.Abs(posZ) < sensitivity){
+		if(Mathf.Abs(posZ) < scaleSensitivity){
 			return false; // --- OUT --->
 		}
 //		dir = posZ > 0.0f ? 1.0f : -1.0f;
@@ -121,7 +128,7 @@ public class NavigationHandTool : HandTool {
 		float max = 1.0f;
 		float angle = 100.0f;
 		
-		if(Mathf.Abs( Mathf.Abs(x) - Mathf.Abs(z) ) < sensitivity ){
+		if(Mathf.Abs( Mathf.Abs(x) - Mathf.Abs(z) ) < rotationSensitivity ){
 			return false; // --- OUT --->
 		}
 		

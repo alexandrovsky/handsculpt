@@ -59,26 +59,57 @@ public class ShadowTool : ManipulationHandTool
 		Vector3 iBoxCenter = iBox.Center.ToUnityTranslated();
 		Vector3 handPos = hand.PalmPosition.ToUnityTranslated();
 
-		if(Vector3.Distance(iBoxCenter, handPos) < MinActivationDistance){
+		float activationDistance = Vector3.Distance(iBoxCenter, handPos);
+		if(activationDistance < MinActivationDistance){
 //		if(hand.PalmPosition.ToUnityTranslated().magnitude < MinActivationDistance ){
 			sculpter.activated = true;
 		}else{
 			sculpter.activated = false;
 		}
 
+		radiusQueue.Add(hand.SphereRadius);
+		if(radiusQueue.Count > radiusQueueSize){
+			radiusQueue.RemoveAt(0);
+		}
 
-		float radius = sculpter.radius * (hand.SphereRadius/10.0f) * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
-		
+		float smoothRadius = 0.0f;
+		foreach(float r in radiusQueue){
+			smoothRadius += r;
+		}
+		smoothRadius = smoothRadius / radiusQueue.Count;
+
+//		float radius = sculpter.radius * (hand.SphereRadius/10.0f) * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
+		float radius = sculpter.radius * (smoothRadius/10.0f) * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
+
+
 		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
 		Vector3 center = sculptMesh.intersectionPoint;
 
 
 
 		float intensity = sculpter.intensity;
+
+
+		// smooth transition
+		if(!sculpter.activated){
+			float range = 8+MinActivationDistance;//2 * MinActivationDistance;
+
+			if(activationDistance > range){
+				intensity = 0;
+			}else{
+				intensity = 1.0f - (activationDistance/range);
+			}
+
+			Debug.Log("intsity:" + intensity + "dist: " + activationDistance);
+		}
+
 		
 		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
 		                center, radius, intensity, Sculpt.Tool.SMOOTH);
-		
+
+		this.iTrisSelected = sculpter.iTrisSelected;
+		this.iVertsSelected = sculpter.iVertsSelected;
+
 		sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, true);
 		
 		sculptMesh.pushMeshData();
