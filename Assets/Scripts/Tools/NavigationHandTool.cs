@@ -4,6 +4,11 @@ using Leap;
 
 public class NavigationHandTool : HandTool {
 
+	public enum NavigationMode{
+		Grab,
+		Direct
+	};
+
 	// Use this for initialization
 
 	bool invertedScaling = false;
@@ -16,6 +21,9 @@ public class NavigationHandTool : HandTool {
 	Camera handCamera;
 
 	Vector3 initHandNormal = Vector3.zero;
+
+
+	NavigationMode navigationMode;
 
 	public override void Start () {
 		name = "navi";
@@ -41,6 +49,13 @@ public class NavigationHandTool : HandTool {
 //	}
 
 	public override void CostumGUI(){
+
+
+		int naviMode = (int)navigationMode;
+		string[] names = System.Enum.GetNames( typeof(NavigationMode) );
+		naviMode = GUILayout.Toolbar(naviMode, names );
+		navigationMode = (NavigationMode)naviMode;
+		GUILayout.TextField("NavigationMode: " + navigationMode);
 
 
 		GUILayout.BeginVertical();{
@@ -79,13 +94,26 @@ public class NavigationHandTool : HandTool {
 			return; // --- out here --->
 		}
 
-		if( hand.GrabStrength > 0.5f  ){ // open hand activates ....
-//		if( hand.GrabStrength < 0.5f  ){ // close hand activates ....
 
-			mode = HandTool.HandToolMode.Disabled;
-		}else{
-			mode = HandTool.HandToolMode.Enabled;
+		switch(navigationMode){
+		case NavigationMode.Direct: // uses the open hand
+			if( hand.GrabStrength > 0.5f  ){ // open hand activates ....
+				mode = HandTool.HandToolMode.Disabled;
+			}else{
+				mode = HandTool.HandToolMode.Enabled;
+			}
+			break;
+		case NavigationMode.Grab: // uses closed hand
+
+			if( hand.GrabStrength < 0.5f  ){ // close hand activates ....
+				
+				mode = HandTool.HandToolMode.Disabled;
+			}else{
+				mode = HandTool.HandToolMode.Enabled;
+			}
+			break;
 		}
+
 
 	
 
@@ -102,8 +130,18 @@ public class NavigationHandTool : HandTool {
 		}else if(HandTool.HandToolMode.Enabled == mode){
 
 			// rotation:
+
+			switch(navigationMode){
+			case NavigationMode.Direct:
+				rotateDirect();
+				break;
+			case NavigationMode.Grab:
+				rotateGrab();
+				break;
+			}
+
 //			rotateGrab();
-			rotateDirect();
+//			rotateDirect();
 
 		
 
@@ -171,7 +209,7 @@ public class NavigationHandTool : HandTool {
 
 
 		Debug.Log("angleXZ: " + angleXZ + " angleYZ: " + angleYZ + " angleXY: " + angleXY);
-		float minAngle = 10.0f;
+		float minAngle = 45.0f * rotationSensitivity;
 
 		if(angleXY > minAngle && angleXY > angleXZ && angleXY > angleYZ){
 			rotXY = Quaternion.FromToRotation(Vector3.right, pointOnPlaneXY);
@@ -195,144 +233,22 @@ public class NavigationHandTool : HandTool {
 
 		// world
 		
-		Debug.DrawLine(Vector3.zero, Vector3.forward * 2, Color.blue);
-		Debug.DrawLine(Vector3.zero, Vector3.up * 2, Color.green);
-		Debug.DrawLine(Vector3.zero, Vector3.right * 2, Color.red);
+		Debug.DrawLine(Vector3.zero, mainCamera.transform.TransformDirection(Vector3.forward) * 2, Color.blue);
+		Debug.DrawLine(Vector3.zero, mainCamera.transform.TransformDirection(Vector3.up) * 2, Color.green);
+		Debug.DrawLine(Vector3.zero, mainCamera.transform.TransformDirection(Vector3.right) * 2, Color.red);
 
 
 		// points on plane:
-		Debug.DrawLine(Vector3.zero, pointOnPlaneXY * 2, Color.blue);
-		Debug.DrawLine(Vector3.zero, pointOnPlaneXZ * 2, Color.green);
-		Debug.DrawLine(Vector3.zero, pointOnPlaneYZ * 2, Color.red);
+		Debug.DrawLine(Vector3.zero, mainCamera.transform.TransformDirection(pointOnPlaneXY) * 2, Color.blue);
+		Debug.DrawLine(Vector3.zero, mainCamera.transform.TransformDirection(pointOnPlaneXZ) * 2, Color.green);
+		Debug.DrawLine(Vector3.zero, mainCamera.transform.TransformDirection(pointOnPlaneYZ) * 2, Color.red);
 
 
 		Debug.DrawLine(Vector3.zero, axis * 2, Color.yellow);
-
-
-	}
-	void rotateDirectOld(){
-		Vector3 pos = palm.transform.position;
-
-		Vector3 forward = mainCamera.transform.TransformDirection( hand.Direction.ToUnity() );
-		Vector3 up = mainCamera.transform.TransformDirection( hand.PalmNormal.ToUnity() ); // palm.transform.up;
-		up.y += -1;
-		Vector3 right = Vector3.Cross(forward, up);
-		Vector3 transformedInitHandNormal = mainCamera.transform.TransformDirection(initHandNormal);
-
-		Vector3 camFwd = mainCamera.transform.forward;
-		Vector3 camUp = mainCamera.transform.up;
-		Vector3 camRight = Vector3.Cross(camFwd, camUp);
-
-		Vector3 pointOnPlaneXZ = new Vector3(forward.x, camFwd.y, forward.z).normalized;
-		Vector3 pointOnPlaneYZ = new Vector3(camFwd.x, -up.y, up.z).normalized;
-		Vector3 pointOnPlaneXY = new Vector3(-right.x, right.y, camRight.z).normalized;
-
-
-
-
-
-		Quaternion rotXZ = Quaternion.identity; 
-		Quaternion rotYZ = Quaternion.identity;
-		Quaternion rotXY = Quaternion.identity;
-
-		float angleXZ = Vector3.Angle(camFwd, pointOnPlaneXZ);
-		float angleYZ = Vector3.Angle(camUp, pointOnPlaneYZ);
-		float angleXY = Vector3.Angle(camRight, pointOnPlaneXY);
-
-		Debug.Log("angleXZ: " + angleXZ + " angleYZ: " + angleYZ + " angleXY: " + angleXY);
-		float minAngle = 10.0f;
-//		if(angleXZ > minAngle && angleXZ > angleYZ && angleXZ > angleXY){
-//			rotXZ = Quaternion.FromToRotation(camFwd, pointOnPlaneXZ);
-//		}else if(angleYZ > minAngle && angleYZ > angleXZ && angleYZ > angleXY){
-//			rotYZ = Quaternion.FromToRotation(camUp, pointOnPlaneYZ);
-//		}else if(angleXY > minAngle && angleXY > angleXZ && angleXY > angleYZ){
-			rotXY = Quaternion.FromToRotation(camRight, pointOnPlaneXY);
-//		}
-
-
-		Quaternion rot = rotXY * rotXZ * rotYZ;
-
-		Vector3 axis = Vector3.zero;
-		float angle = 0.0f;
-
-
-		rot.ToAngleAxis(out angle, out axis);
-
-		mainCamera.transform.RotateAround(target.transform.position, axis, rotationSpeed * angle * Time.deltaTime);
-
-
-//		float angleX = Vector3.Angle(camUp, pointOnPlaneYZ);
-//		float signX = (Vector3.Dot(camFwd, pointOnPlaneYZ) > 0.0f) ? 1.0f : -1.0f;
-//		
-//		float angleY = 90.0f - Vector3.Angle(camRight, pointOnPlaneXZ);
-		
-//		float angleZ = 90.0f - Vector3.Angle(camUp, pointOnPlaneXY);
-
-//		if( Mathf.Abs(angleX) > Mathf.Abs(angleY)  && Mathf.Abs(angleX) > Mathf.Abs(angleZ)){
-//			// rotate on x axis:
-//			mainCamera.transform.RotateAround(target.transform.position, camRight, rotationSpeed * signX * angleX * Time.deltaTime);
-//		}else if(Mathf.Abs(angleY) > Mathf.Abs(angleX)  && Mathf.Abs(angleY) > Mathf.Abs(angleZ)){
-//			// rotate on y axis:
-//			mainCamera.transform.RotateAround(target.transform.position, camUp, rotationSpeed * angleY * Time.deltaTime);
-//		}else if(Mathf.Abs(angleZ) > Mathf.Abs(angleX)  && Mathf.Abs(angleZ) > Mathf.Abs(angleY)){
-//			// rotate on z axis:
-//			mainCamera.transform.RotateAround(target.transform.position, camFwd, rotationSpeed * angleZ * Time.deltaTime);
-//		}
-
-
-
-
-
-
-		// hand
-//			Debug.DrawLine(pos, pos + forward,Color.blue);
-//			Debug.DrawLine(pos, pos + up,Color.green);
-//			Debug.DrawLine(pos, pos + right,Color.red);
-//
-		// cam
-
-		Debug.DrawLine(pos, pos + camFwd*2,Color.blue);
-		Debug.DrawLine(pos, pos + camUp*2,Color.green);
-		Debug.DrawLine(pos, pos + camRight*2,Color.red);
-
-		// points on plane:
-
-		Debug.DrawLine(pos, pos + pointOnPlaneXZ*2,Color.green);
-		Debug.DrawLine(pos, pos + pointOnPlaneYZ*2,Color.red);
-		Debug.DrawLine(pos, pos + pointOnPlaneXY*2,Color.blue);
 	}
 
 
-	bool rotate(){
 
 
-		float x = hand.PalmNormal.x;
-		float z = hand.PalmNormal.z;
-		float max = 1.0f;
-		float angle = 100.0f;
-		
-		if(Mathf.Abs( Mathf.Abs(x) - Mathf.Abs(z) ) < rotationSensitivity ){
-			return false; // --- OUT --->
-		}
-		
-		Vector3 axis = mainCamera.transform.right; // Vector3.zero;
-		if(Mathf.Abs(x) < Mathf.Abs(z) ){
-			axis = mainCamera.transform.right;
-			max = z;
-		}else{
-			axis = mainCamera.transform.up;
-			max = x;
-		}
-		//dynamic:
-		angle *= -max;
-		
-		//static:
-		//					if(max > 0.0f){
-		//						angle *= -1.0f;
-		//					}
-		
-		mainCamera.transform.RotateAround(target.transform.position, axis, rotationSpeed * angle * Time.deltaTime);
-		return true;
-	}
 
 } // class
