@@ -234,6 +234,23 @@ namespace Sculpt{
 			initMesh();
 		}
 
+		public void subdivideMesh(){
+			MeshSubdivide.Subdivide4(mesh);
+			mesh.RecalculateBounds();
+			meshFilter.sharedMesh = mesh;
+
+
+			vertices = new List<Vertex>();
+			triangles = new List<Triangle>();
+			iTrisCandidates = new List<int>();
+			iTrisInCells = new List<int>();
+			leavesUpdate = new List<Octree>();
+			pickedVertices = new List<int>();
+
+			initMesh();
+		}
+
+
 		void initMesh(){
 
 	//			GameObject target = GameObject.Find("Target");

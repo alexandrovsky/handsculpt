@@ -34,7 +34,7 @@
 
             half4 c = tex2D (_MainTex, IN.uv_MainTex);
 
-            o.Albedo =  c.rgb * IN.color.rgb; // vertex RGB
+            o.Albedo = c.rgb * IN.color.rgb; // vertex RGB
             o.Alpha = c.a * IN.color.a; // vertex Alpha
 
         }

@@ -92,11 +92,13 @@ public class Gui : MonoBehaviour {
 			}
 			objectExportFilepath = GUILayout.TextField(objectExportFilepath);
 
-//			if( GUILayout.Button("Subdivide") ){
+			if( GUILayout.Button("Subdivide") ){
 //				GameObject target = GameObject.Find("Target");
 //				TargetObjectScript tos = target.GetComponent<TargetObjectScript>();
 //				tos.Subdivide();
-//			}
+
+				sculptMesh.subdivideMesh();
+			}
 
 			if( GUILayout.Button("Reset") ){
 
