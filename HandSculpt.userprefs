@@ -1,26 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Gui.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Tools/NavigationHandTool.cs">
     <Files>
-      <File FileName="Assets/Scripts/Gui.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/SculptMesh.cs" Line="238" Column="28" />
-      <File FileName="Assets/Scripts/Tools/ShadowTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/ManipulationHandTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/PointingTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Utils/Geometry.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/GrabTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Mesh/TargetObjectScript.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/NavigationHandTool.cs" Line="219" Column="38" />
+      <File FileName="Assets/Scripts/Gui.cs" Line="108" Column="1" />
       <File FileName="Assets/Scripts/Tools/HandTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Leap/LeapUnityBridge.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/NavigationHandTool.cs" Line="124" Column="4" />
-      <File FileName="Assets/Shaders/TestSurfaceShader.shader" Line="1" Column="1" />
-      <File FileName="Assets/Shaders/Velvet.shader" Line="24" Column="5" />
-      <File FileName="Assets/Scripts/Leap/LeapInput.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Leap/LeapUnityHandController.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Mesh/MeshSubdivide.cs" Line="1" Column="1" />
-      <File FileName="Assets/Shaders/TestSurfaceShader2.shader" Line="16" Column="22" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -30,8 +14,9 @@
               <Node name="Leap" expanded="True" />
               <Node name="Mesh" expanded="True" />
               <Node name="SculptMesh" expanded="True" />
-              <Node name="Tools" expanded="True" />
-              <Node name="Gui.cs" selected="True" />
+              <Node name="Tools" expanded="True">
+                <Node name="NavigationHandTool.cs" selected="True" />
+              </Node>
             </Node>
             <Node name="Shaders" expanded="True" />
           </Node>

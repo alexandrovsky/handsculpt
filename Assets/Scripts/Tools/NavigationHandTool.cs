@@ -213,8 +213,10 @@ public class NavigationHandTool : HandTool {
 
 		if(angleXY > minAngle && angleXY > angleXZ && angleXY > angleYZ){
 			rotXY = Quaternion.FromToRotation(Vector3.right, pointOnPlaneXY);
+			rotXY = Quaternion.Inverse( rotXY );
 		}else if(angleXZ > minAngle && angleXZ > angleYZ && angleXZ > angleXY){
 			rotXZ = Quaternion.FromToRotation(Vector3.forward, pointOnPlaneXZ);
+			rotXZ = Quaternion.Inverse(rotXZ);
 		}else if(angleYZ > minAngle && angleYZ > angleXZ && angleYZ > angleXY){
 			rotYZ = Quaternion.FromToRotation(Vector3.up, pointOnPlaneYZ);
 		} 
