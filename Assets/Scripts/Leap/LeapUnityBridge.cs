@@ -38,6 +38,7 @@ public class LeapUnityBridge : MonoBehaviour
 	public GameObject m_InputParent; //The parent of the hand objects for motion.  Useful 
 	public GameObject m_FingerTemplate; //The template object to use for the fingers. Must have Tags set correctly
 	public GameObject m_PalmTemplate; //The template object to use for the palms.
+	public GameObject m_BoneTemplate; //The template object to use for the bones.
 	
 	/// <summary>
 	/// The materials to use for the different hands.
@@ -91,7 +92,29 @@ public class LeapUnityBridge : MonoBehaviour
 	private void CreateSceneHands()
 	{
 		GameObject hands = new GameObject("Leap Hands");
-		
+
+
+		//---
+
+//		GameObject palm = Instantiate(m_PalmTemplate) as GameObject;
+//
+//		for(int i = 0; i < 5; i++){
+//			GameObject joint0 = Instantiate(m_BoneTemplate) as GameObject;
+//			joint0.name = "joint_"+ i + "_0";
+//			GameObject joint1 = Instantiate(m_BoneTemplate) as GameObject;
+//			joint1.name = "joint_"+ i + "_1";
+//
+//			GameObject tip0 = Instantiate(m_FingerTemplate) as GameObject;
+//			joint1.name = "tip"+ i + "_0";
+//			GameObject tip1 = Instantiate(m_FingerTemplate) as GameObject;
+//			joint1.name = "tip"+ i + "_1";
+//			GameObject tip2 = Instantiate(m_FingerTemplate) as GameObject;
+//			joint1.name = "tip"+ i + "_2";
+//
+//		}
+
+		//---
+
 		if( m_InputParent )
 		{
 

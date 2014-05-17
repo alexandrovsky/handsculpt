@@ -70,7 +70,7 @@ public static class LeapInput
 	//*********************************************************************
 	// Private data & functions
 	//*********************************************************************
-	private enum HandID : int
+	public enum HandID : int
 	{
 		Primary		= 0,
 		Secondary	= 1

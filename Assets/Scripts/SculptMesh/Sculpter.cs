@@ -9,7 +9,7 @@ namespace Sculpt{
 	}
 	public class Sculpter : MonoBehaviour {
 
-		public static Color CLEAR = new Color(0.5f,0.5f,0.5f,0.9f);
+		public static Color CLEAR = new Color(0.5f,0.5f,0.5f,1.0f);
 		public static Color SELECTED = (CLEAR + Color.yellow) * 0.5f;
 		public static Color ACTIVATED = (CLEAR + Color.red) * 0.5f;
 
