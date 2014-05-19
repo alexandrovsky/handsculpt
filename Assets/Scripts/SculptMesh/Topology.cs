@@ -21,7 +21,14 @@ namespace Sculpt
 		List<int> iTrisToDelete = new List<int>(); //triangles to be deleted
 		List<int> iVertsToDelete = new List<int>(); //vertices to be deleted
 		List<int> iVertsDecimated = new List<int>(); //vertices to be updated (mainly for the VBO's, used in decimation and adaptive topo)
-		
+
+		List<Vertex> vertices = null;
+		List<Triangle> triangles = null;
+		Vector3[] vAr = null;
+		Vector3[] nAr = null;
+		Color[] cAr = null;
+		int[] iAr = null;
+
 		bool linearSubdivision = false; //linear subdivision
 		bool checkPlane = false; //terminal critera for subdivision/decimation process (false = spherical selection)
 		Vector3 planeOrigin = Vector3.zero; //plane origin
@@ -49,8 +56,13 @@ namespace Sculpt
 		private List<int> subdivide(List<int> iTris, float detailMaxSquared){
 
 
-			List<Vertex> vertices = mesh.vertices;
-			List<Triangle> triangles = mesh.triangles;
+			vertices = mesh.vertices;
+			triangles = mesh.triangles;
+			this.vAr = mesh.vertexArray;
+			this.nAr = mesh.normalArray;
+			this.cAr = mesh.colorArray;
+			this.iAr = mesh.indexArray;
+
 			int nbVertsInit = vertices.Count;
 			int nbTrisInit = triangles.Count;
 			List<int> iTrisSubd = new List<int>();
@@ -60,9 +72,9 @@ namespace Sculpt
 			// ---
 			initSplit(iTris, iTrisSubd, split, detailMaxSquared);
 
-//			if(iTrisSubd.Count > 20 ){
-//				mesh.expandsTriangles(iTrisSubd, 3);
-//			}
+			if(iTrisSubd.Count > 20 ){
+				mesh.expandsTriangles(iTrisSubd, 3);
+			}
 
 			for(int i = 0; i < iTrisSubd.Count; i++){
 				Vector3[] vAr = mesh.vertexArray;
@@ -80,11 +92,41 @@ namespace Sculpt
 			}
 
 			Debug.Log("tris to subdivide " + iTrisSubd.Count);
-			// check array length....
+//			// check array length....
 			checkArrayLength(iTrisSubd.Count);
+
+
 			subdivideTriangles(iTrisSubd, split, detailMaxSquared);
 
-			return iTris;
+
+			List<int> newTriangles = new List<int>();
+			int nbTriangles = triangles.Count;
+			for(int i = 0; i < nbTriangles; i++){
+				newTriangles.Add(i);
+			}
+
+			mesh.expandsTriangles(newTriangles, 1);
+
+
+			List<int> iTrisMask = new List<int>();
+			int nbTrisMask = iTris.Count;
+			long triangleTagMask = ++Triangle.tagMask;
+			for (int i = 0; i < nbTrisMask; ++i)
+			{
+				int iTri = iTris[i];
+				Triangle t = triangles[iTri];
+				if (t.tagFlag == triangleTagMask)
+					continue;
+				t.tagFlag = triangleTagMask;
+				iTrisMask.Add(iTri);
+			}
+
+
+			int nbTrianglesOld = triangles.Count;
+			while (newTriangles.Count > 0)
+				newTriangles = this.fillTriangles(newTriangles);
+
+			return iTrisSubd;
 		}
 
 
@@ -102,8 +144,8 @@ namespace Sculpt
 		/** Subdivide all the triangles that need to be subdivided */
 		public void subdivideTriangles(List<int>iTrisSubd, List<int> split, float detailMaxSquared)
 		{
-			var iAr = this.mesh.indexArray;
-			var nbTris = iTrisSubd.Count;
+//			var iAr = this.mesh.indexArray;
+			int nbTris = iTrisSubd.Count;
 			for (int i = 0; i < nbTris; ++i)
 			{
 				int ind = iTrisSubd[i] * 3;
@@ -160,8 +202,8 @@ namespace Sculpt
 
 
 
-			Vector3[] vAr = mesh.vertexArray;
-			int[] iAr = mesh.indexArray;
+//			Vector3[] vAr = mesh.vertexArray;
+//			int[] iAr = mesh.indexArray;
 			
 			int id = iTri * 3;
 
@@ -215,13 +257,13 @@ namespace Sculpt
 		}
 
 		/**
- * Subdivide one triangle, it simply cut the triangle in two at a given edge.
- * The position of the vertex is computed as follow :
- * 1. Initial position of the new vertex at the middle of the edge
- * 2. Compute normal of the new vertex (average of the two normals of the two vertices defining the edge)
- * 3. Compute angle between those two normals
- * 4. Move the new vertex along its normal with a strengh proportional to the angle computed at step 3.
- */
+		 * Subdivide one triangle, it simply cut the triangle in two at a given edge.
+		 * The position of the vertex is computed as follow :
+		 * 1. Initial position of the new vertex at the middle of the edge
+		 * 2. Compute normal of the new vertex (average of the two normals of the two vertices defining the edge)
+		 * 3. Compute angle between those two normals
+		 * 4. Move the new vertex along its normal with a strengh proportional to the angle computed at step 3.
+		 */
 		public void halfEdgeSplit(int iTri, int iv1, int iv2, int iv3)
 		{
 			
@@ -230,18 +272,14 @@ namespace Sculpt
 			
 			List<Vertex> vertices = mesh.vertices;
 			List<Triangle> triangles = mesh.triangles;
-			Vector3[] vAr = mesh.vertexArray;
-			Vector3[] nAr = mesh.normalArray;
-			Color[] cAr = mesh.colorArray;
-			int[] iAr = mesh.indexArray;
-			
+
 			var leaf = triangles[iTri].leaf;
 			var iTrisLeaf = leaf.iTris;
 			Vertex v1 = vertices[iv1];
 			Vertex v2 = vertices[iv2];
 			Vertex v3 = vertices[iv3];
 			
-			var vMap = this.verticesMap;
+			Dictionary<int, int> vMap = this.verticesMap;
 			key[0] = Mathf.Min(iv1, iv2);
 			key[1] = Mathf.Max(iv1, iv2);
 			bool isNewVertex = false;
@@ -251,6 +289,7 @@ namespace Sculpt
 				ivMid = vertices.Count;
 				isNewVertex = true;
 				vMap[key[0]] = ivMid;
+
 			}else{
 				ivMid = vMap[key[0]];
 			}
@@ -268,7 +307,7 @@ namespace Sculpt
 
 			iAr[id] = ivMid;
 			iAr[id + 1] = iv2;
-			iAr[id + 2] = iv3;
+			iAr[id + 2] =iv3;
 
 			
 			v3.tIndices.Add(iNewTri);
@@ -284,19 +323,25 @@ namespace Sculpt
 				Vector3 v1_ = mesh.transform.TransformPoint(vAr[iv1]);
 				Vector3 v2_ = mesh.transform.TransformPoint(vAr[iv2]);
 
+//				Vector3 v1_ = vAr[iv1];
+//				Vector3 v2_ = vAr[iv2];
+
+				Debug.DrawLine(v1_, v2_, Color.blue, 5);
 
 				Vector3 n1 = mesh.transform.TransformPoint(nAr[iv1]);
 				Vector3 n2 = mesh.transform.TransformPoint(nAr[iv2]);
 
+//				Vector3 n1 = nAr[iv1];
+//				Vector3 n2 = nAr[iv2];
 
 				Color c1 = cAr[iv1];
 				Color c2 = cAr[iv1];
 
 				Vector3 n1n2 = n1+n2;
 				float len = 1 / n1n2.magnitude;
-				nAr[id] = n1n2 * len;
+				nAr[ind] = mesh.transform.InverseTransformPoint( n1n2 * len);
 				
-				cAr[id] = (c1 + c2) * 0.5f;
+				cAr[ind] = (c1 + c2) * 0.5f;//[id] = (c1 + c2) * 0.5f;
 
 				float offset = 0;
 				if (!this.linearSubdivision)
@@ -310,12 +355,12 @@ namespace Sculpt
 					Vector3 edge = v1_ - v2_;
 					len = edge.magnitude;
 
-					offset = angle * len * 0.12f;
+					offset = 1.0f; // angle * len * 0.12f;
 					if ((edge.x * (n1.x - n2.x) + edge.y * (n1.y - n2.y) + edge.z * (n1.z - n2.z)) < 0)
 						offset = -offset;
 				}
 				
-				vAr[id] = (v1_ + v2_) * 0.5f + nAr[id] * offset;
+				vAr[ind] = mesh.transform.InverseTransformPoint( (v1_ + v2_) * 0.5f + nAr[ind] * offset);
 
 
 				vMidTest.ringVertices.Add(iv1);
@@ -339,9 +384,136 @@ namespace Sculpt
 			triangles.Add(newTri);
 			
 		}
-	}
+
+
+		/**
+ * Fill the triangles. It checks if a newly vertex has been created at the middle
+ * of the edge. If several split are needed, it first chooses the split that minimize
+ * the valence of the vertex.
+ */
+		private List<int> fillTriangles(List<int> iTris)
+		{
+			int[] key = new int[2];
+			
+			
+			int nbTris = iTris.Count;
+			List<int> iTrisNext = new List<int>();
+			for (var i = 0; i < nbTris; ++i)
+			{
+				int iTri = iTris[i];
+				int j = iTri * 3;
+				int iv1 = iAr[j];
+				int iv2 = iAr[j + 1];
+				int iv3 = iAr[j + 2];
+				
+				Dictionary<int, int> vMap = this.verticesMap;
+				if (iv1 < iv2){
+					key[0] = iv1;
+					key[1] = iv2;
+				}else{
+					key[0] = iv2;
+					key[1] = iv1;
+				}
+				int val1 = vMap[key[0]];
+				if (iv2 < iv3){
+					key[0] = iv2;
+					key[1] = iv3;
+				}else
+				{
+					key[0] = iv3;
+					key[1] = iv2;
+				}
+				int val2 = vMap[key[0]];
+				if (iv1 < iv3){
+					key[0] = iv1;
+					key[1] = iv3;
+				}else{
+					key[0] = iv3;
+					key[1] = iv1;
+				}
+				int val3 = vMap[key[0]];
+				
+				int num1 = vertices[iv1].ringVertices.Count;
+				int num2 = vertices[iv2].ringVertices.Count;
+				int num3 = vertices[iv3].ringVertices.Count;
+				int split = 0;
+				if (val1 != 0)
+				{
+					if (val2 != 0)
+					{
+						if (val3 != 0)
+						{
+							if (num1 < num2 && num1 < num3) split = 2;
+							else if (num2 < num3) split = 3;
+							else split = 1;
+						}
+						else if (num1 < num3) split = 2;
+						else split = 1;
+					}
+					else if (val3 != 0 && num2 < num3) split = 3;
+					else split = 1;
+				}
+				else if (val2 != 0)
+				{
+					if (val3 != 0 && num2 < num1) split = 3;
+					else split = 2;
+				}
+				else if (val3 != 0) split = 3;
+				
+				if (split == 1)
+					this.fillTriangle(iTri, iv1, iv2, iv3, val1);
+				else if (split == 2)
+					this.fillTriangle(iTri, iv2, iv3, iv1, val2);
+				else if (split == 3)
+					this.fillTriangle(iTri, iv3, iv1, iv2, val3);
+				else continue;
+				iTrisNext.Add(iTri);
+				iTrisNext.Add( triangles.Count - 1);
+			}
+			return iTrisNext;
+		}
+		
+		
+		/** Fill crack on one triangle */
+		private void fillTriangle(int iTri, int iv1, int iv2, int iv3, int ivMid)
+		{
+
+			
+			int j = iTri * 3;
+			iAr[j] = iv1;
+			iAr[j + 1] = ivMid;
+			iAr[j + 2] = iv3;
+			Octree leaf = triangles[iTri].leaf;
+			List<int> iTrisLeaf = leaf.iTris;
+			
+			Vertex v2 = vertices[iv2];
+			Vertex v3 = vertices[iv3];
+			Vertex vMid = vertices[ivMid];
+
+			vMid.ringVertices.Add(iv3);
+			v3.ringVertices.Add(ivMid);
+			
+			int iNewTri = triangles.Count;
+			vMid.tIndices.Add(iTri);
+			vMid.tIndices.Add(iNewTri);
+			Triangle newTri = new Triangle(iNewTri);
+			j = iNewTri * 3;
+			iAr[j] = ivMid;
+			iAr[j + 1] = iv2;
+			iAr[j + 2] = iv3;
+
+			newTri.leaf = leaf;
+
+			
+			v3.tIndices.Add(iNewTri);
+			v2.replaceTriangle(iTri, iNewTri);
+			
+			iTrisLeaf.Add(iNewTri);
+			triangles.Add(newTri);
+		}
+	} // class
+}// namespace
 
 
 
-}
 

@@ -76,16 +76,13 @@
      <Compile Include="Assets\Scripts\Tools\ShadowTool.cs" />
      <Compile Include="Assets\Scripts\Utils\Geometry.cs" />
      <Compile Include="Assets\Scripts\Utils\MathHelper.cs" />
+     <Compile Include="Assets\Scripts\Wireframe.cs" />
      <Compile Include="Assets\TargetTransformer.cs" />
-     <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Basic.shader" />
      <None Include="Assets\Shaders\MultipleLights.shader" />
      <None Include="Assets\Shaders\VertexInputSimple.shader" />
-     <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-BasicOutline.shader" />
      <None Include="Assets\Shaders\Wireframe.shader" />
      <None Include="Assets\Shaders\TestSurfaceShader.shader" />
-     <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-LightedOutline.shader" />
      <None Include="Assets\Shaders\SpecularInput.shader" />
-     <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Lighted.shader" />
      <None Include="Assets\Shaders\SelectVertexColorShader.shader" />
      <None Include="Assets\Shaders\TestSurfaceShader2.shader" />
      <None Include="Assets\Shaders\SpecularInputFrag.shader" />

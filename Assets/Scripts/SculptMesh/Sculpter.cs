@@ -238,14 +238,6 @@ namespace Sculpt{
 
 
 
-//			// topology here....
-//			if(activated){
-//				setAdaptiveParameters(radius*radius);
-//				topo.center = sculptMesh.intersectionPoint;
-//				Debug.DrawLine(mainCamera.transform.position,topo.center);
-//				topo.Subdivision(iTrisSelected, d2Max);
-//			}
-
 
 
 			for(int i = 0; i < nbVertsSelected; i++){
@@ -267,9 +259,19 @@ namespace Sculpt{
 			}
 
 			if(iVertsInFront.Count > 0){
+
+				// topology here....
+				if(activated){
+					setAdaptiveParameters(radius*radius);
+					topo.center = sculptMesh.intersectionPoint;
+					Debug.DrawLine(mainCamera.transform.position,topo.center);
+					topo.Subdivision(iTrisSelected, d2Max);
+				}
+
+
 				switch(tool){
 				case Tool.BRUSH:
-					brush(center, iVertsInRadius, iVertsInFront, radius, intensity);
+					//brush(center, iVertsInRadius, iVertsInFront, radius, intensity);
 					break;
 				case Tool.DRAG:
 					drag(center, this.dragDir, iVertsInFront, radius);

@@ -628,7 +628,7 @@ namespace Sculpt{
 
 
 		/** Get more triangles (n-ring) */
-		public void expandsTriangles(List<int>iTris, int nRing)
+		public void expandsTriangles(List<int> iTris, int nRing)
 		{
 			long triangleTagMask = ++Triangle.tagMask;
 			int nbTris = iTris.Count;
