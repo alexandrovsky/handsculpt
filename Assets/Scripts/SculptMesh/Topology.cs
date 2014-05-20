@@ -151,30 +151,23 @@ namespace Sculpt
 			Triangle t2 = new Triangle(triangles.Count);
 			t2.leaf = leaf;
 			triangles.Add(t2);
+			leaf.iTris.Add(t2.id);
 
 
 			Triangle t3 = new Triangle(triangles.Count);
 			t3.leaf = leaf;
-
 			triangles.Add(t3);
-
+			leaf.iTris.Add(t3.id);
 
 			Triangle t4 = new Triangle(triangles.Count);
 			t4.leaf = leaf;
-
 			triangles.Add(t4);
+			leaf.iTris.Add(t4.id);
 
-			mesh.updateTriangleAabbAndNormal(t);
-			mesh.updateTriangleAabbAndNormal(t2);
-			mesh.updateTriangleAabbAndNormal(t3);
-			mesh.updateTriangleAabbAndNormal(t4);
 
 			// rederect old triangles:
-			v2.tIndices.Remove(iTri);
-			v2.tIndices.Add(t2.id);
-
-			v3.tIndices.Remove(iTri);
-			v3.tIndices.Add(t3.id);
+			v2.replaceTriangle(iTri, t2.id);
+			v3.replaceTriangle(iTri, t3.id);
 
 			// add triangles to new vertices:
 

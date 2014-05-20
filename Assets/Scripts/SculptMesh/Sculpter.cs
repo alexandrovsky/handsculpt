@@ -62,7 +62,7 @@ namespace Sculpt{
 		// Use this for initialization
 		void Start () {
 			sculptMesh = GetComponent<SculptMesh>();
-			tool = Tool.DRAG;
+			tool = Tool.BRUSH;
 			Debug.Log("sculpter");
 			mainCamera = Camera.main;
 
@@ -141,10 +141,10 @@ namespace Sculpt{
 				this.activated = false;
 			}
 
-//			if( Input.GetKeyDown(KeyCode.D) )
-//			{
-//				sculptMesh.drawDebug = !sculptMesh.drawDebug;
-//			}
+			if( Input.GetKeyDown(KeyCode.D) )
+			{
+				sculptMesh.drawDebug = !sculptMesh.drawDebug;
+			}
 
 			if( Input.GetKeyDown(KeyCode.Plus) )
 			{
@@ -272,17 +272,17 @@ namespace Sculpt{
 				}
 
 
-//				switch(tool){
-//				case Tool.BRUSH:
-//					brush(center, iVertsInRadius, iVertsInFront, radius, intensity);
-//					break;
-//				case Tool.DRAG:
-//					drag(center, this.dragDir, iVertsInFront, radius);
-//					break;
-//				case Tool.SMOOTH:
-//					smooth(iVertsInFront, intensity);
-//					break;
-//				}
+				switch(tool){
+				case Tool.BRUSH:
+					brush(center, iVertsInRadius, iVertsInFront, radius, intensity);
+					break;
+				case Tool.DRAG:
+					drag(center, this.dragDir, iVertsInFront, radius);
+					break;
+				case Tool.SMOOTH:
+					smooth(iVertsInFront, intensity);
+					break;
+				}
 			}
 
 		}

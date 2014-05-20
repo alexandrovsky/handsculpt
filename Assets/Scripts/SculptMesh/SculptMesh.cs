@@ -54,7 +54,7 @@ namespace Sculpt{
 //			drawITrisInCells();
 			//drawITrisCandidates();
 //			drawOctree(this.octree);
-//			drawTriangleAabbs();
+			drawTriangleAabbs();
 		}
 
 
