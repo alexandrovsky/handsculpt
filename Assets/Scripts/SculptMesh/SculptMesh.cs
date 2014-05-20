@@ -628,11 +628,11 @@ namespace Sculpt{
 
 
 		/** Get more triangles (n-ring) */
-		public void expandsTriangles(List<int> iTris, int nRing)
+		public void expandsTriangles(List<int>iTris, int nRing)
 		{
 			long triangleTagMask = ++Triangle.tagMask;
 			int nbTris = iTris.Count;
-			int[] iAr = this.indexArray;
+
 			int i = 0;
 			int j = 0;
 			for (i = 0; i < nbTris; ++i){
@@ -644,14 +644,13 @@ namespace Sculpt{
 				--nRing;
 				for (i = iBegin; i < nbTris; ++i)
 				{
-					int ind = iTris[i] * 3;
-					List<int> iTris1 = vertices[ind].tIndices;
-					List<int> iTris2 = vertices[ind + 1].tIndices;
-					List<int> iTris3 = vertices[ind + 2].tIndices;
+					var ind = iTris[i] * 3;
+					List<int> iTris1 = vertices[indexArray[ind]].tIndices;
+					List<int> iTris2 = vertices[indexArray[ind + 1]].tIndices;
+					List<int> iTris3 = vertices[indexArray[ind + 2]].tIndices;
 					int nbTris1 = iTris1.Count;
 					int nbTris2 = iTris2.Count;
 					int nbTris3 = iTris3.Count;
-
 					for (j = 0; j < nbTris1; ++j)
 					{
 						Triangle t1 = triangles[iTris1[j]];
@@ -684,8 +683,8 @@ namespace Sculpt{
 				nbTris = iTris.Count;
 			}
 		}
-
-
+		
+		
 		/** Get more vertices (n-ring) */
 		public void expandsVertices(List<int>iVerts, int nRing)
 		{

@@ -72,14 +72,13 @@ namespace Sculpt
 			// ---
 			initSplit(iTris, iTrisSubd, split, detailMaxSquared);
 
-			if(iTrisSubd.Count > 20 ){
+			if(iTrisSubd.Count > 20 )
+			{
 				mesh.expandsTriangles(iTrisSubd, 3);
 			}
 
 			for(int i = 0; i < iTrisSubd.Count; i++){
-				Vector3[] vAr = mesh.vertexArray;
-				int[] iAr = mesh.indexArray;
-				
+
 				int id = iTrisSubd[i] * 3;
 				
 				Vector3 v1 = mesh.transform.TransformPoint(vAr[ iAr[id] ]);
@@ -96,7 +95,13 @@ namespace Sculpt
 			checkArrayLength(iTrisSubd.Count);
 
 
+			while(split.Count < iTrisSubd.Count){
+				split.Add(0);
+			}
+
 			subdivideTriangles(iTrisSubd, split, detailMaxSquared);
+
+
 
 
 			List<int> newTriangles = new List<int>();
@@ -167,6 +172,15 @@ namespace Sculpt
 					vertices[ind].sculptFlag = vertexSculptMask - 1;
 				}
 			}
+
+
+
+//			System.Array.Resize(ref mesh.vertexArray, vertices.Count);
+//			System.Array.Resize(ref mesh.normalArray, vertices.Count);
+//			System.Array.Resize(ref mesh.colorArray, vertices.Count);
+//			System.Array.Resize(ref mesh.indexArray, triangles.Count * 3);
+			
+			
 			return iTrisMask;
 		}
 
@@ -248,6 +262,10 @@ namespace Sculpt
 			
 			int id = iTri * 3;
 
+			int ind1 = iAr[id];
+			int ind2 = iAr[id + 1];
+			int ind3 = iAr[id + 2];
+
 			v1 = mesh.transform.TransformPoint(vAr[ iAr[id] ]);
 			v2 = mesh.transform.TransformPoint(vAr[ iAr[id+1] ]);
        		v3 = mesh.transform.TransformPoint(vAr[ iAr[id+2] ]);
@@ -256,32 +274,32 @@ namespace Sculpt
 //			Debug.DrawLine(v1, v2, Color.green);
 //			Debug.DrawLine(v1, v3, Color.green);
 
-			if (this.checkPlane)
-			{
-				var po = this.planeOrigin;
-				var pn = this.planeNormal;
-
-				if(Vector3.Dot(pn, v1 - po) < 0.0f &&
-				   Vector3.Dot(pn, v2 - po) < 0.0f &&
-				   Vector3.Dot(pn, v3 - po) < 0.0f){
-					return 0;
-				}
-
-//				if (vec3.dot(pn, vec3.sub(tmp, v1, po)) < 0.0 &&
-//				    vec3.dot(pn, vec3.sub(tmp, v2, po)) < 0.0 &&
-//				    vec3.dot(pn, vec3.sub(tmp, v3, po)) < 0.0)
+//			if (this.checkPlane)
+//			{
+//				var po = this.planeOrigin;
+//				var pn = this.planeNormal;
+//
+//				if(Vector3.Dot(pn, v1 - po) < 0.0f &&
+//				   Vector3.Dot(pn, v2 - po) < 0.0f &&
+//				   Vector3.Dot(pn, v3 - po) < 0.0f){
 //					return 0;
-			}
-			else if (checkInsideSphere == true)
-			{
-				if (!Geometry.triangleInsideSphere(this.center, this.radiusSquared, v1, v2, v3))
-				{
-					if (!Geometry.pointInsideTriangle(this.center, v1, v2, v3))
-					{
-						return 0;
-					}
-				}
-			}
+//				}
+//
+////				if (vec3.dot(pn, vec3.sub(tmp, v1, po)) < 0.0 &&
+////				    vec3.dot(pn, vec3.sub(tmp, v2, po)) < 0.0 &&
+////				    vec3.dot(pn, vec3.sub(tmp, v3, po)) < 0.0)
+////					return 0;
+//			}
+//			else if (checkInsideSphere == true)
+//			{
+//				if (!Geometry.triangleInsideSphere(this.center, this.radiusSquared, v1, v2, v3))
+//				{
+//					if (!Geometry.pointInsideTriangle(this.center, v1, v2, v3))
+//					{
+//						return 0;
+//					}
+//				}
+//			}
 
 
 			
@@ -309,13 +327,10 @@ namespace Sculpt
 		{
 			
 			int[] key = new int[2];
-			
-			
-			List<Vertex> vertices = mesh.vertices;
-			List<Triangle> triangles = mesh.triangles;
 
-			var leaf = triangles[iTri].leaf;
-			var iTrisLeaf = leaf.iTris;
+
+			Octree leaf = triangles[iTri].leaf;
+			List<int> iTrisLeaf = leaf.iTris;
 			Vertex v1 = vertices[iv1];
 			Vertex v2 = vertices[iv2];
 			Vertex v3 = vertices[iv3];
@@ -324,19 +339,22 @@ namespace Sculpt
 			key[0] = Mathf.Min(iv1, iv2);
 			key[1] = Mathf.Max(iv1, iv2);
 			bool isNewVertex = false;
+
 			int ivMid = -1;
+
 			if( !vMap.ContainsKey(key[0]) ) 
 			{
 				ivMid = vertices.Count;
 				isNewVertex = true;
-				vMap[key[0]] = ivMid;
+				vMap.Add(key[0],ivMid);
 
 			}else{
 				ivMid = vMap[key[0]];
 			}
-			
+
+
 			v3.ringVertices.Add(ivMid);
-			var id = iTri * 3;
+			int id = iTri * 3;
 			iAr[id] = iv1;
 			iAr[id + 1] = ivMid;
 			iAr[id + 2] = iv3;
@@ -346,9 +364,13 @@ namespace Sculpt
 			id = iNewTri * 3;
 
 
+			if(id >= iAr.Length){
+				Debug.Log("out of bounds");
+			}
+
 			iAr[id] = ivMid;
 			iAr[id + 1] = iv2;
-			iAr[id + 2] =iv3;
+			iAr[id + 2] = iv3;
 
 			
 			v3.tIndices.Add(iNewTri);
@@ -380,7 +402,10 @@ namespace Sculpt
 
 				Vector3 n1n2 = n1+n2;
 				float len = 1 / n1n2.magnitude;
-				nAr[ind] = mesh.transform.InverseTransformPoint( n1n2 * len);
+
+				Vector3 normal = n1n2 * len;
+
+				nAr[ind] = mesh.transform.InverseTransformPoint( normal);
 				
 				cAr[ind] = (c1 + c2) * 0.5f;//[id] = (c1 + c2) * 0.5f;
 
@@ -397,12 +422,13 @@ namespace Sculpt
 					len = edge.magnitude;
 
 					offset = 1.0f; // angle * len * 0.12f;
-					if ((edge.x * (n1.x - n2.x) + edge.y * (n1.y - n2.y) + edge.z * (n1.z - n2.z)) < 0)
+					if ((edge.x * (n1.x - n2.x) + edge.y * (n1.y - n2.y) + edge.z * (n1.z - n2.z)) < 0){
 						offset = -offset;
+					}
 				}
 				
-				vAr[ind] = mesh.transform.InverseTransformPoint( (v1_ + v2_) * 0.5f + nAr[ind] * offset);
-
+				//vAr[ind] = mesh.transform.InverseTransformPoint( (v1_ + v2_) * 0.5f  + normal * offset);
+				vAr[ind] = mesh.transform.InverseTransformPoint( (v1_ + v2_) * 0.5f );
 
 
 				vMidTest.ringVertices.Add(iv1);
