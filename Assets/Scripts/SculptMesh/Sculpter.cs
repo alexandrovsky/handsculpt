@@ -41,12 +41,9 @@ namespace Sculpt{
 		Vector3 gizmoPos = Vector3.zero;
 		float gizmoRadius = 1.0f;
 
-		float d2Min = 0.0f; //uniform refinement of mesh (min edge length)
 		float d2Max = 0.0f; //uniform refinement of mesh (max edge length)
-		float d2Thickness = 0.5f; //distance between 2 vertices before split/merge
-		float d2Move = 0.0f; //max displacement of vertices per step
 		float detailSubdivision = 0.75f; //maximal edge length before we subdivide it
-		float detailDecimation = 0.1f; //minimal edge length before we collapse it (dependent of detailSubdivision_)
+
 
 
 
@@ -72,10 +69,9 @@ namespace Sculpt{
 		/** Set adaptive parameters */
 	 	void setAdaptiveParameters(float radiusSquared)
 		{
-			this.d2Max = radiusSquared * (1.1f - this.detailSubdivision) * 0.2f;
-			this.d2Min = this.d2Max / 4.2025f;
-			this.d2Move = this.d2Min * 0.2375f;
-			this.d2Thickness = (4.0f * this.d2Move + this.d2Max / 3.0f) * 1.1f;
+			//this.d2Max = radiusSquared * (1.1f - this.detailSubdivision) * 0.2f;
+			this.d2Max = radiusSquared * this.detailSubdivision;
+
 		}
 
 		void rotate(){
@@ -263,12 +259,12 @@ namespace Sculpt{
 
 				// topology here....
 				if(activated){
-//					setAdaptiveParameters(radius*radius);
+					setAdaptiveParameters(radius*radius);
 //					topo.center = sculptMesh.intersectionPoint;
 //					Debug.DrawLine(mainCamera.transform.position,topo.center);
-//					topo.Subdivision(iTrisSelected, d2Max);
+					topo.Subdivision(iTrisSelected, d2Max);
 
-					topo.Subdivision(sculptMesh.pickedTriangle);
+					//topo.Subdivision(sculptMesh.pickedTriangle);
 				}
 
 
