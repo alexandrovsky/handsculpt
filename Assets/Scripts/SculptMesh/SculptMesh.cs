@@ -686,6 +686,38 @@ namespace Sculpt{
 		}
 
 
+		/** Get more vertices (n-ring) */
+		public void expandsVertices(List<int>iVerts, int nRing)
+		{
+			long vertexTagMask = ++Vertex.TagMask;
+			int nbVerts = iVerts.Count;
+			int i = 0;
+			int j = 0;
+			for (i = 0; i < nbVerts; ++i)
+				vertices[iVerts[i]].tagFlag = vertexTagMask;
+			int iBegin = 0;
+			while (nRing > 0)
+			{
+				--nRing;
+				for (i = iBegin; i < nbVerts; ++i)
+				{
+					List<int> ring = vertices[iVerts[i]].ringVertices;
+					int nbRing = ring.Count;
+					for (j = 0; j < nbRing; ++j)
+					{
+						Vertex vRing = vertices[ring[j]];
+						if (vRing.tagFlag != vertexTagMask)
+						{
+							vRing.tagFlag = vertexTagMask;
+							iVerts.Add(ring[j]);
+						}
+					}
+				}
+				iBegin = nbVerts;
+				nbVerts = iVerts.Count;
+			}
+		}
+
 		/** Compute average normal of a group of vertices with culling */
 		public Vector3 areaNormal(List<int>iVerts)
 		{

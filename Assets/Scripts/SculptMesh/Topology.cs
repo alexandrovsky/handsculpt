@@ -126,7 +126,48 @@ namespace Sculpt
 			while (newTriangles.Count > 0)
 				newTriangles = this.fillTriangles(newTriangles);
 
-			return iTrisSubd;
+			nbTriangles = triangles.Count;
+			for(int i = nbTrianglesOld;  i < nbTriangles; i++){
+				iTrisMask.Add(i);
+			}
+
+
+			List<int> vNew = new List<int>();
+			int nbVertices = vertices.Count;
+			for (int i = nbVertsInit; i < nbVertices; ++i){
+				vNew.Add(i);
+			}
+
+			int nbVNew = vNew.Count;
+			mesh.expandsVertices(vNew, 1);
+
+
+			if (!this.linearSubdivision)
+			{
+//				var smoother = new Sculpt();
+//				smoother.mesh_ = mesh;
+//				smoother.smoothFlat(vNew.slice(nbVNew), 1.0);
+			}
+
+			
+			long vertexSculptMask = Vertex.SculptMask;
+			nbVNew = vNew.Count;
+			int j = 0;
+			for (int i = 0; i < nbVNew; ++i)
+			{
+				var ind = vNew[i];
+				j = ind * 3;
+
+
+				Vector3 d  = mesh.transform.TransformPoint(vAr[j]);
+
+				if (Vector3.Distance(d, center) < this.radiusSquared){
+					vertices[ind].sculptFlag = vertexSculptMask;
+				}else{
+					vertices[ind].sculptFlag = vertexSculptMask - 1;
+				}
+			}
+			return iTrisMask;
 		}
 
 
@@ -361,6 +402,7 @@ namespace Sculpt
 				}
 				
 				vAr[ind] = mesh.transform.InverseTransformPoint( (v1_ + v2_) * 0.5f + nAr[ind] * offset);
+
 
 
 				vMidTest.ringVertices.Add(iv1);
