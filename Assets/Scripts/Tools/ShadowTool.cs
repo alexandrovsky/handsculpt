@@ -110,7 +110,7 @@ public class ShadowTool : ManipulationHandTool
 		this.iTrisSelected = sculpter.iTrisSelected;
 		this.iVertsSelected = sculpter.iVertsSelected;
 
-		sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, true);
+		sculptMesh.updateMesh(this.iTrisSelected, true);
 		
 		sculptMesh.pushMeshData();
 

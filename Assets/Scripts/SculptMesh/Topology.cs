@@ -36,13 +36,204 @@ namespace Sculpt
 
 		SculptMesh mesh;
 
+
+		//
+		List<Vector3> vertexList = null;
+		List<Vector3> normalList = null;
+		List<Color> colorList = null;
+		List<int> indexList = null;
+
+		int[] indexArray = null;
+		Dictionary<uint,int> newVectices = null;
+
 		public Topology (SculptMesh mesh)
 		{
 			this.mesh = mesh;
+			this.vertices = mesh.vertices;
+			this.triangles = mesh.triangles;
+			this.vertexList = new List<Vector3>(mesh.vertexArray);
+			this.normalList = new List<Vector3>(mesh.normalArray);
+			this.colorList = new List<Color>(mesh.colorArray);
+			this.indexList = new List<int>(mesh.indexArray);
+			this.indexArray = mesh.indexArray;
+
+			this.newVectices = new Dictionary<uint,int>();
+
 		}
 
+		public void Subdivision(int iTri){
+
+			newVectices.Clear();
+			Subdivide4Triangle(iTri);
+
+			mesh.vertexArray = vertexList.ToArray();
+			if (normalList.Count > 0)
+				mesh.normalArray = normalList.ToArray();
+			if (colorList.Count>0)
+				mesh.colorArray = colorList.ToArray();
+//			if (uv.Count>0)
+//				mesh.uv = uv.ToArray();
+//			if (uv1.Count>0)
+//				mesh.uv1 = uv1.ToArray();
+//			if (uv2.Count>0)
+//				mesh.uv2 = uv2.ToArray();
+			
+			mesh.indexArray = indexList.ToArray();
+			mesh.vertices = this.vertices;
+			mesh.triangles = this.triangles;
+		}
+
+		public void Subdivide4Triangle(int iTri)
+		{
+			int idx = iTri * 3;
+			int i1 = indexArray[idx];
+			int i2 = indexArray[idx + 1];
+			int i3 = indexArray[idx + 2];
+
+			Vertex v1 = vertices[i1];
+			Vertex v2 = vertices[i2];
+			Vertex v3 = vertices[i3];
+
+			Triangle t = triangles[iTri];
+			Octree leaf = t.leaf;
 
 
+			int a = GetNewVertex4(i1, i2);
+			Vertex vA = new Vertex(a);
+			vA.ringVertices.Add(i1);
+			vA.ringVertices.Add(i2);
+			v1.replaceRingVertex(i2, a);
+			v2.replaceRingVertex(i1, a);
+			vertices.Add(vA);
+
+			int b = GetNewVertex4(i2, i3);
+			Vertex vB = new Vertex(b);
+			vB.ringVertices.Add(i2);
+			vB.ringVertices.Add(i3);
+			v2.replaceRingVertex(i3, b);
+			v3.replaceRingVertex(i2, b);
+			vertices.Add(vB);
+
+			int c = GetNewVertex4(i3, i1);
+			Vertex vC = new Vertex(c);
+			vC.ringVertices.Add(i3);
+			vC.ringVertices.Add(i1);
+			v3.replaceRingVertex(i1, c);
+			v1.replaceRingVertex(i3, c);
+			vertices.Add(vC);
+
+			//draw new triangle
+
+
+			Vector3 pA = mesh.transform.TransformPoint(vertexList[a]);
+			Vector3 pB = mesh.transform.TransformPoint(vertexList[b]);
+			Vector3 pC = mesh.transform.TransformPoint(vertexList[c]);
+
+			Debug.DrawLine(pA, pB, Color.red, 3);
+			Debug.DrawLine(pB, pC, Color.green, 3);
+			Debug.DrawLine(pC, pA, Color.blue, 3);
+			 
+
+			//redirect old triangle: 
+			indexList[idx] = i1;
+			indexList[idx + 1] = a;
+			indexList[idx + 2] = c;
+
+			// add new rendering triangles
+			indexList.Add(i2);   indexList.Add(b);   indexList.Add(a);
+			indexList.Add(i3);   indexList.Add(c);   indexList.Add(b);
+			indexList.Add(a);   indexList.Add(b);   indexList.Add(c); // center triangle
+
+
+			// add new logical triangles
+
+
+			Triangle t2 = new Triangle(triangles.Count);
+			t2.leaf = leaf;
+			triangles.Add(t2);
+
+
+			Triangle t3 = new Triangle(triangles.Count);
+			t3.leaf = leaf;
+
+			triangles.Add(t3);
+
+
+			Triangle t4 = new Triangle(triangles.Count);
+			t4.leaf = leaf;
+
+			triangles.Add(t4);
+
+			mesh.updateTriangleAabbAndNormal(t);
+			mesh.updateTriangleAabbAndNormal(t2);
+			mesh.updateTriangleAabbAndNormal(t3);
+			mesh.updateTriangleAabbAndNormal(t4);
+
+			// rederect old triangles:
+			v2.tIndices.Remove(iTri);
+			v2.tIndices.Add(t2.id);
+
+			v3.tIndices.Remove(iTri);
+			v3.tIndices.Add(t3.id);
+
+			// add triangles to new vertices:
+
+
+			vertices[a].tIndices.Add(t.id);
+			vertices[a].tIndices.Add(t2.id);
+			vertices[a].tIndices.Add(t4.id);
+
+			vertices[b].tIndices.Add(t2.id);
+			vertices[b].tIndices.Add(t3.id);
+			vertices[b].tIndices.Add(t4.id);
+
+			vertices[c].tIndices.Add(t3.id);
+			vertices[c].tIndices.Add(t.id);
+			vertices[c].tIndices.Add(t4.id);
+
+
+
+
+
+//			// draw old triangle
+//			{
+//				Vector3 p1 = mesh.transform.TransformPoint(vertexList[ indexList[idx]]);
+//				Vector3 p2 = mesh.transform.TransformPoint(vertexList[indexList[idx +1]]);
+//				Vector3 p3 = mesh.transform.TransformPoint(vertexList[indexList[idx +2]]);
+//
+//				Debug.DrawLine(p1, p2, Color.cyan, 5);
+//				Debug.DrawLine(p2, p3, Color.magenta, 5);
+//				Debug.DrawLine(p3, p1, Color.yellow, 5);
+//			}
+			
+		}
+
+		int GetNewVertex4(int i1, int i2)
+		{
+			int newIndex = vertexList.Count;
+			uint t1 = ((uint)i1 << 16) | (uint)i2;
+			uint t2 = ((uint)i2 << 16) | (uint)i1;
+			if (newVectices.ContainsKey(t2))
+				return newVectices[t2];
+			if (newVectices.ContainsKey(t1))
+				return newVectices[t1];
+			
+			newVectices.Add(t1,newIndex);
+			
+			vertexList.Add((vertexList[i1] + vertexList[i2]) * 0.5f);
+			if (normalList.Count>0)
+				normalList.Add((normalList[i1] + normalList[i2]).normalized);
+			if (colorList.Count>0)
+				colorList.Add((colorList[i1] + colorList[i2]) * 0.5f);
+//			if (uv.Count>0)
+//				uv.Add((uv[i1] + uv[i2])*0.5f);
+//			if (uv1.Count>0)
+//				uv1.Add((uv1[i1] + uv1[i2])*0.5f);
+//			if (uv2.Count>0)
+//				uv2.Add((uv2[i1] + uv2[i2])*0.5f);
+			
+			return newIndex;
+		}
 
 		public void Subdivision(List<int> iTris, float detailMaxSquared){
 			List<Triangle> triangles = this.mesh.triangles;

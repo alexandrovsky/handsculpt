@@ -29,7 +29,7 @@ namespace Sculpt{
 		List<Octree> leavesUpdate; // leafes for mesh update
 
 
-		int pickedTriangle = -1;
+		public int pickedTriangle = -1;
 		public Vector3 intersectionPoint = Vector3.zero;
 
 		List<int> pickedVertices;
@@ -319,7 +319,7 @@ namespace Sculpt{
 
 		}
 
-		void updateTriangleAabbAndNormal(Triangle t){
+		public void updateTriangleAabbAndNormal(Triangle t){
 			int iTri = t.id;
 			
 			int iVert1 = indexArray[3 * iTri + 0];
@@ -437,7 +437,7 @@ namespace Sculpt{
 			mesh.colors = this.colorArray;
 		}
 
-		public void updateMesh(List<int> iTris, List<int> iVerts, bool bUpdateOctree){
+		public void updateMesh(List<int> iTris, bool bUpdateOctree){
 			if(bUpdateOctree){
 				updateTrianglesAabbAndNormal(iTris);
 				updateOctree(iTris);

@@ -89,7 +89,7 @@ public class PointingTool : ManipulationHandTool {
 		this.iTrisSelected = sculpter.iTrisSelected;
 		this.iVertsSelected = sculpter.iVertsSelected;
 
-		sculptMesh.updateMesh(sculpter.iTrisSelected, sculpter.iVertsSelected, true);
+		sculptMesh.updateMesh(sculpter.iTrisSelected, true);
 		
 		sculptMesh.pushMeshData();
 	}

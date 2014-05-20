@@ -112,7 +112,7 @@ public class GrabTool : ManipulationHandTool
 		}
 
 
-		sculptMesh.updateMesh(sculpter.iTrisSelected, sculpter.iVertsSelected, !sculpter.activated);
+		sculptMesh.updateMesh(sculpter.iTrisSelected, !sculpter.activated);
 		sculptMesh.pushMeshData();
 
 	}

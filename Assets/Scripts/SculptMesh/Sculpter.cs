@@ -133,8 +133,9 @@ namespace Sculpt{
 			if(Input.GetMouseButtonUp(0)){
 				Debug.Log("DRAG ended");
 			}
-			
-			if(Input.GetMouseButton(0) ){
+
+			if(Input.GetMouseButtonDown(0) ){
+			//if(Input.GetMouseButton(0) ){
 				this.activated = true;
 			}else{
 				this.activated = false;
@@ -203,7 +204,7 @@ namespace Sculpt{
 			sculpt(mainCamera.transform.forward, pickedVertices, 
 			       center, sculptMesh.worldRadiusSqr, intensity,this.tool);
 
-			sculptMesh.updateMesh(this.iTrisSelected, this.iVertsSelected, !dragging);
+			sculptMesh.updateMesh(this.iTrisSelected, !dragging);
 
 			sculptMesh.pushMeshData();
 		}
@@ -262,24 +263,26 @@ namespace Sculpt{
 
 				// topology here....
 				if(activated){
-					setAdaptiveParameters(radius*radius);
-					topo.center = sculptMesh.intersectionPoint;
-					Debug.DrawLine(mainCamera.transform.position,topo.center);
-					topo.Subdivision(iTrisSelected, d2Max);
+//					setAdaptiveParameters(radius*radius);
+//					topo.center = sculptMesh.intersectionPoint;
+//					Debug.DrawLine(mainCamera.transform.position,topo.center);
+//					topo.Subdivision(iTrisSelected, d2Max);
+
+					topo.Subdivision(sculptMesh.pickedTriangle);
 				}
 
 
-				switch(tool){
-				case Tool.BRUSH:
-					//brush(center, iVertsInRadius, iVertsInFront, radius, intensity);
-					break;
-				case Tool.DRAG:
-					drag(center, this.dragDir, iVertsInFront, radius);
-					break;
-				case Tool.SMOOTH:
-					smooth(iVertsInFront, intensity);
-					break;
-				}
+//				switch(tool){
+//				case Tool.BRUSH:
+//					brush(center, iVertsInRadius, iVertsInFront, radius, intensity);
+//					break;
+//				case Tool.DRAG:
+//					drag(center, this.dragDir, iVertsInFront, radius);
+//					break;
+//				case Tool.SMOOTH:
+//					smooth(iVertsInFront, intensity);
+//					break;
+//				}
 			}
 
 		}
