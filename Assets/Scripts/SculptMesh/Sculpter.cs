@@ -121,11 +121,6 @@ namespace Sculpt{
 			Vector3 mousePos = Input.mousePosition;
 
 
-			if(Input.GetMouseButtonDown(0)){
-				Debug.Log("DRAG started");
-				this.dragInitPos = mousePos;
-			}
-
 			if(Input.GetMouseButtonUp(0)){
 				Debug.Log("DRAG ended");
 			}
@@ -133,6 +128,7 @@ namespace Sculpt{
 			if(Input.GetMouseButtonDown(0) ){
 			//if(Input.GetMouseButton(0) ){
 				this.activated = true;
+				this.dragInitPos = mousePos;
 			}else{
 				this.activated = false;
 			}
@@ -171,7 +167,7 @@ namespace Sculpt{
 			float r = this.radius; // * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 			pickedVertices = sculptMesh.pickVerticesInSphere(r);
 
-			Debug.Log("picked verticec" + pickedVertices.Count);
+			//Debug.Log("picked verticec" + pickedVertices.Count);
 			if(pickedVertices.Count > 0){
 				gizmoPos = sculptMesh.intersectionPoint;
 				gizmoRadius = radius;
@@ -260,11 +256,9 @@ namespace Sculpt{
 				// topology here....
 				if(activated){
 					setAdaptiveParameters(radius*radius);
-//					topo.center = sculptMesh.intersectionPoint;
-//					Debug.DrawLine(mainCamera.transform.position,topo.center);
+					topo = new Topology(sculptMesh);
 					topo.Subdivision(iTrisSelected, d2Max);
 
-					//topo.Subdivision(sculptMesh.pickedTriangle);
 				}
 
 

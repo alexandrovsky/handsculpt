@@ -16,9 +16,8 @@ namespace Sculpt
 {
 	public class Topology
 	{
-		public Vector3 center = Vector3.zero; //center point
 		Dictionary<int, int> verticesMap = new Dictionary<int, int>(); //to detect new vertices at the middle of edge (for subdivision)
-		float radiusSquared = 0.0f; //radius squared
+
 
 		List<Vertex> vertices = null;
 		List<Triangle> triangles = null;
@@ -53,11 +52,13 @@ namespace Sculpt
 		public void Subdivision(List<int> iTris, float detailMaxSquared){
 			newVectices.Clear();
 
+
 			int nbTriangles = iTris.Count;
 			for(int i = 0; i < nbTriangles; i++){
 				Triangle t = triangles[i];
 
-				//if(t.aabb.size.sqrMagnitude > detailMaxSquared)
+				float size = t.aabb.size.sqrMagnitude;
+				if(t.aabb.size.sqrMagnitude > detailMaxSquared)
 				{
 					Subdivide4Triangle(iTris[i]);
 				}
