@@ -58,7 +58,7 @@ namespace Sculpt
 				Triangle t = triangles[i];
 
 				float size = t.aabb.size.sqrMagnitude;
-				if(t.aabb.size.sqrMagnitude > detailMaxSquared)
+				if(t.aabb.size.magnitude > detailMaxSquared)
 				{
 					Subdivide4Triangle(iTris[i]);
 				}

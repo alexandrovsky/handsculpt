@@ -67,10 +67,10 @@ namespace Sculpt{
 		}
 
 		/** Set adaptive parameters */
-	 	void setAdaptiveParameters(float radiusSquared)
+	 	void setAdaptiveParameters(float radius)
 		{
 			//this.d2Max = radiusSquared * (1.1f - this.detailSubdivision) * 0.2f;
-			this.d2Max = radiusSquared * this.detailSubdivision;
+			this.d2Max = radius * this.detailSubdivision;
 
 		}
 
@@ -255,7 +255,7 @@ namespace Sculpt{
 
 				// topology here....
 				if(activated){
-					setAdaptiveParameters(radius*radius);
+					setAdaptiveParameters(radius);
 					topo = new Topology(sculptMesh);
 					topo.Subdivision(iTrisSelected, d2Max);
 

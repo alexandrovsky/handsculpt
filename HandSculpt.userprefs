@@ -1,17 +1,18 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SculptMesh/Topology.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SculptMesh/Sculpter.cs">
     <Files>
-      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="260" Column="22" />
+      <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="52" Column="3" />
+      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="258" Column="36" />
       <File FileName="Assets/Scripts/Leap/LeapUnityBridge.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/SculptMesh.cs" Line="728" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/Vertex.cs" Line="40" Column="3" />
-      <File FileName="Assets/Scripts/Mesh/MeshSubdivide.cs" Line="5" Column="19" />
+      <File FileName="Assets/Scripts/SculptMesh/SculptMesh.cs" Line="224" Column="34" />
+      <File FileName="Assets/Scripts/SculptMesh/Vertex.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Mesh/MeshSubdivide.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/SculptMesh/Triangle.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/Octree.cs" Line="112" Column="1" />
-      <File FileName="Assets/Scripts/Tools/GrabTool.cs" Line="115" Column="48" />
-      <File FileName="Assets/Scripts/Tools/PointingTool.cs" Line="92" Column="48" />
-      <File FileName="Assets/Scripts/Tools/ShadowTool.cs" Line="113" Column="43" />
+      <File FileName="Assets/Scripts/SculptMesh/Octree.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/GrabTool.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/PointingTool.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/ShadowTool.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="52" Column="3" />
     </Files>
     <Pads>
@@ -20,7 +21,7 @@
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Scripts" expanded="True">
               <Node name="SculptMesh" expanded="True">
-                <Node name="Topology.cs" selected="True" />
+                <Node name="Sculpter.cs" selected="True" />
               </Node>
             </Node>
           </Node>
@@ -36,7 +37,6 @@
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="756" />
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Sculpter.cs" line="461" />
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/Tools/ManipulationHandTool.cs" line="40" />
-      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Topology.cs" line="61" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
