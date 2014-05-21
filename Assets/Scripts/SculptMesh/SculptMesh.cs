@@ -433,7 +433,7 @@ namespace Sculpt{
 		public void pushMeshData(){
 			mesh.vertices = this.vertexArray;
 			mesh.normals = this.normalArray;
-			mesh.triangles = this.indexArray;
+			//mesh.triangles = this.indexArray;
 			mesh.colors = this.colorArray;
 		}
 
