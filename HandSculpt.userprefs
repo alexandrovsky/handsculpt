@@ -1,11 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SculptMesh/Sculpter.cs">
     <Files>
-      <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="52" Column="3" />
-      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="258" Column="36" />
+      <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="260" Column="38" />
       <File FileName="Assets/Scripts/Leap/LeapUnityBridge.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/SculptMesh.cs" Line="224" Column="34" />
+      <File FileName="Assets/Scripts/SculptMesh/SculptMesh.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/SculptMesh/Vertex.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Mesh/MeshSubdivide.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/SculptMesh/Triangle.cs" Line="1" Column="1" />
@@ -13,7 +14,6 @@
       <File FileName="Assets/Scripts/Tools/GrabTool.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Tools/PointingTool.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Tools/ShadowTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/Topology.cs" Line="52" Column="3" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">

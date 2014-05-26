@@ -62,11 +62,20 @@ public abstract class ManipulationHandTool : HandTool
 		if(iVertsSelected.Count > 0){
 			gizmoPos = sculptMesh.intersectionPoint;
 			gizmoRadius = radius * radius;
-			selector.renderer.material.color = new Color(Sculpter.SELECTED.r,
-			                                             Sculpter.SELECTED.g,
-			                                             Sculpter.SELECTED.b, 
+			selector.renderer.material.color = new Color(Sculpter.SELECTED_HIGH.r,
+			                                             Sculpter.SELECTED_HIGH.g,
+			                                             Sculpter.SELECTED_HIGH.b, 
 			                                             0.25f);
 			selector.SetActive(false);
+
+			Vector4 brushPos = new Vector4(sculptMesh.intersectionPoint.x, 
+			                               sculptMesh.intersectionPoint.y, 
+			                               sculptMesh.intersectionPoint.z,
+			                               1.0f);
+			target.renderer.material.SetVector("_BrushPos", brushPos);
+			target.renderer.material.SetFloat("_BrushRadius", radius);
+
+
 		}else{
 			gizmoPos = ray.origin + ray.direction;
 			gizmoRadius = radius * radius / mainCamera.transform.position.magnitude;

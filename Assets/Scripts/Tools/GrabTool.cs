@@ -9,7 +9,7 @@ using Sculpt;
 
 public class GrabTool : ManipulationHandTool 
 {	
-	float radius;
+
 	Vector3 grabInitPos = Vector3.zero;
 	Dictionary<int, float> selectedVertices;
 
@@ -28,7 +28,7 @@ public class GrabTool : ManipulationHandTool
 
 	}
 
-	public void ManipulateVertices(float radius){
+	public void ManipulateVertices(){
 		foreach(int v_idx in selectedVertices.Keys ){
 			float dist = selectedVertices[v_idx];
 
@@ -72,7 +72,7 @@ public class GrabTool : ManipulationHandTool
 			sculpter.dragDir = ray.direction;
 //			ray = new Ray(sculptMesh.intersectionPoint, palm.transform.position - lastPalmPosition);
 			Debug.DrawLine(ray.origin, ray.origin + ray.direction, Color.blue);
-			ManipulateVertices(radius);
+			ManipulateVertices();
 		}else{
 
 			mode = HandToolMode.Select;
@@ -107,7 +107,7 @@ public class GrabTool : ManipulationHandTool
 				float dist = delta.magnitude/radius;
 				selectedVertices.Add(v_idx, dist);
 
-				sculptMesh.colorArray[ iVertsSelected[i] ] = Sculpter.SELECTED;
+				sculptMesh.colorArray[ iVertsSelected[i] ] = Sculpter.SELECTED_HIGH;
 			}
 		}
 

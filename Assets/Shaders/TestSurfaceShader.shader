@@ -1,6 +1,8 @@
 ﻿Shader "Custom/TestSurfaceShader" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "green" {}
+		_BrushPos ("BrushPos", Vector) = (0,0,0,0)
+		_BrushRadius ("BrushRadius", float) = 0.5
 	}
 	SubShader {
 
@@ -15,18 +17,17 @@
 	LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf BlinnPhong
+		#pragma surface surf Lambert
+		//BlinnPhong
 
 		sampler2D _MainTex;
-
- 
+		float4 _BrushPos;
+ 		float _BrushRadius;
 
         struct Input {
-
             float2 uv_MainTex;
-
             float4 color: Color; // Vertex color
-
+            float3 worldPos;
         };
 
  
@@ -37,7 +38,11 @@
 
             o.Albedo = c.rgb * IN.color.rgb; // vertex RGB
             o.Alpha = c.a * IN.color.a; // vertex Alpha
-
+            
+            float curDistance = distance(_BrushPos.xyz, IN.worldPos);
+            if(curDistance < _BrushRadius){
+            	o.Albedo = float4(0.0f, 0.0f, 1.0f, 1.0f);
+            }
         }
 
 		ENDCG
