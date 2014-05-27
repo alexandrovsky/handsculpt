@@ -1,4 +1,6 @@
-﻿Shader "Custom/TestSurfaceShader" {
+﻿//http://answers.unity3d.com/questions/229829/shader-based-on-surface-distance-from-center-.html
+
+Shader "Custom/TestSurfaceShader" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "green" {}
 		_BrushPos ("BrushPos", Vector) = (0,0,0,0)

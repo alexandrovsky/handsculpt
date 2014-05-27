@@ -19,18 +19,44 @@ namespace Leap {
 		public static float ScaleFactor =  1.0f;//0.02f;
 		public static Vector3 InputScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
 		public static Vector3 InputOffset = new Vector3(0, 0, 0);
+
+
+		// Leap coordinates are in mm and Unity is in meters. So scale by 1000.
+		public const float INPUT_SCALE = 0.001f;
+		public static readonly Vector3 Z_FLIP = new Vector3(1, 1, -1);
 		
-		//For Directions
-		public static Vector3 ToUnity(this Vector lv)
-		{
-			return FlippedZ(lv);
+		// For directions.
+		public static Vector3 ToUnity(this Vector leap_vector) {
+			return FlipZ(ToVector3(leap_vector));
 		}
-		//For Acceleration/Velocity
-		public static Vector3 ToUnityScaled(this Vector lv)
-		{
-			return Scaled(FlippedZ( lv ));
+		
+		// For positions and scaled vectors.
+		public static Vector3 ToUnityScaled(this Vector leap_vector) {
+			return INPUT_SCALE * FlipZ(ToVector3(leap_vector));
 		}
-		//For Positions
+		
+		private static Vector3 FlipZ(Vector3 vector) {
+			return Vector3.Scale(vector, Z_FLIP);
+		}
+		
+		private static Vector3 ToVector3(Vector vector) {
+			return new Vector3(vector.x, vector.y, vector.z);
+		}
+	
+
+
+
+//		//For Directions
+//		public static Vector3 ToUnity(this Vector lv)
+//		{
+//			return FlippedZ(lv);
+//		}
+//		//For Acceleration/Velocity
+//		public static Vector3 ToUnityScaled(this Vector lv)
+//		{
+//			return Scaled(FlippedZ( lv ));
+//		}
+//		//For Positions
 		public static Vector3 ToUnityTranslated(this Vector lv)
 		{
 			return Offset(Scaled(FlippedZ( lv )));

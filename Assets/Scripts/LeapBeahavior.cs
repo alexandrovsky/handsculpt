@@ -5,6 +5,9 @@ using Leap;
 
 
 public class LeapBeahavior : MonoBehaviour {
+
+	public GameObject HandPrefab;
+
 	public static Leap.Controller 		m_controller	= null;
 	public Leap.Frame m_Frame;
     public static int handCount 						= 0;
@@ -19,6 +22,7 @@ public class LeapBeahavior : MonoBehaviour {
 		
 		handDict = new Dictionary<int, GameObject>();
     }
+
 
     void Update()
     {
@@ -43,19 +47,24 @@ public class LeapBeahavior : MonoBehaviour {
 		{
 			if( h.IsValid  && !handDict.ContainsKey(h.Id) ){
 				
-				GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-				sphere.transform.position =  new Vector3(h.PalmPosition.x, h.PalmPosition.y, -h.PalmPosition.z);
-				sphere.transform.localScale = new Vector3(100.0f, 20.0f, 100.0f);
-				Rigidbody sphereRigidBody = sphere.AddComponent<Rigidbody>();
-				sphereRigidBody.velocity = new Vector3(0.0f, 0.0f, 0.0f);
-				sphereRigidBody.maxAngularVelocity = 0.0f;
-				sphere.name = "hand_"+ h.Id.ToString();
-				
-				sphere.AddComponent("HandCollision");
+//				GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+//				sphere.transform.position =  new Vector3(h.PalmPosition.x, h.PalmPosition.y, -h.PalmPosition.z);
+//				sphere.transform.localScale = new Vector3(100.0f, 20.0f, 100.0f);
+//				Rigidbody sphereRigidBody = sphere.AddComponent<Rigidbody>();
+//				sphereRigidBody.velocity = new Vector3(0.0f, 0.0f, 0.0f);
+//				sphereRigidBody.maxAngularVelocity = 0.0f;
+//				sphere.name = "hand_"+ h.Id.ToString();
+//				
+//				sphere.AddComponent("HandCollision");
+
+
 				
 				
 				//sphere.rigidbody.detectCollisions = true;
-				handDict.Add(h.Id, sphere);
+//				handDict.Add(h.Id, sphere);
+
+				GameObject hand = Instantiate(HandPrefab) as GameObject;
+				handDict.Add(h.Id, hand);
 			}
 		}
 	}
@@ -74,6 +83,13 @@ public class LeapBeahavior : MonoBehaviour {
 	}
 	void HandUpdate(Frame frame){
 		foreach(Hand h in frame.Hands){
+
+//			Vector3 vFingerDir = pointable.Direction.ToUnity();
+//			Vector3 vFingerPos = pointable.TipPosition.ToUnityTranslated();
+//			
+//			fingerObject.transform.localPosition = vFingerPos;
+//			fingerObject.transform.localRotation = Quaternion.FromToRotation( Vector3.forward, vFingerDir );
+
 			handDict[h.Id].transform.position = new Vector3(h.PalmPosition.x, h.PalmPosition.y, -h.PalmPosition.z);
 			Vector3 palmNormal = new Vector3(h.PalmNormal.x, h.PalmNormal.y, h.PalmNormal.z);
 			handDict[h.Id].transform.localRotation = Quaternion.FromToRotation(Vector3.down, palmNormal); 
