@@ -39,10 +39,10 @@
             o.Albedo = c.rgb * IN.color.rgb; // vertex RGB
             o.Alpha = c.a * IN.color.a; // vertex Alpha
             
-            float curDistance = distance(_BrushPos.xyz, IN.worldPos);
-            if(curDistance < _BrushRadius){
-            	o.Albedo = float4(0.0f, 0.0f, 1.0f, 1.0f);
-            }
+//            float curDistance = distance(_BrushPos.xyz, IN.worldPos);
+//            if(curDistance < _BrushRadius){
+//            	o.Albedo = float4(0.0f, 0.0f, 1.0f, 1.0f);
+//            }
         }
 
 		ENDCG
