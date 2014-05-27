@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+﻿
+
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace Sculpt{
+
 	public enum Tool{
 		BRUSH,
 		DRAG,
@@ -306,9 +309,12 @@ namespace Sculpt{
 					v -= aNormal * fallOff * Time.deltaTime * 10;
 
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
-					sculptMesh.colorArray[v_idx] = ACTIVATED;
+//					sculptMesh.colorArray[v_idx] = ACTIVATED;
+
 				}else{
-					sculptMesh.colorArray[v_idx] = Color.Lerp(SELECTED_LOW, SELECTED_HIGH, intensity); // (SELECTED*(1-intensity) + ACTIVATED*intensity);
+
+//					sculptMesh.colorArray[v_idx] = Color.Lerp(SELECTED_LOW, SELECTED_HIGH, intensity); // (SELECTED*(1-intensity) + ACTIVATED*intensity);
+
 				}
 
 
@@ -337,9 +343,10 @@ namespace Sculpt{
 					Debug.DrawLine(v, v + dragDirection * fallOff, Color.blue);
 
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
-					sculptMesh.colorArray[v_idx] = ACTIVATED;
+//					sculptMesh.colorArray[v_idx] = ACTIVATED;
+
 				}else{
-					sculptMesh.colorArray[v_idx] = SELECTED_HIGH;
+//					sculptMesh.colorArray[v_idx] = SELECTED_HIGH;
 				}
 
 
@@ -381,9 +388,11 @@ namespace Sculpt{
 
 
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
-					sculptMesh.colorArray[v_idx] = ACTIVATED;
+//					sculptMesh.colorArray[v_idx] = ACTIVATED;
 				}else{
-					sculptMesh.colorArray[v_idx] = Color.Lerp(SELECTED_LOW, SELECTED_HIGH, intensity);
+
+//					sculptMesh.colorArray[v_idx] = Color.Lerp(SELECTED_LOW, SELECTED_HIGH, intensity);
+
 				}
 
 			}

@@ -58,7 +58,26 @@ public abstract class ManipulationHandTool : HandTool
 
 	}
 
-	public void updateSelector(float radius){
+
+	public void colorizeSelectedVertices(Vector3 center, float radius, float intensity, bool flag){
+		Vector4 brushPos = new Vector4(center.x, 
+		                               center.y, 
+		                               center.z,
+		                               1.0f);
+		target.renderer.material.SetVector("_BrushPos", brushPos);
+		target.renderer.material.SetFloat("_BrushRadius", radius);
+		target.renderer.material.SetFloat("_BrushActivationState", intensity);
+		target.renderer.material.SetInt("_BrushActivationFlag", flag ? 1 : 0);
+
+		Debug.Log("flag:" + flag);
+
+//		target.renderer.material.SetColor("_BrushColorSelectedLow", Sculpter.SELECTED_LOW);
+//		target.renderer.material.SetColor("_BrushColorSelectedHigh", Sculpter.SELECTED_HIGH);
+//		target.renderer.material.SetColor("_BrushDirtyColor", Sculpter.ACTIVATED);
+
+	}
+	
+	public void updateSelector(float radius, float intensity){
 		if(iVertsSelected.Count > 0){
 			gizmoPos = sculptMesh.intersectionPoint;
 			gizmoRadius = radius * radius;
@@ -68,13 +87,6 @@ public abstract class ManipulationHandTool : HandTool
 			                                             0.25f);
 			selector.SetActive(false);
 
-			Vector4 brushPos = new Vector4(sculptMesh.intersectionPoint.x, 
-			                               sculptMesh.intersectionPoint.y, 
-			                               sculptMesh.intersectionPoint.z,
-			                               1.0f);
-			target.renderer.material.SetVector("_BrushPos", brushPos);
-			target.renderer.material.SetFloat("_BrushRadius", radius);
-
 
 		}else{
 			gizmoPos = ray.origin + ray.direction;
@@ -83,6 +95,9 @@ public abstract class ManipulationHandTool : HandTool
 			                                             Sculpter.CLEAR.g,
 			                                             Sculpter.CLEAR.b, 
 			                                             0.75f);
+
+
+
 			selector.SetActive(true);
 		}
 		

@@ -66,7 +66,7 @@ public class PointingTool : ManipulationHandTool {
 		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
 		Vector3 center = sculptMesh.intersectionPoint;
 
-		updateSelector(radius);
+
 
 		float intensity = sculpter.intensity;
 
@@ -82,6 +82,8 @@ public class PointingTool : ManipulationHandTool {
 //			Debug.Log("intsity:" + intensity);
 		}
 
+		updateSelector(radius, intensity);
+		colorizeSelectedVertices(sculptMesh.intersectionPoint, radius, intensity, sculpter.activated);
 
 		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
 		                center, radius, intensity, sculpter.tool);

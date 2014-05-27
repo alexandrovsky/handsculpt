@@ -103,7 +103,9 @@ public class ShadowTool : ManipulationHandTool
 			Debug.Log("intsity:" + intensity + "dist: " + activationDistance);
 		}
 
-		
+
+		colorizeSelectedVertices(center, radius, intensity, sculpter.activated);
+
 		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
 		                center, radius, intensity, Sculpt.Tool.SMOOTH);
 

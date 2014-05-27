@@ -13,6 +13,7 @@ public class GrabTool : ManipulationHandTool
 	Vector3 grabInitPos = Vector3.zero;
 	Dictionary<int, float> selectedVertices;
 
+	float radius;
 	public override void Start () {
 		name = "grab";
 		workingHandIdx = 0;
@@ -43,8 +44,9 @@ public class GrabTool : ManipulationHandTool
 
 //			Debug.DrawLine(vertex, vertex+dragDirection);
 
-			sculptMesh.colorArray[v_idx] = Sculpter.ACTIVATED;
-
+//			sculptMesh.colorArray[v_idx] = Sculpter.ACTIVATED;
+			//updateSelector(this.radius, 1.0f);
+			colorizeSelectedVertices(sculptMesh.intersectionPoint, radius, 1.0f, sculpter.activated);
 			sculptMesh.vertexArray[v_idx] = target.transform.InverseTransformPoint(vertex);
 		}
 
@@ -94,7 +96,7 @@ public class GrabTool : ManipulationHandTool
 			Debug.DrawLine(ray.origin, ray.origin + ray.direction, Color.green);
 			// --- 
 
-			float radius = sculpter.radius * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
+			this.radius = sculpter.radius * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 			
 			this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
 			selectedVertices.Clear();
@@ -107,7 +109,9 @@ public class GrabTool : ManipulationHandTool
 				float dist = delta.magnitude/radius;
 				selectedVertices.Add(v_idx, dist);
 
-				sculptMesh.colorArray[ iVertsSelected[i] ] = Sculpter.SELECTED_HIGH;
+				//sculptMesh.colorArray[ iVertsSelected[i] ] = Sculpter.SELECTED_HIGH;
+
+				colorizeSelectedVertices(sculptMesh.intersectionPoint, radius, 0.0f, sculpter.activated);
 			}
 		}
 
