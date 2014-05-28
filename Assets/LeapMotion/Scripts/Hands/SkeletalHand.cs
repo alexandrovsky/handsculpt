@@ -56,4 +56,13 @@ public class SkeletalHand : HandModel {
       		palm.transform.rotation = GetPalmRotation();
     	}
   	}
+
+	public FingerModel GetFingerWithType(Finger.FingerType type){
+		foreach(FingerModel fm in fingers){
+			if(fm.fingerType == type){
+				return fm;
+			}
+		}
+		return null;
+	}
 }

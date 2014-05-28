@@ -33,6 +33,7 @@ public class HandController : MonoBehaviour {
   	
 
 
+
   	void Start() {
 
     	leap_controller_ = new Controller();
@@ -129,6 +130,10 @@ public class HandController : MonoBehaviour {
 //				updateHand(hand, rightRigidHand);
 //			}
 //		}
+	}
+
+	public Frame GetFrame(int idx){
+		return leap_controller_.Frame(idx);
 	}
 
 }

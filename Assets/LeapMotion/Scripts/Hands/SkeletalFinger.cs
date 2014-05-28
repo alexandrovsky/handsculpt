@@ -21,31 +21,11 @@ public class SkeletalFinger : FingerModel {
 
   	public override void UpdateFinger() {
     	SetPositions(GetController().transform);
-		checkCollision();
   	}
 
 
 
-	private void checkCollision(){
 
-		float distance = 1.0f;
-		RaycastHit hit;
-		if(Physics.Raycast(GetBonePosition(3), GetBoneDirection(3), out hit,distance) ){
-
-
-
-			if(hit.collider.tag.Equals("GUIWidget") ){
-
-				WidgetGui widget = hit.collider.gameObject.GetComponent<WidgetGui>();
-				//widget.PerformAction();
-				widget.SendMessage("WidgetGuiButtonPressed", widget.Identifier);
-				Debug.Log("button clicked " + hit.collider.tag);
-			}
-		}
-		Debug.DrawLine(GetBonePosition(3), GetBoneDirection(3), Color.green);
-
-
-	}
 
   	private void SetPositions(Transform deviceTransform) {
     	for (int i = 0; i < bones.Length; ++i) {
