@@ -25,30 +25,35 @@ public class SkeletalHand : HandModel {
 
   public override void UpdateHand() {
     SetPositions();
+		for (int i = 0; i < fingers.Length; ++i) {
+			if (fingers[i] != null)
+				fingers[i].UpdateFinger();
+		}
+
   }
 
-  protected Vector3 GetPalmCenter() {
-    Hand leap_hand = GetLeapHand();
-    Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
-    Vector3 local_center = leap_hand.PalmPosition.ToUnityScaled() - offset;
+	protected Vector3 GetPalmCenter() {
+	    Hand leap_hand = GetLeapHand();
+	    Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
+	    Vector3 local_center = leap_hand.PalmPosition.ToUnityScaled() - offset;
 
-    return GetController().transform.TransformPoint(local_center);
-  }
+	    return GetController().transform.TransformPoint(local_center);
+  	}
 
-  protected Quaternion GetPalmRotation() {
-    return GetController().transform.rotation *
-           GetLeapHand().Basis.Rotation();
-  }
+	protected Quaternion GetPalmRotation() {
+    	return GetController().transform.rotation *
+          	 GetLeapHand().Basis.Rotation();
+  	}
 
-  private void SetPositions() {
-    for (int f = 0; f < fingers.Length; ++f) {
-      if (fingers[f] != null)
-        fingers[f].InitFinger();
-    }
+	protected void SetPositions() {
+    	for (int f = 0; f < fingers.Length; ++f) {
+      		if (fingers[f] != null)
+        		fingers[f].InitFinger();
+		}
 
-    if (palm != null) {
-      palm.transform.position = GetPalmCenter();
-      palm.transform.rotation = GetPalmRotation();
-    }
-  }
+    	if (palm != null) {
+      		palm.transform.position = GetPalmCenter();
+      		palm.transform.rotation = GetPalmRotation();
+    	}
+  	}
 }

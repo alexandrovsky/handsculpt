@@ -17,9 +17,14 @@ namespace Leap {
 	public static class UnityVectorExtension
 	{
 		public static float ScaleFactor =  1.0f;//0.02f;
-		public static Vector3 InputScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
-		public static Vector3 InputOffset = new Vector3(0, 0, 0);
+//		public static Vector3 InputScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
+//		public static Vector3 InputOffset = new Vector3(0, 0, 0);
 
+//		public static Vector3 InputScale = new Vector3(0.04f, 0.04f, 0.04f);
+//		public static Vector3 InputOffset = new Vector3(0,-8,0);
+
+		public static Vector3 InputScale = new Vector3(0.1f, 0.1f, 0.07f);
+		public static Vector3 InputOffset = new Vector3(0,-20,0);
 
 		// Leap coordinates are in mm and Unity is in meters. So scale by 1000.
 		public const float INPUT_SCALE = 0.001f;

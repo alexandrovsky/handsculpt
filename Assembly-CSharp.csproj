@@ -46,6 +46,19 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\ArcMaker.cs" />
+     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\FingerBehavior.cs" />
+     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\LeapManager.cs" />
+     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\MenuBehavior.cs" />
+     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\MenuEventHandler.cs" />
+     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\MenuMoverBehavior.cs" />
+     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\ScaleManager.cs" />
+     <Compile Include="Assets\LeapMotion\Leap_Boilerplate\scripts\LeapManager.cs" />
+     <Compile Include="Assets\LeapMotion\Leap_Boilerplate\scripts_for_example_scenes\FingerCountChecker.cs" />
+     <Compile Include="Assets\LeapMotion\Leap_Boilerplate\scripts_for_example_scenes\HandOpenChecker.cs" />
+     <Compile Include="Assets\LeapMotion\Leap_Boilerplate\scripts_for_example_scenes\RevolvingCamera.cs" />
+     <Compile Include="Assets\LeapMotion\Leap_Boilerplate\scripts_for_example_scenes\ScreenMover.cs" />
+     <Compile Include="Assets\LeapMotion\Leap_Boilerplate\scripts_for_example_scenes\WorldMover.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\DemoScripts\CubeWave.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\HandController.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\Hands\FingerModel.cs" />
@@ -61,6 +74,7 @@
      <Compile Include="Assets\LeapMotion\Scripts\Utils\ConfidenceTransparency.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\Utils\LeapUnityExtensions.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\Utils\MagneticPinch.cs" />
+     <Compile Include="Assets\Scripts\3DGui\WidgetGui.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\Gui.cs" />
      <Compile Include="Assets\Scripts\HandCollision.cs" />
@@ -89,6 +103,7 @@
      <Compile Include="Assets\Scripts\Tools\NavigationHandTool.cs" />
      <Compile Include="Assets\Scripts\Tools\PointingTool.cs" />
      <Compile Include="Assets\Scripts\Tools\ShadowTool.cs" />
+     <Compile Include="Assets\Scripts\Tools\ToolDispatcher.cs" />
      <Compile Include="Assets\Scripts\Utils\Geometry.cs" />
      <Compile Include="Assets\Scripts\Utils\MathHelper.cs" />
      <Compile Include="Assets\Scripts\Wireframe.cs" />
@@ -102,6 +117,7 @@
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent Bump.shader" />
      <None Include="Assets\Shaders\MultipleLights.shader" />
      <None Include="Assets\Shaders\VertexInputSimple.shader" />
+     <None Include="Assets\LeapMotion\Leap_Boilerplate\readme.txt" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Opaque Bump.shader" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque.shader" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Diffuse.shader" />
@@ -136,8 +152,9 @@
      <None Include="Assets\Shaders\Velvet.shader" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque Specular.shader" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurface SFX Depth Write Only.shader" />
- <Reference Include="Assets\Plugins\LeapCSharp.NET3.5">
- <HintPath>Assets\Plugins\LeapCSharp.NET3.5.dll</HintPath>
+     <None Include="Assets\LeapMotion\FreeformMenus\README.txt" />
+ <Reference Include="Assets\_Plugins2\LeapCSharp.NET3.5">
+ <HintPath>Assets\_Plugins2\LeapCSharp.NET3.5.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

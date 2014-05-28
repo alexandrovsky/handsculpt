@@ -10,108 +10,125 @@ using Leap;
 
 public class HandController : MonoBehaviour {
 
+
   // Reference distance from thumb base to pinky base in mm.
-  protected const float MODEL_PALM_WIDTH = 85.0f;
+  	protected const float MODEL_PALM_WIDTH = 85.0f;
 
-  public bool separateLeftRight = false;
-  public HandModel leftGraphicsModel;
-  public HandModel leftPhysicsModel;
-  public HandModel rightGraphicsModel;
-  public HandModel rightPhysicsModel;
+  	public bool separateLeftRight = false;
 
-  private Controller leap_controller_;
-  private Dictionary<int, HandModel> graphics_hands_;
-  private Dictionary<int, HandModel> physics_hands_;
+//prefabs:
+	public HandModel leftGraphicsModel;
+	public HandModel leftPhysicsModel;
+	public HandModel rightGraphicsModel;
+	public HandModel rightPhysicsModel;
+//
 
-  void Start() {
-    leap_controller_ = new Controller();
-    graphics_hands_ = new Dictionary<int, HandModel>();
-    physics_hands_ = new Dictionary<int, HandModel>();
+	public SkeletalHand leftHand;
+	public SkeletalHand rightHand;
 
-    if (leap_controller_ == null) {
-      Debug.LogWarning(
-          "Cannot connect to controller. Make sure you have Leap Motion v2.0+ installed");
-    }
-  }
+//	public RigidHand leftRigidHand;
+//	public RigidHand rightRigidHand;
 
-  private void IgnoreHandCollisions(HandModel hand) {
-    // Ignores hand collisions with immovable objects.
-    Collider[] colliders = gameObject.GetComponentsInChildren<Collider>();
-    Collider[] hand_colliders = hand.GetComponentsInChildren<Collider>();
+  	private Controller leap_controller_;
+  	
 
-    for (int i = 0; i < colliders.Length; ++i) {
-      for (int h = 0; h < hand_colliders.Length; ++h) {
-        if (colliders[i].rigidbody == null)
-          Physics.IgnoreCollision(colliders[i], hand_colliders[h]);
-      }
-    }
-  }
 
-  HandModel CreateHand(HandModel model) {
-    HandModel hand_model = Instantiate(model, transform.position, transform.rotation)
+  	void Start() {
+
+    	leap_controller_ = new Controller();
+
+//		leap_controller_.EnableGesture(Gesture.GestureType.TYPE_SCREEN_TAP, true);
+//		if(leap_controller_.IsGestureEnabled(Gesture.GestureType.TYPE_SCREEN_TAP) ){
+//			Debug.Log("screen tap enabled, success ");
+//		}
+
+
+		leftHand = CreateHand(leftGraphicsModel) as SkeletalHand;
+		leftHand.name = "left_hand";
+		rightHand = CreateHand(rightGraphicsModel) as SkeletalHand;
+		rightHand.name = "right_hand";
+
+
+//		leftRigidHand = CreateHand(leftPhysicsModel) as RigidHand;
+//		leftRigidHand.name = "left_rigid_hand";
+//		rightRigidHand = CreateHand(rightPhysicsModel) as RigidHand;
+//		rightRigidHand.name = "right_rigid_hand";
+
+    	if (leap_controller_ == null) {
+      		Debug.LogWarning(
+          		"Cannot connect to controller. Make sure you have Leap Motion v2.0+ installed");
+    	}
+  	}
+
+
+
+  	private void IgnoreHandCollisions(HandModel hand) {
+    	// Ignores hand collisions with immovable objects.
+    	Collider[] colliders = gameObject.GetComponentsInChildren<Collider>();
+    	Collider[] hand_colliders = hand.GetComponentsInChildren<Collider>();
+
+    	for (int i = 0; i < colliders.Length; ++i) {
+      		for (int h = 0; h < hand_colliders.Length; ++h) {
+        		if (colliders[i].rigidbody == null){
+          			Physics.IgnoreCollision(colliders[i], hand_colliders[h]);
+				}
+      		}
+    	}
+  	}
+
+  	HandModel CreateHand(HandModel model) {
+    	HandModel hand_model = Instantiate(model, transform.position, transform.rotation)
                            as HandModel;
-    hand_model.gameObject.SetActive(true);
-    IgnoreHandCollisions(hand_model);
-    return hand_model;
-  }
+    	hand_model.gameObject.SetActive(true);
+		IgnoreHandCollisions(hand_model);
 
-  private void UpdateModels(Dictionary<int, HandModel> all_hands, HandList leap_hands,
-                            HandModel left_model, HandModel right_model) {
-    List<int> ids_to_check = new List<int>(all_hands.Keys);
+    	return hand_model;
+  	}	
 
-    // Go through all the active hands and update them.
-    int num_hands = leap_hands.Count;
-    for (int h = 0; h < num_hands; ++h) {
-      Hand leap_hand = leap_hands[h];
-      
-      // Only create or update if the hand is enabled.
-      if ((leap_hand.IsLeft && left_model != null) ||
-          (leap_hand.IsRight && right_model != null)) {
+  	
 
-        ids_to_check.Remove(leap_hand.Id);
+  	void Update() {
+		if (leap_controller_ == null)
+	      		return;
 
-        // Create the hand and initialized it if it doesn't exist yet.
-        if (!all_hands.ContainsKey(leap_hand.Id)) {
-          HandModel model = leap_hand.IsLeft? left_model : right_model;
-          HandModel new_hand = CreateHand(model);
-          new_hand.SetLeapHand(leap_hand);
-          new_hand.SetController(this);
-          new_hand.InitHand();
-          all_hands[leap_hand.Id] = new_hand;
-        }
+	    Frame frame = leap_controller_.Frame();
+		foreach(Hand hand in frame.Hands){
+			if(hand.IsLeft){
+				updateHand(hand, leftHand);
+			}else{
+				updateHand(hand, rightHand);
+			}
+		}
 
-        // Make sure we update the Leap Hand reference.
-        HandModel hand_model = all_hands[leap_hand.Id];
-        hand_model.SetLeapHand(leap_hand);
 
-        // Set scaling based on reference hand.
-        float hand_scale = leap_hand.PalmWidth / MODEL_PALM_WIDTH;
-        hand_model.transform.localScale = hand_scale * transform.localScale;
+		foreach(Gesture g in frame.Gestures() ){
+			Debug.Log("gesture:" +  g.ToString() );
+		}
 
-        hand_model.UpdateHand();
-      }
-    }
+	   	
+  	}
 
-    // Destroy all hands with defunct IDs.
-    for (int i = 0; i < ids_to_check.Count; ++i) {
-      Destroy(all_hands[ids_to_check[i]].gameObject);
-      all_hands.Remove(ids_to_check[i]);
-    }
-  }
+	private void updateHand(Hand leap_hand, SkeletalHand hand){
+		hand.SetLeapHand(leap_hand);
+		hand.SetController(this);
+		float hand_scale = leap_hand.PalmWidth / MODEL_PALM_WIDTH;
+		hand.transform.localScale = hand_scale * transform.localScale;
+		hand.UpdateHand();
+		
+	}
+	
+	void FixedUpdate() {
+		if (leap_controller_ == null)
+	    return;
 
-  void Update() {
-    if (leap_controller_ == null)
-      return;
+//		Frame frame = leap_controller_.Frame();
+//		foreach(Hand hand in frame.Hands){
+//			if(hand.IsLeft){
+//				updateHand(hand, leftRigidHand);
+//			}else{
+//				updateHand(hand, rightRigidHand);
+//			}
+//		}
+	}
 
-    Frame frame = leap_controller_.Frame();
-    UpdateModels(graphics_hands_, frame.Hands, leftGraphicsModel, rightGraphicsModel);
-  }
-
-  void FixedUpdate() {
-    if (leap_controller_ == null)
-      return;
-
-    Frame frame = leap_controller_.Frame();
-    UpdateModels(physics_hands_, frame.Hands, leftPhysicsModel, rightPhysicsModel);
-  }
 }

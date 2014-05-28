@@ -33,6 +33,7 @@ public class LeapUnityHandController : MonoBehaviour
 		Right
 	}
 
+
 	public GameObject[]				m_palms		= null;
 	public GameObject[]				m_fingers	= null;
 	public GameObject[]				m_hands 	= null;

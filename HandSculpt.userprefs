@@ -1,34 +1,45 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/LeapMotion/Scripts/HandController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/LeapMotion/FreeformMenus/Scripts/MenuBehavior.cs">
     <Files>
-      <File FileName="Assets/Scripts/Tools/ManipulationHandTool.cs" Line="76" Column="79" />
-      <File FileName="Assets/Scripts/Tools/HandTool.cs" Line="45" Column="60" />
-      <File FileName="Assets/Shaders/TestSurfaceShader.shader" Line="1" Column="97" />
-      <File FileName="Assets/Hard Surface Free/HardSurface Shaders/HardSurface Free Opaque.shader" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/PointingTool.cs" Line="88" Column="18" />
-      <File FileName="Assets/Scripts/Gui.cs" Line="108" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="264" Column="24" />
-      <File FileName="Assets/Scripts/Tools/ShadowTool.cs" Line="109" Column="3" />
-      <File FileName="Assets/Scripts/Tools/GrabTool.cs" Line="32" Column="32" />
-      <File FileName="Assets/Scripts/LeapBeahavior.cs" Line="87" Column="54" />
-      <File FileName="Assets/Scripts/Leap/LeapUnityHandController.cs" Line="239" Column="100" />
-      <File FileName="Assets/Scripts/Leap/LeapUnityExtensions.cs" Line="45" Column="2" />
-      <File FileName="Assets/LeapMotion/Scripts/HandController.cs" Line="88" Column="38" />
-      <File FileName="Assets/LeapMotion/Scripts/Utils/LeapUnityExtensions.cs" Line="15" Column="6" />
+      <File FileName="Assets/LeapMotion/Scripts/HandController.cs" Line="131" Column="6" />
+      <File FileName="Assets/LeapMotion/Scripts/Utils/MagneticPinch.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/Scripts/Utils/ConfidenceTransparency.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/3DGui/WidgetGui.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/Scripts/Hands/SkeletalFinger.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/Scripts/Hands/SkeletalHand.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/ToolDispatcher.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Tools/ManipulationHandTool.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/Leap_Boilerplate/scripts/LeapManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Leap/LeapUnityExtensions.cs" Line="27" Column="60" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/MenuEventHandler.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/ArcMaker.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/ScaleManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/README.txt" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/LeapManager.cs" Line="53" Column="33" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/MenuBehavior.cs" Line="181" Column="48" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="LeapMotion" expanded="True">
+              <Node name="FreeformMenus" expanded="True">
+                <Node name="Scripts" expanded="True">
+                  <Node name="MenuBehavior.cs" selected="True" />
+                </Node>
+              </Node>
+              <Node name="Leap_Boilerplate" expanded="True">
+                <Node name="scripts" expanded="True" />
+              </Node>
               <Node name="Scripts" expanded="True">
-                <Node name="Utils" expanded="True" />
-                <Node name="HandController.cs" selected="True" />
+                <Node name="Hands" expanded="True" />
               </Node>
             </Node>
             <Node name="Scripts" expanded="True">
+              <Node name="3DGui" expanded="True" />
               <Node name="Leap" expanded="True" />
+              <Node name="Tools" expanded="True" />
             </Node>
           </Node>
         </State>

@@ -59,6 +59,7 @@
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent Bump.shader" />
      <None Include="Assets\Shaders\MultipleLights.shader" />
      <None Include="Assets\Shaders\VertexInputSimple.shader" />
+     <None Include="Assets\LeapMotion\Leap_Boilerplate\readme.txt" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Opaque Bump.shader" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque.shader" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Diffuse.shader" />
@@ -93,8 +94,9 @@
      <None Include="Assets\Shaders\Velvet.shader" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque Specular.shader" />
      <None Include="Assets\Hard Surface Free\HardSurface Shaders\HardSurface SFX Depth Write Only.shader" />
- <Reference Include="Assets\Plugins\LeapCSharp.NET3.5">
- <HintPath>Assets\Plugins\LeapCSharp.NET3.5.dll</HintPath>
+     <None Include="Assets\LeapMotion\FreeformMenus\README.txt" />
+ <Reference Include="Assets\_Plugins2\LeapCSharp.NET3.5">
+ <HintPath>Assets\_Plugins2\LeapCSharp.NET3.5.dll</HintPath>
  </Reference>
  <Reference Include="\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEditor.Graphs">
  <HintPath>\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEditor.Graphs.dll</HintPath>

@@ -69,7 +69,7 @@ public abstract class ManipulationHandTool : HandTool
 		target.renderer.material.SetFloat("_BrushActivationState", intensity);
 		target.renderer.material.SetInt("_BrushActivationFlag", flag ? 1 : 0);
 
-		Debug.Log("flag:" + flag);
+		//Debug.Log("flag:" + flag);
 
 //		target.renderer.material.SetColor("_BrushColorSelectedLow", Sculpter.SELECTED_LOW);
 //		target.renderer.material.SetColor("_BrushColorSelectedHigh", Sculpter.SELECTED_HIGH);
