@@ -1,12 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/LeapMotion/FreeformMenus/Scripts/ScaleManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/LeapMotion/FreeformMenus/Scripts/MenuBehavior.cs">
     <Files>
-      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/MenuBehavior.cs" Line="64" Column="38" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/MenuBehavior.cs" Line="275" Column="3" />
       <File FileName="Assets/LeapMotion/Scripts/Hands/FingerModel.cs" Line="1" Column="1" />
       <File FileName="Assets/LeapMotion/Scripts/HandController.cs" Line="1" Column="1" />
       <File FileName="Assets/LeapMotion/Scripts/Hands/SkeletalHand.cs" Line="1" Column="1" />
-      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/ScaleManager.cs" Line="17" Column="2" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/ScaleManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/Scripts/Hands/SkeletalFinger.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/README.txt" Line="154" Column="1" />
+      <File FileName="Assets/Scripts/Leap/LeapUnityExtensions.cs" Line="1" Column="1" />
+      <File FileName="Assets/LeapMotion/FreeformMenus/Scripts/MenuEventHandler.cs" Line="4" Column="1" />
+      <File FileName="Assets/Scripts/Tools/ToolDispatcher.cs" Line="10" Column="20" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -15,7 +20,7 @@
             <Node name="LeapMotion" expanded="True">
               <Node name="FreeformMenus" expanded="True">
                 <Node name="Scripts" expanded="True">
-                  <Node name="ScaleManager.cs" selected="True" />
+                  <Node name="LeapManager.cs" selected="True" />
                 </Node>
               </Node>
               <Node name="Scripts" expanded="True">
@@ -23,7 +28,9 @@
               </Node>
             </Node>
             <Node name="Scripts" expanded="True">
+              <Node name="Leap" expanded="True" />
               <Node name="Tools" expanded="True" />
+              <Node name="Utils" expanded="True" />
             </Node>
           </Node>
         </State>

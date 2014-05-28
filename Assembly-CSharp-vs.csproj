@@ -47,12 +47,10 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\ArcMaker.cs" />
-     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\LeapManager.cs" />
      <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\MenuBehavior.cs" />
      <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\MenuEventHandler.cs" />
      <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\MenuMoverBehavior.cs" />
      <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\ScaleManager.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\DemoScripts\CubeWave.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\HandController.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\Hands\FingerModel.cs" />
      <Compile Include="Assets\LeapMotion\Scripts\Hands\HandModel.cs" />
