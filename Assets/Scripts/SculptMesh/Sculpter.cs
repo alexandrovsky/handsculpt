@@ -108,9 +108,9 @@ namespace Sculpt{
 
 
 		public void clear(){
-			for(int i = 0; i < sculptMesh.colorArray.Length; i++){
-				sculptMesh.colorArray[i] = CLEAR;
-			}
+//			for(int i = 0; i < sculptMesh.colorArray.Length; i++){
+//				sculptMesh.colorArray[i] = CLEAR;
+//			}
 
 		}
 
@@ -170,7 +170,7 @@ namespace Sculpt{
 			center = sculptMesh.intersectionPoint;
 			sculptMesh.intersectRayMesh(ray);
 			float r = this.radius; // * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
-			pickedVertices = sculptMesh.pickVerticesInSphere(r);
+			pickedVertices = sculptMesh.pickVerticesInSphere(sculptMesh.intersectionPoint, r);
 
 			//Debug.Log("picked verticec" + pickedVertices.Count);
 			if(pickedVertices.Count > 0){

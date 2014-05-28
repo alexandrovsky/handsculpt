@@ -51,7 +51,7 @@ public class ShadowTool : ManipulationHandTool
 			sculptMesh.intersectRayMesh(ray);
 		}
 
-		Debug.DrawLine(ray.origin, ray.origin + ray.direction, Color.green);
+		//Debug.DrawLine(ray.origin, ray.origin + ray.direction, Color.green);
 
 
 
@@ -82,7 +82,7 @@ public class ShadowTool : ManipulationHandTool
 		float radius = sculpter.radius * (smoothRadius/10.0f) * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 
 
-		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
+		this.iVertsSelected = sculptMesh.pickVerticesInSphere(sculptMesh.intersectionPoint, radius);
 		Vector3 center = sculptMesh.intersectionPoint;
 
 

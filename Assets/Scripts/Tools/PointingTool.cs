@@ -63,7 +63,7 @@ public class PointingTool : ManipulationHandTool {
 		sculptMesh.intersectRayMesh(ray);
 		float radius = sculpter.radius; // * (camera.fieldOfView/180.0f); // scale the radius depending on "distance"
 
-		this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
+		this.iVertsSelected = sculptMesh.pickVerticesInSphere(sculptMesh.intersectionPoint, radius);
 		Vector3 center = sculptMesh.intersectionPoint;
 
 

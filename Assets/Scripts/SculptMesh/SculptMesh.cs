@@ -539,12 +539,12 @@ namespace Sculpt{
 		}
 
 
-		public List<int> pickVerticesInSphere(float radius){
+		public List<int> pickVerticesInSphere(Vector3 center, float radius){
 			this.leavesUpdate.Clear();
 			this.pickedVertices.Clear();
 
 			this.worldRadiusSqr = radius;
-			this.iTrisInCells = this.octree.intersectSphere(this.intersectionPoint, this.worldRadiusSqr, this.leavesUpdate);
+			this.iTrisInCells = this.octree.intersectSphere(center, this.worldRadiusSqr, this.leavesUpdate);
 
 			List<int> iVerts = getVerticesForTriangles(this.iTrisInCells);
 			long vertexSculptMask = ++Vertex.SculptMask;
@@ -552,7 +552,7 @@ namespace Sculpt{
 				int idx = iVerts[i];
 
 				Vector3 v = transform.TransformPoint( vertexArray[idx] );
-				float dist = Vector3.Distance(this.intersectionPoint, v);
+				float dist = Vector3.Distance(center, v);
 				if(dist < this.worldRadiusSqr){
 					vertices[idx].sculptFlag = vertexSculptMask;
 					this.pickedVertices.Add(idx);

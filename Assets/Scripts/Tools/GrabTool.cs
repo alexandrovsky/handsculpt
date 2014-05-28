@@ -98,7 +98,7 @@ public class GrabTool : ManipulationHandTool
 
 			this.radius = sculpter.radius * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 			
-			this.iVertsSelected = sculptMesh.pickVerticesInSphere(radius);
+			this.iVertsSelected = sculptMesh.pickVerticesInSphere(sculptMesh.intersectionPoint, radius);
 			selectedVertices.Clear();
 
 			for(int i = 0; i < iVertsSelected.Count; i++){

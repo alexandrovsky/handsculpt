@@ -32,6 +32,16 @@ public class SkeletalHand : HandModel {
 
   }
 
+	public Vector3 GetSphereCenter(){
+		Hand leap_hand = GetLeapHand();
+
+		Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
+	    //Vector3 local_center = leap_hand.PalmPosition.ToUnityScaled() - offset;
+
+		Vector3 local_center = leap_hand.SphereCenter.ToUnityScaled() - offset;
+		return GetController().transform.TransformPoint(local_center);
+	}
+
 	protected Vector3 GetPalmCenter() {
 	    Hand leap_hand = GetLeapHand();
 	    Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
