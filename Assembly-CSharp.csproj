@@ -46,37 +46,29 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\ArcMaker.cs" />
-     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\MenuBehavior.cs" />
-     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\MenuEventHandler.cs" />
-     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\MenuMoverBehavior.cs" />
-     <Compile Include="Assets\LeapMotion\FreeformMenus\Scripts\ScaleManager.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\HandController.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\FingerModel.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\HandModel.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\PolyFinger.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\PolyHand.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\RiggedFinger.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\RiggedHand.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\RigidFinger.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\RigidHand.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\SkeletalFinger.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Hands\SkeletalHand.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Utils\ConfidenceTransparency.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Utils\LeapUnityExtensions.cs" />
-     <Compile Include="Assets\LeapMotion\Scripts\Utils\MagneticPinch.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\Gui.cs" />
+     <Compile Include="Assets\Scripts\Hands\FingerModel.cs" />
+     <Compile Include="Assets\Scripts\Hands\HandController.cs" />
+     <Compile Include="Assets\Scripts\Hands\HandModel.cs" />
+     <Compile Include="Assets\Scripts\Hands\RiggedFinger.cs" />
+     <Compile Include="Assets\Scripts\Hands\RiggedHand.cs" />
+     <Compile Include="Assets\Scripts\Hands\RigidFinger.cs" />
+     <Compile Include="Assets\Scripts\Hands\RigidHand.cs" />
+     <Compile Include="Assets\Scripts\Hands\SkeletalFinger.cs" />
+     <Compile Include="Assets\Scripts\Hands\SkeletalHand.cs" />
      <Compile Include="Assets\Scripts\Leap\LeapInput.cs" />
      <Compile Include="Assets\Scripts\Leap\LeapUnityBridge.cs" />
-     <Compile Include="Assets\Scripts\Leap\LeapUnityExtensions.cs" />
      <Compile Include="Assets\Scripts\Leap\LeapUnityHandController.cs" />
      <Compile Include="Assets\Scripts\LeapBeahavior.cs" />
+     <Compile Include="Assets\Scripts\Menus\ArcMaker.cs" />
+     <Compile Include="Assets\Scripts\Menus\MenuBehavior.cs" />
+     <Compile Include="Assets\Scripts\Menus\MenuEventHandler.cs" />
+     <Compile Include="Assets\Scripts\Menus\MenuMoverBehavior.cs" />
+     <Compile Include="Assets\Scripts\Menus\ScaleManager.cs" />
      <Compile Include="Assets\Scripts\Mesh\MeshSubdivide.cs" />
      <Compile Include="Assets\Scripts\Mesh\MeshTopology.cs" />
      <Compile Include="Assets\Scripts\Mesh\MeshTopologyTriangles.cs" />
-     <Compile Include="Assets\Scripts\Mesh\Octree.cs" />
-     <Compile Include="Assets\Scripts\Mesh\TargetObjectScript.cs" />
      <Compile Include="Assets\Scripts\ObjExporter.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\Octree.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\SculptMesh.cs" />
@@ -84,7 +76,6 @@
      <Compile Include="Assets\Scripts\SculptMesh\Topology.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\Triangle.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\Vertex.cs" />
-     <Compile Include="Assets\Scripts\TestScript.cs" />
      <Compile Include="Assets\Scripts\Tools\GrabTool.cs" />
      <Compile Include="Assets\Scripts\Tools\HandTool.cs" />
      <Compile Include="Assets\Scripts\Tools\ManipulationHandTool.cs" />
@@ -93,6 +84,7 @@
      <Compile Include="Assets\Scripts\Tools\ShadowTool.cs" />
      <Compile Include="Assets\Scripts\Tools\ToolDispatcher.cs" />
      <Compile Include="Assets\Scripts\Utils\Geometry.cs" />
+     <Compile Include="Assets\Scripts\Utils\LeapUnityExtensions.cs" />
      <Compile Include="Assets\Scripts\Utils\MathHelper.cs" />
      <Compile Include="Assets\Scripts\Wireframe.cs" />
      <Compile Include="Assets\TargetTransformer.cs" />

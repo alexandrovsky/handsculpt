@@ -1,25 +1,47 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using System.Collections;
-using Leap;
+using Sculpt;
+
 public class ToolDispatcher : MonoBehaviour {
 
 	// Use this for initialization
-	GameObject Widget;
-	HandController handController;
+	HandController _handController;
+	Sculpt.Tool currentLeftTool = Tool.NONE;
+	Sculpt.Tool currentRightTool = Tool.NONE;
 	void Start () {
-		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
-		Widget = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-
+		_handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		Widget.transform.position = handController.leftHand.palm.transform.position;
+		switch(currentLeftTool){
+		case Tool.BRUSH:
+			break;
+		case Tool.SMOOTH:
+			break;
+		case Tool.DRAG:
+			break;
+		default: break;
+		}
+
+		switch(currentRightTool){
+		case Tool.BRUSH:
+			break;
+		case Tool.SMOOTH:
+			break;
+		case Tool.DRAG:
+			break;
+		default: break;
+		}
 
 	}
 
-
-	public void WidgetGuiButtonPressed(int id){
-		Debug.Log("WidgetButtonPressed" + id);
+	public void SetToolForHand(Sculpt.Tool tool, SkeletalHand hand){
+		if(hand.GetLeapHand().IsLeft){
+			currentLeftTool = tool;
+		}else{
+			currentRightTool = tool;
+		}
 	}
 }

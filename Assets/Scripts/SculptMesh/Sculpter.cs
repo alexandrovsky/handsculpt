@@ -6,6 +6,7 @@ using System.Collections.Generic;
 namespace Sculpt{
 
 	public enum Tool{
+		NONE,
 		BRUSH,
 		DRAG,
 		SMOOTH

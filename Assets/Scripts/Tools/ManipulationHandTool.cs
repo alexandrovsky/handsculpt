@@ -21,8 +21,6 @@ public abstract class ManipulationHandTool : HandTool
 		PALM_POS_TO_PALM_UP
 	}
 
-	protected TargetObjectScript tos;
-
 	public SelectionMode selectionMode = SelectionMode.PALM_POS_TO_PALM_UP; // for witchin betee
 
 	public int vertexWithMaxDistance = 0;

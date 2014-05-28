@@ -69,16 +69,16 @@ public class MenuBehavior : MonoBehaviour {
 	private bool _hasSubLabel;
 	private float _selectionCooldownTime = 0;
 	private Vector3 _baseLocation;
+	private CurrentHand _currentHand = CurrentHand.NONE;
+	public enum CurrentHand { LEFT, RIGHT, NONE };
+
 
 	public enum MenuType { ICON, TEXT, TEXTURE };
 	public enum MenuState { INACTIVE, ACTIVATING, ACTIVE, SELECTION, DEACTIVATION, DISABLED };
 	public enum ButtonAction { 
 		NONE, 
-		ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN,
-		STRENGTH_LOW, STRENGTH_MEDIUM, STRENGTH_HIGH, 
-		TOOL_FLATTEN, TOOL_GROW, TOOL_PAINT, TOOL_PRESS, TOOL_REPEL, TOOL_SMOOTH, TOOL_SWEEP, 
-		ENV_ARCTIC, ENV_DESERT, ENV_ISLAND, ENV_JUNGLE, ENV_CLIFF, ENV_REDWOOD, ENV_RIVER,
-		MAT_CLAY, MAT_GLASS, MAT_PLASTIC, MAT_PORCELAIN, MAT_STEEL };
+		TOOL_SMOOTH, TOOL_GROW, TOOL_PAINT 
+	};
 
 	public MenuState currentState
 	{
@@ -103,6 +103,8 @@ public class MenuBehavior : MonoBehaviour {
 		_baseLocation = gameObject.transform.parent.position;
 		_handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 //		_leapManager._mainCam = _mainCam;
+
+
 
 		//Get a reference to the subLabel
 		foreach(Transform child in gameObject.transform.parent)
@@ -178,9 +180,20 @@ public class MenuBehavior : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () 
+
+	void Update(){
+		if(_currentHand == CurrentHand.NONE || _currentHand == CurrentHand.LEFT){
+			CheckHand(_handController.leftHand);
+		}
+
+		if(_currentHand == CurrentHand.NONE || _currentHand == CurrentHand.RIGHT){
+			CheckHand(_handController.rightHand);
+		}
+	}
+
+	void CheckHand(SkeletalHand hand) 
 	{
-		SkeletalFinger finger = _handController.leftHand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
+		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
 		Vector3 pointerPositionWorld = finger == null ? Vector3.zero : finger.bones[3].transform.position;
 		Vector3 pointerPositionScreen = Camera.main.WorldToScreenPoint( pointerPositionWorld );
 
@@ -206,7 +219,8 @@ public class MenuBehavior : MonoBehaviour {
 			if(parentToFinger.magnitude < _activation_radius && pointerPositionWorld.z > _deactivate_z) 
 			{
 				_activationStartTime = Time.time;
-				_currentState = MenuState.ACTIVATING; 
+				_currentState = MenuState.ACTIVATING;
+				_currentHand = hand.GetLeapHand().IsLeft ? CurrentHand.LEFT : CurrentHand.RIGHT;
 			}
 
 			if(_hasSubLabel && _currentSelection != -1 && _currentSelection < _text.Length && _text[_currentSelection] != null)
@@ -268,6 +282,7 @@ public class MenuBehavior : MonoBehaviour {
 			{
 				gameObject.transform.localScale = new Vector3(0,0,1);
 				_currentState = MenuState.INACTIVE;
+				_currentHand = CurrentHand.NONE;
 				return;
 			}
 			break;
@@ -390,7 +405,7 @@ public class MenuBehavior : MonoBehaviour {
 
 							if(_eventHandler != null && _closest < _buttonActions.Length)
 							{
-								_eventHandler.recieveMenuEvent(_buttonActions[_closest]);
+								_eventHandler.recieveMenuEvent(_buttonActions[_closest], hand);
 							}
 
 							_currentState = MenuState.SELECTION;
