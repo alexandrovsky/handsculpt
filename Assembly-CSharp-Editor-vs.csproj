@@ -47,20 +47,28 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\LeapMotion\Editor\HandControllerEditor.cs" />
+     <None Include="Assets\Shaders\Translucent.shader" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Basic.shader" />
-     <None Include="Assets\Shaders\MultipleLights.shader" />
-     <None Include="Assets\Shaders\VertexInputSimple.shader" />
+     <None Include="Assets\Shaders\VertexSelection.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Shaders\MatCap_TextureAdd_Bumped.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Shaders\MatCap_TextureMult_Bumped.shader" />
      <None Include="Assets\LeapMotion\readme.txt" />
+     <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-BasicOutline.shader" />
-     <None Include="Assets\Shaders\Wireframe.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Shaders\MatCap_Lit.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Shaders\MatCap_Plain_Bumped.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Shaders\MatCap_Plain_AdditiveZ.shader" />
+     <None Include="Assets\JMO Assets\!JMO Assets Readme.txt" />
      <None Include="Assets\Shaders\TestSurfaceShader.shader" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-LightedOutline.shader" />
-     <None Include="Assets\Shaders\SpecularInput.shader" />
      <None Include="Assets\LeapMotion\Materials\Sources\Shaders\Toony-Lighted.shader" />
-     <None Include="Assets\Shaders\SelectVertexColorShader.shader" />
-     <None Include="Assets\Shaders\TestSurfaceShader2.shader" />
-     <None Include="Assets\Shaders\SpecularInputFrag.shader" />
-     <None Include="Assets\Shaders\Velvet.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Shaders\MatCap_Plain.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Shaders\MatCap_Plain_Additive.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Shaders\MatCap_TextureMult.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Shaders\MatCap_TextureAdd.shader" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Textures\MaCrea\MaCrea.txt" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\Textures\BenSimonds\_Textures Readme.txt" />
+     <None Include="Assets\JMO Assets\MatCap Shaders\_MatCap Shaders Readme.txt" />
      <None Include="Assets\LeapMotion\FreeformMenus\README.txt" />
  <Reference Include="Assets\_Plugins2\LeapCSharp.NET3.5">
  <HintPath>Assets\_Plugins2\LeapCSharp.NET3.5.dll</HintPath>
@@ -76,6 +84,9 @@
  </Reference>
  <Reference Include="\Applications\Unity\Unity.app\Contents\PlaybackEngines\AndroidPlayer\EditorExtensions\UnityEditor.Android.Extensions">
  <HintPath>\Applications\Unity\Unity.app\Contents\PlaybackEngines\AndroidPlayer\EditorExtensions\UnityEditor.Android.Extensions.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\JMO Assets\Editor\JMOAssets">
+ <HintPath>Assets\JMO Assets\Editor\JMOAssets.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

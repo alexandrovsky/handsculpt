@@ -9,8 +9,8 @@ public class ToolDispatcher : MonoBehaviour {
 	public float radius = 2.0f;
 	public float intensity = 0.5f;
 
-	public Sculpt.Tool currentLeftTool = Tool.BRUSH;
-	public Sculpt.Tool currentRightTool = Tool.BRUSH_SECONDARY;
+	public Sculpt.Tool currentLeftTool = Tool.SMOOTH;
+	public Sculpt.Tool currentRightTool = Tool.SMOOTH;
 
 
 	HandController handController;
@@ -34,38 +34,43 @@ public class ToolDispatcher : MonoBehaviour {
 
 		this.iTrisSelected.Clear();
 
-		switch(currentLeftTool){
-		case Tool.BRUSH:
-			UpdateBrushTool(handController.leftHand,true);
-			break;
-		case Tool.BRUSH_SECONDARY:
-			UpdateBrushSecondaryTool(handController.leftHand,true);
-			break;
-		case Tool.SMOOTH:
-			UpdateSmoothTool(handController.leftHand, true);
-			break;
-		case Tool.DRAG:
-			UpdateDragTool(handController.leftHand, true);
-			break;
-		default: break;
+
+		if(handController.leftHand.GetLeapHand() != null){
+
+			switch(currentLeftTool){
+			case Tool.BRUSH:
+				UpdateBrushTool(handController.leftHand,true);
+				break;
+			case Tool.BRUSH_SECONDARY:
+				UpdateBrushSecondaryTool(handController.leftHand,true);
+				break;
+			case Tool.SMOOTH:
+				UpdateSmoothTool(handController.leftHand, true);
+				break;
+			case Tool.DRAG:
+				UpdateDragTool(handController.leftHand, true);
+				break;
+			default: break;
+			}
 		}
 
-		switch(currentRightTool){
-		case Tool.BRUSH:
-			UpdateBrushTool(handController.rightHand, false);
-			break;
-		case Tool.BRUSH_SECONDARY:
-			UpdateBrushSecondaryTool(handController.rightHand,true);
-			break;
-		case Tool.SMOOTH:
-			UpdateSmoothTool(handController.rightHand, false);
-			break;
-		case Tool.DRAG:
-			UpdateDragTool(handController.rightHand, false);
-			break;
-		default: break;
+		if(handController.rightHand.GetLeapHand() != null){
+			switch(currentRightTool){
+			case Tool.BRUSH:
+				UpdateBrushTool(handController.rightHand, false);
+				break;
+			case Tool.BRUSH_SECONDARY:
+				UpdateBrushSecondaryTool(handController.rightHand,true);
+				break;
+			case Tool.SMOOTH:
+				UpdateSmoothTool(handController.rightHand, false);
+				break;
+			case Tool.DRAG:
+				UpdateDragTool(handController.rightHand, false);
+				break;
+			default: break;
+			}
 		}
-
 		sculptMesh.updateMesh(this.iTrisSelected, true);
 		sculptMesh.pushMeshData();
 	}
@@ -95,8 +100,18 @@ public class ToolDispatcher : MonoBehaviour {
 
 	public void UpdateSmoothTool(SkeletalHand hand, bool isLeft){
 
+
+		//center = hand.GetSphereCenter();
+		center = hand.GetPalmCenter();
+		float sphereRadius = hand.GetSphereRadius() / 100.0f;
+		radius = 3.0f * sphereRadius * sphereRadius;
+
+
 		sculptMesh.pickVerticesInSphere(center, radius);
-		center = hand.GetSphereCenter();
+
+		sculpter.activated = true;
+//		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
+//		                center, radius, intensity, Tool.SMOOTH);
 
 		ColorizeSelectedVertices(center, radius, intensity, true, hand.GetLeapHand().IsRight);
 

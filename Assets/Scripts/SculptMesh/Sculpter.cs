@@ -270,7 +270,7 @@ namespace Sculpt{
 
 				switch(tool){
 				case Tool.BRUSH:
-					brush(center, iVertsInRadius, iVertsInFront, radius, intensity);
+					brush(center, iVertsInFront, radius, intensity);
 					break;
 				case Tool.DRAG:
 					drag(center, this.dragDir, iVertsInFront, radius);
@@ -284,7 +284,7 @@ namespace Sculpt{
 		}
 
 		/** Brush stroke, move vertices along a direction computed by their averaging normals */
-		public void brush(Vector3 center, List<int> iVertsInRadius, List<int> iVertsFront, float radius, float intensity){
+		public void brush(Vector3 center, List<int> iVertsFront, float radius, float intensity){
 			Vector3 aNormal = sculptMesh.areaNormal(iVertsFront);
 			Vector3 aCenter = sculptMesh.areaCenter(iVertsFront);
 //			Debug.DrawLine(sculptMesh.intersectionPoint, aCenter, Color.cyan);

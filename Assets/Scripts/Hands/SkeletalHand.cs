@@ -51,7 +51,7 @@ public class SkeletalHand : HandModel {
 		return leap_hand.SphereRadius;
 	}
 
-	protected Vector3 GetPalmCenter() {
+	public Vector3 GetPalmCenter() {
 	    Hand leap_hand = GetLeapHand();
 	    Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
 	    Vector3 local_center = leap_hand.PalmPosition.ToUnityScaled() - offset;
@@ -59,7 +59,7 @@ public class SkeletalHand : HandModel {
 	    return GetController().transform.TransformPoint(local_center);
   	}
 
-	protected Quaternion GetPalmRotation() {
+	public Quaternion GetPalmRotation() {
     	return GetController().transform.rotation *
           	 GetLeapHand().Basis.Rotation();
   	}
