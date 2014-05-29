@@ -107,11 +107,11 @@ public class ToolDispatcher : MonoBehaviour {
 		radius = 3.0f * sphereRadius * sphereRadius;
 
 
-		sculptMesh.pickVerticesInSphere(center, radius);
+		iVertsSelected = sculptMesh.pickVerticesInSphere(center, radius);
 
 		sculpter.activated = true;
-//		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
-//		                center, radius, intensity, Tool.SMOOTH);
+		sculpter.sculpt(mainCamera.transform.forward, iVertsSelected, 
+		                center, radius, intensity, Tool.SMOOTH);
 
 		ColorizeSelectedVertices(center, radius, intensity, true, hand.GetLeapHand().IsRight);
 

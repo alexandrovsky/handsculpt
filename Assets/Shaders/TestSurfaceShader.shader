@@ -32,11 +32,13 @@ Shader "Custom/TestSurfaceShader" {
     //LOD 200
 
 	
-	Tags { "RenderType"="Opaque" }
+	//Tags { "RenderType"="Opaque" }
+	Tags { "Queue"="Transparent" "RenderType"="Transparent" }
+	Blend SrcAlpha OneMinusSrcAlpha
 	LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf Lambert
+		#pragma surface surf Lambert alpha;
 		//BlinnPhong
 
 		sampler2D _MainTex;
@@ -88,6 +90,7 @@ Shader "Custom/TestSurfaceShader" {
 	            	half4 dirtyColor = lerp(_Brush1ColorSelectedLow, _Brush1ColorSelectedHigh, _Brush1ActivationState);
 	            	o.Albedo.rgb = dirtyColor.rgb;
 	            }
+	            o.Alpha = 1.0;
 			}else if(curDistance2 < _Brush2Radius){
 				if(1 == _Brush1ActivationFlag){
 	            	o.Albedo.rgb = _Brush2DirtyColor.rgb;
@@ -96,8 +99,10 @@ Shader "Custom/TestSurfaceShader" {
 	            	o.Albedo.rgb = dirtyColor.rgb;
 	            }
 			
+				o.Alpha = 1.0;
 			}else{
-            	o.Albedo = IN.color.rgb;
+            	//o.Albedo = IN.color.rgb;
+            	o.Alpha = 0.0;
 	        }
 			//o.Alpha = IN.color.a;
         }
