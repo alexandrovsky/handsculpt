@@ -38,6 +38,16 @@ namespace Sculpt{
 
 		public int debugTrisInOctreeCount;
 		public bool drawDebug = false;
+
+
+
+		void OnApplicationQuit(){
+			
+			resetMesh();
+			
+		}
+
+
 		void OnDrawGizmos()
 		{
 			if(!drawDebug)return;
@@ -394,7 +404,7 @@ namespace Sculpt{
 				Triangle tri = triangles[trisToMove[i]];
 				if (!this.octree.aabbLoose.Intersects(tri.aabb)) //we reconstruct the whole octree, slow... but rare
 				{
-					Debug.Log("reconstruct whole octree");
+					//Debug.Log("reconstruct whole octree");
 					Bounds aabb = new Bounds(octree.aabbSplit.center, octree.aabbSplit.size);
 
 					List<int> allTris = new List<int>();

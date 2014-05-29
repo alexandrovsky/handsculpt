@@ -19,8 +19,13 @@ public class MenuEventHandler : MonoBehaviour {
 		case MenuBehavior.ButtonAction.TOOL_SMOOTH:
 			toolDispatcher.SetToolForHand(Sculpt.Tool.SMOOTH, hand);
 			break;
+
 		case MenuBehavior.ButtonAction.TOOL_PAINT:
 			toolDispatcher.SetToolForHand(Sculpt.Tool.BRUSH, hand);
+			break;
+
+		case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
+			toolDispatcher.SetToolForHand(Sculpt.Tool.BRUSH_SECONDARY, hand);
 			break;
 			
 		case MenuBehavior.ButtonAction.TOOL_GROW:

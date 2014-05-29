@@ -32,14 +32,23 @@ public class SkeletalHand : HandModel {
 
   }
 
+	public float GetPinchStrength(){
+		Hand leap_hand = GetLeapHand();
+		return leap_hand.PinchStrength;
+	}
+
 	public Vector3 GetSphereCenter(){
 		Hand leap_hand = GetLeapHand();
-
 		Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
 	    //Vector3 local_center = leap_hand.PalmPosition.ToUnityScaled() - offset;
 
 		Vector3 local_center = leap_hand.SphereCenter.ToUnityScaled() - offset;
 		return GetController().transform.TransformPoint(local_center);
+	}
+
+	public float GetSphereRadius(){
+		Hand leap_hand = GetLeapHand();
+		return leap_hand.SphereRadius;
 	}
 
 	protected Vector3 GetPalmCenter() {

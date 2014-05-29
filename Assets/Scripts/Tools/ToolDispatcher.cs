@@ -10,7 +10,7 @@ public class ToolDispatcher : MonoBehaviour {
 	public float intensity = 0.5f;
 
 	public Sculpt.Tool currentLeftTool = Tool.BRUSH;
-	public Sculpt.Tool currentRightTool = Tool.BRUSH;
+	public Sculpt.Tool currentRightTool = Tool.BRUSH_SECONDARY;
 
 
 	HandController handController;
@@ -38,6 +38,9 @@ public class ToolDispatcher : MonoBehaviour {
 		case Tool.BRUSH:
 			UpdateBrushTool(handController.leftHand,true);
 			break;
+		case Tool.BRUSH_SECONDARY:
+			UpdateBrushSecondaryTool(handController.leftHand,true);
+			break;
 		case Tool.SMOOTH:
 			UpdateSmoothTool(handController.leftHand, true);
 			break;
@@ -50,6 +53,9 @@ public class ToolDispatcher : MonoBehaviour {
 		switch(currentRightTool){
 		case Tool.BRUSH:
 			UpdateBrushTool(handController.rightHand, false);
+			break;
+		case Tool.BRUSH_SECONDARY:
+			UpdateBrushSecondaryTool(handController.rightHand,true);
 			break;
 		case Tool.SMOOTH:
 			UpdateSmoothTool(handController.rightHand, false);
@@ -83,6 +89,10 @@ public class ToolDispatcher : MonoBehaviour {
 
 	}
 
+	public void UpdateBrushSecondaryTool(SkeletalHand hand, bool isLeft){
+		radius = (1 - hand.GetPinchStrength() );
+	}
+
 	public void UpdateSmoothTool(SkeletalHand hand, bool isLeft){
 
 		sculptMesh.pickVerticesInSphere(center, radius);
@@ -94,7 +104,7 @@ public class ToolDispatcher : MonoBehaviour {
 	}
 
 	public void UpdateDragTool(SkeletalHand hand, bool isLeft){
-		
+		radius = hand.GetSphereRadius();
 	}
 
 	public void SetToolForHand(Sculpt.Tool tool, SkeletalHand hand){

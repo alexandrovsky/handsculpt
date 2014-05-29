@@ -8,6 +8,7 @@ namespace Sculpt{
 	public enum Tool{
 		NONE,
 		BRUSH,
+		BRUSH_SECONDARY,
 		DRAG,
 		SMOOTH
 	}
