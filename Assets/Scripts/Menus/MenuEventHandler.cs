@@ -4,7 +4,8 @@ using System.Collections;
 public class MenuEventHandler : MonoBehaviour {
 
 	TextMesh eventText;
-
+	string leftTool;
+	string rightTool;
 	ToolDispatcher toolDispatcher;
 	void Start () { 
 
@@ -14,7 +15,14 @@ public class MenuEventHandler : MonoBehaviour {
 
 	public void recieveMenuEvent(MenuBehavior.ButtonAction action, SkeletalHand hand)
 	{
-		eventText.text = "Events:\n" + action.ToString() +  " from " + hand.GetLeapHand().ToString();
+		if(hand.IsLeftHand() ){
+			leftTool = action.ToString();
+		}else{
+			rightTool = action.ToString();
+		}
+		eventText.text = "Left:" + leftTool + "\n" +
+			"Right: " + rightTool;
+
 		switch(action){
 		case MenuBehavior.ButtonAction.TOOL_SMOOTH:
 			toolDispatcher.SetToolForHand(Sculpt.Tool.SMOOTH, hand);
@@ -28,7 +36,7 @@ public class MenuEventHandler : MonoBehaviour {
 			toolDispatcher.SetToolForHand(Sculpt.Tool.BRUSH_SECONDARY, hand);
 			break;
 			
-		case MenuBehavior.ButtonAction.TOOL_GROW:
+		case MenuBehavior.ButtonAction.TOOL_DRAG:
 			toolDispatcher.SetToolForHand(Sculpt.Tool.DRAG, hand);
 			break;
 			

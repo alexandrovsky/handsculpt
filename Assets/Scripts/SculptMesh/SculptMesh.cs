@@ -559,6 +559,10 @@ namespace Sculpt{
 
 			List<int> iVerts = getVerticesForTriangles(this.iTrisInCells);
 			long vertexSculptMask = ++Vertex.SculptMask;
+
+//			float minDist = Mathf.Infinity;
+//			int minDistVIdx = -1;
+
 			for(int i = 0; i < iVerts.Count; i++){
 				int idx = iVerts[i];
 
@@ -568,7 +572,10 @@ namespace Sculpt{
 					vertices[idx].sculptFlag = vertexSculptMask;
 					this.pickedVertices.Add(idx);
 					this.pickedVerticesDistances.Add(idx, dist);
-//					colorArray[idx] = Color.red;
+//					if(dist < minDist){
+//						minDistVIdx = idx;
+//					}
+
 
 				}
 			}

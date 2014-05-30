@@ -206,11 +206,9 @@ public class ToolDispatcher : MonoBehaviour {
 			
 			fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 			fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
-			
-			
+
 			v -= aNormal * fallOff * 8.0f * Time.deltaTime;
-			
-			
+
 			
 			sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 			
