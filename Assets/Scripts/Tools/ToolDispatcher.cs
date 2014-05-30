@@ -180,10 +180,8 @@ public class ToolDispatcher : MonoBehaviour {
 
 		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
 		hand.pickingCenter = finger.bones[3].transform.position;
-
-
 		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
-
+		hand.brushIntensity = -0.75f;
 
 
 		//---
@@ -232,15 +230,49 @@ public class ToolDispatcher : MonoBehaviour {
 			handController.leftHand.pickingRadius = 0.2f + (1 - hand.GetPinchStrength() );
 		}
 	}
-
+	List<float> smoothedSpeed = new List<float>();
+	List<float> smoothedDistance = new List<float>();
 	public void UpdateSmoothTool(SkeletalHand hand, bool isLeft){
 
 
-		//center = hand.GetSphereCenter();
-		hand.pickingCenter = hand.GetPalmCenter();
+
+		hand.pickingCenter = hand.GetPalmCenterSmoothed();
 		float sphereRadius = hand.GetSphereRadius() / 100.0f;
 		hand.pickingRadius = 2.0f * sphereRadius * sphereRadius;
 
+		float distance = Vector3.Distance(hand.GetLastPalmCenter(), hand.pickingCenter);
+		float speed = hand.GetLeapHand().PalmVelocity.Magnitude/100.0f;
+
+		if(smoothedSpeed.Count > 5){
+			smoothedSpeed.RemoveAt(0);
+			smoothedDistance.RemoveAt(0);
+		}
+		smoothedSpeed.Add(speed);
+		smoothedDistance.Add(distance);
+		float s_ = 0;
+		float d_ = 0;
+		for(int i = 0; i < smoothedSpeed.Count; i++){
+			s_ += smoothedSpeed[i];
+			d_ += smoothedDistance[i];
+		}
+		speed = s_/smoothedSpeed.Count;
+		distance = d_/smoothedDistance.Count;
+
+		bool activated = false;
+		if(distance < 0.15f && speed > 0.3){
+
+			//speed = Mathf.Min(speed, 2); // bring maximum 
+
+			hand.brushIntensity = 1.0f; // speed/2.0f;
+			activated = true;
+		}else{
+			hand.brushIntensity = 0.0f;
+			activated = false;
+		}
+
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, activated, isLeft);
+
+		Debug.Log("palm velocity" + speed + " dist: " + distance  + "intensity" + hand.brushIntensity);
 
 		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 
@@ -267,7 +299,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 		//
 
-		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, true, isLeft);
+
 
 		
 	}
@@ -325,6 +357,7 @@ public class ToolDispatcher : MonoBehaviour {
 	}
 
 	public void SetToolForHand(Sculpt.Tool tool, SkeletalHand hand){
+
 		if(hand.GetLeapHand().IsLeft){
 			currentLeftTool = tool;
 		}else{

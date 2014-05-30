@@ -19,6 +19,8 @@ public class SkeletalHand : HandModel {
 	Quaternion lastPalmRotation = Quaternion.identity;
 
 	public List<int> pickedVertices = new List<int>();
+	public List<float> smoothedRadius = new List<float>(0);
+
 	public Vector3 pickingCenter = Vector3.zero;
 	public float pickingRadius = 0.75f;
 	public float brushIntensity = 0.25f;
@@ -26,6 +28,7 @@ public class SkeletalHand : HandModel {
 	public Ray dragRay = new Ray();
 	void Start() {
 	 	IgnoreCollisionsWithSelf();
+
 	}
 
 	public override void InitHand() {
@@ -38,9 +41,15 @@ public class SkeletalHand : HandModel {
 			if (fingers[i] != null)
 				fingers[i].UpdateFinger();
 		}
+		if(smoothedRadius.Count > 10){
+			smoothedRadius.RemoveAt(0);
+		}
+		smoothedRadius.Add(GetSphereRadius());
   	}
 
-
+	public bool IsLeftHand(){
+		return GetLeapHand().IsLeft;
+	}
 	public bool isHandValid(){
 		Hand leap_hand = GetLeapHand();
 		if(leap_hand == null || !leap_hand.IsValid){
@@ -48,6 +57,8 @@ public class SkeletalHand : HandModel {
 		}
 		return true;
 	}
+
+
 
 	public float GetPinchStrength(){
 		Hand leap_hand = GetLeapHand();
@@ -73,6 +84,14 @@ public class SkeletalHand : HandModel {
 		return leap_hand.SphereRadius;
 	}
 
+	public float GetSphereRadiusSmoothed(){
+		float r = 0.0f;
+		for(int i = 0; i < smoothedRadius.Count; i++){
+			r += smoothedRadius[i];
+		}
+		return r/smoothedRadius.Count;
+	}
+
 	public Vector3 GetPalmCenterSmoothed(){
 		Hand leap_hand = GetLeapHand();
 		Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
@@ -86,7 +105,7 @@ public class SkeletalHand : HandModel {
 	}
 	public Vector3 GetPalmCenter() {
 	    Hand leap_hand = GetLeapHand();
-	    Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
+		Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
 	    Vector3 local_center = leap_hand.PalmPosition.ToUnityScaled() - offset;
 
 	    return GetController().transform.TransformPoint(local_center);

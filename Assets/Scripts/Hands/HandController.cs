@@ -63,6 +63,7 @@ public class HandController : MonoBehaviour {
 
 
 
+
   	private void IgnoreHandCollisions(HandModel hand) {
     	// Ignores hand collisions with immovable objects.
     	Collider[] colliders = gameObject.GetComponentsInChildren<Collider>();
