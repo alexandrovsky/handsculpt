@@ -5,9 +5,8 @@ using Sculpt;
 
 public class ToolDispatcher : MonoBehaviour {
 
-	public Vector3 center =Vector3.zero;
-	public float radius = 2.0f;
-	public float intensity = 0.5f;
+	//public Vector3 center = Vector3.zero;
+
 
 	public Sculpt.Tool currentLeftTool = Tool.TWO_HAND_NAVIGATION;
 	public Sculpt.Tool currentRightTool = Tool.TWO_HAND_NAVIGATION;
@@ -15,16 +14,14 @@ public class ToolDispatcher : MonoBehaviour {
 
 	HandController handController;
 	GameObject target;
-	Sculpter sculpter;
+
 	SculptMesh sculptMesh;
 	Camera mainCamera;
-	List<int> iVertsSelected = new List<int>();
-	List<int> iTrisSelected = new List<int>();
+
 
 	void Start () {
 		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 		target = GameObject.Find("Target");
-		sculpter = target.GetComponent<Sculpter>();
 		sculptMesh = target.GetComponent<SculptMesh>();
 		mainCamera = Camera.main;
 	}
@@ -32,17 +29,18 @@ public class ToolDispatcher : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		this.iTrisSelected.Clear();
+
+
 
 		if(!isTwoHandTool){
-			if(handController.leftHand.GetLeapHand() != null){
-				
+			if(handController.leftHand.isHandValid() ){
+
 				switch(currentLeftTool){
 				case Tool.BRUSH:
-					UpdateBrushTool(handController.leftHand,true);
+					UpdateBrushTool(handController.leftHand, true);
 					break;
 				case Tool.BRUSH_SECONDARY:
-					UpdateBrushSecondaryTool(handController.leftHand,true);
+					UpdateBrushSecondaryTool(handController.leftHand, true);
 					break;
 				case Tool.SMOOTH:
 					UpdateSmoothTool(handController.leftHand, true);
@@ -52,15 +50,17 @@ public class ToolDispatcher : MonoBehaviour {
 					break;
 				default: break;
 				}
+			}else{
+				handController.leftHand.pickedVertices.Clear();
 			}
 			
-			if(handController.rightHand.GetLeapHand() != null){
+			if(handController.rightHand.isHandValid() ){
 				switch(currentRightTool){
 				case Tool.BRUSH:
 					UpdateBrushTool(handController.rightHand, false);
 					break;
 				case Tool.BRUSH_SECONDARY:
-					UpdateBrushSecondaryTool(handController.rightHand,true);
+					UpdateBrushSecondaryTool(handController.rightHand, false);
 					break;
 				case Tool.SMOOTH:
 					UpdateSmoothTool(handController.rightHand, false);
@@ -70,6 +70,8 @@ public class ToolDispatcher : MonoBehaviour {
 					break;
 				default: break;
 				}
+			}else{
+				handController.rightHand.pickedVertices.Clear();
 			}
 		}else{ // TwoHandTools here...
 
@@ -82,8 +84,10 @@ public class ToolDispatcher : MonoBehaviour {
 			}
 		}
 
-
-		sculptMesh.updateMesh(this.iTrisSelected, true);
+		List<int> iTrisSelected = new List<int>();
+		iTrisSelected.AddRange( sculptMesh.getTrianglesFromVertices(handController.leftHand.pickedVertices) );
+		iTrisSelected.AddRange( sculptMesh.getTrianglesFromVertices(handController.rightHand.pickedVertices) );
+		sculptMesh.updateMesh(iTrisSelected, true);
 		sculptMesh.pushMeshData();
 	}
 
@@ -175,42 +179,95 @@ public class ToolDispatcher : MonoBehaviour {
 
 
 		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
-		center = finger.bones[3].transform.position;
+		hand.pickingCenter = finger.bones[3].transform.position;
 
 
-		hand.pickedVertices = sculptMesh.pickVerticesInSphere(center, radius);
-		this.iVertsSelected.AddRange(hand.pickedVertices);
-		this.iTrisSelected.AddRange(sculptMesh.getTrianglesFromVertices(hand.pickedVertices) );
-		sculpter.activated = true;
-		sculpter.sculpt(mainCamera.transform.forward, hand.pickedVertices, 
-		       center, radius, intensity, Tool.BRUSH);
+		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 
 
 
-		ColorizeSelectedVertices(center, radius, intensity, true, isLeft);
+		//---
+		Vector3 aNormal = sculptMesh.areaNormal(hand.pickedVertices);
+		Vector3 aCenter = sculptMesh.areaCenter(hand.pickedVertices);
+
+		
+		float deformIntensityBrush = hand.brushIntensity * hand.pickingRadius * 0.1f;
+		float deformIntensityFlatten = hand.brushIntensity * 0.3f;
+		
+		int nbVerts = hand.pickedVertices.Count;
+		for(int i = 0; i < nbVerts; i++){
+
+			int v_idx = hand.pickedVertices[i];
+
+			Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
+			Vector3 delta = v - hand.pickingCenter;
+			
+			float distanceToPlane = (v.x - aCenter.x) * aNormal.x + (v.y - aCenter.y) * aNormal.y + (v.z - aCenter.z) * aNormal.z;
+			float dist = delta.magnitude/hand.pickingRadius;
+			float fallOff = dist * dist;
+			
+			fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
+			fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
+			
+			
+			v -= aNormal * fallOff;
+			
+			
+			
+			sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
+			
+		}
+
+		//---
+
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, true, isLeft);
 
 	}
 
 	public void UpdateBrushSecondaryTool(SkeletalHand hand, bool isLeft){
-		radius = 0.2f + (1 - hand.GetPinchStrength() );
+		// update the radius of the other hand:
+		if(isLeft){
+			handController.rightHand.pickingRadius = 0.2f + (1 - hand.GetPinchStrength() );
+		}else{
+			handController.leftHand.pickingRadius = 0.2f + (1 - hand.GetPinchStrength() );
+		}
 	}
 
 	public void UpdateSmoothTool(SkeletalHand hand, bool isLeft){
 
 
 		//center = hand.GetSphereCenter();
-		center = hand.GetPalmCenter();
+		hand.pickingCenter = hand.GetPalmCenter();
 		float sphereRadius = hand.GetSphereRadius() / 100.0f;
-		radius = 3.0f * sphereRadius * sphereRadius;
+		hand.pickingRadius = 2.0f * sphereRadius * sphereRadius;
 
 
-		hand.pickedVertices = sculptMesh.pickVerticesInSphere(center, radius);
+		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 
-		sculpter.activated = true;
-		sculpter.sculpt(mainCamera.transform.forward, hand.pickedVertices, 
-		                center, radius, intensity, Tool.SMOOTH);
+		for(int i = 0; i < hand.pickedVertices.Count; i++){
+			int v_idx = hand.pickedVertices[i];
+			Vector3 n = Vector3.zero;
+			Vertex vertex = sculptMesh.vertices[v_idx];
+			
+			Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
+			
+			if(vertex.ringVertices.Count > 0){
+				for(int j = 0; j < vertex.ringVertices.Count; j++){
+					Vector3 ringV = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[vertex.ringVertices[j]]); 
+					n += ringV;
+				}
+				n *= 1.0f/vertex.ringVertices.Count;
+				
+				Vector3 d = (n - v) * hand.brushIntensity;
+				v += d;
+				
+			}
+			sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
+		}
 
-		ColorizeSelectedVertices(center, radius, intensity, true, hand.GetLeapHand().IsRight);
+		//
+
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, true, isLeft);
 
 		
 	}
@@ -224,9 +281,9 @@ public class ToolDispatcher : MonoBehaviour {
 		}
 
 
-		center = hand.GetPalmCenter();
+		hand.pickingCenter = hand.GetPalmCenter();
 
-		radius = 1.0f; // 3.0f * sphereRadius * sphereRadius;
+		hand.pickingRadius = 1.0f; // 3.0f * sphereRadius * sphereRadius;
 		if( hand.GetGrabStrength() > 0.8 ){
 			// manipulate....
 
@@ -238,18 +295,17 @@ public class ToolDispatcher : MonoBehaviour {
 
 				
 				Vector3 vertex =  target.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
-				hand.dragRay.direction = center - hand.dragRay.origin;
-				float dragDistance = Vector3.Distance(hand.dragRay.origin, center);
+				hand.dragRay.direction = hand.pickingCenter - hand.dragRay.origin;
 
 				float dist = MathHelper.DistanceToLine(hand.dragRay, vertex);
 
 
-				Vector3 dragDirection = center - hand.GetLastPalmCenter();
+				Vector3 dragDirection = hand.pickingCenter - hand.GetLastPalmCenter();
 				
 				
 				float fallOff = dist * dist;
 				fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
-				vertex += dragDirection * fallOff;
+				vertex += dragDirection * fallOff * Time.deltaTime;
 
 
 
@@ -257,24 +313,15 @@ public class ToolDispatcher : MonoBehaviour {
 //				Debug.DrawRay(vertex, hand.dragRay.direction * dragDistance * fallOff);
 
 
-
-				ColorizeSelectedVertices(center,radius, 1.0f, true, isLeft);
 				sculptMesh.vertexArray[v_idx] = target.transform.InverseTransformPoint(vertex);
-
+				ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, true, isLeft);
 			}
 
 		}else{
 
-			hand.pickedVertices = sculptMesh.pickVerticesInSphere(center, radius);
+			hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 			hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
 		}
-
-
-		
-
-		
-		ColorizeSelectedVertices(center, radius, intensity, true, hand.GetLeapHand().IsRight);
-
 	}
 
 	public void SetToolForHand(Sculpt.Tool tool, SkeletalHand hand){

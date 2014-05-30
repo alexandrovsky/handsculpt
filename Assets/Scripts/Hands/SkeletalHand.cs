@@ -19,6 +19,10 @@ public class SkeletalHand : HandModel {
 	Quaternion lastPalmRotation = Quaternion.identity;
 
 	public List<int> pickedVertices = new List<int>();
+	public Vector3 pickingCenter = Vector3.zero;
+	public float pickingRadius = 0.75f;
+	public float brushIntensity = 0.25f;
+
 	public Ray dragRay = new Ray();
 	void Start() {
 	 	IgnoreCollisionsWithSelf();
@@ -34,8 +38,16 @@ public class SkeletalHand : HandModel {
 			if (fingers[i] != null)
 				fingers[i].UpdateFinger();
 		}
-
   	}
+
+
+	public bool isHandValid(){
+		Hand leap_hand = GetLeapHand();
+		if(leap_hand == null || !leap_hand.IsValid){
+			return false;
+		}
+		return true;
+	}
 
 	public float GetPinchStrength(){
 		Hand leap_hand = GetLeapHand();
@@ -91,6 +103,10 @@ public class SkeletalHand : HandModel {
     	return GetController().transform.rotation *
           	 GetLeapHand().Basis.Rotation();
   	}
+
+	public Quaternion GetLastPalmRotation(){
+		return lastPalmRotation;
+	}
 
 	protected void SetPositions() {
     	for (int f = 0; f < fingers.Length; ++f) {
