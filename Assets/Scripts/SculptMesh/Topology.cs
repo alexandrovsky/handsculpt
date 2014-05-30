@@ -31,6 +31,8 @@ namespace Sculpt
 		List<Color> colorList = null;
 		List<int> indexList = null;
 
+
+
 		int[] indexArray = null;
 		Dictionary<uint,int> newVectices = null;
 
@@ -49,18 +51,28 @@ namespace Sculpt
 
 		}
 
-		public void Subdivision(List<int> iTris, float detailMaxSquared){
+		public List<int> Subdivision(List<int> iTris, float detailMaxSquared){
 			newVectices.Clear();
 
 
 			int nbTriangles = iTris.Count;
 			for(int i = 0; i < nbTriangles; i++){
-				Triangle t = triangles[i];
 
-				float size = t.aabb.size.sqrMagnitude;
-				if(t.aabb.size.magnitude > detailMaxSquared)
+				int triIdx = iTris[i] * 3;
+				int iVert1 = indexArray[triIdx + 0];
+				int iVert2 = indexArray[triIdx + 1];
+				int iVert3 = indexArray[triIdx + 2];
+
+				Vector3 v1 = mesh.transform.InverseTransformPoint(vertexList[iVert1]);
+				Vector3 v2 = mesh.transform.InverseTransformPoint(vertexList[iVert2]);
+				Vector3 v3 = mesh.transform.InverseTransformPoint(vertexList[iVert3]);
+
+				if(Vector3.Distance(v1, v2) > detailMaxSquared || Vector3.Distance(v1, v3) > detailMaxSquared)
 				{
 					Subdivide4Triangle(iTris[i]);
+
+					// flick holes...
+
 				}
 			}
 
@@ -79,6 +91,11 @@ namespace Sculpt
 			mesh.indexArray = indexList.ToArray();
 			mesh.vertices = this.vertices;
 			mesh.triangles = this.triangles;
+
+			List<int> newVerts = newVectices.Values.ToList();
+			List<int> newTriangles = mesh.getTrianglesFromVertices(newVerts);
+			mesh.updateMesh(newTriangles, true);
+			return newVerts;
 		}
 
 
@@ -189,6 +206,7 @@ namespace Sculpt
 			vertices[c].tIndices.Add(t3.id);
 			vertices[c].tIndices.Add(t.id);
 			vertices[c].tIndices.Add(t4.id);
+
 		}
 
 		int GetNewVertex4(int i1, int i2)

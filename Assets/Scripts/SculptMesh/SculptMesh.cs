@@ -50,7 +50,7 @@ namespace Sculpt{
 
 		void OnDrawGizmos()
 		{
-			if(!drawDebug)return;
+			//if(!drawDebug)return;
 
 //			debugTrisInOctreeCount = 0;
 //			drawOctreeTriangles(this.octree);
@@ -58,13 +58,13 @@ namespace Sculpt{
 
 //			drawVertices();
 //			drawPickedVerices();
-//			drawSelectedAabbs();
+			drawSelectedAabbs();
 
 //			drawLeavesUpdate();
 //			drawITrisInCells();
 			//drawITrisCandidates();
 //			drawOctree(this.octree);
-			drawTriangleAabbs();
+//			drawTriangleAabbs();
 		}
 
 
@@ -443,7 +443,7 @@ namespace Sculpt{
 		public void pushMeshData(){
 			mesh.vertices = this.vertexArray;
 			mesh.normals = this.normalArray;
-			//mesh.triangles = this.indexArray;
+			mesh.triangles = this.indexArray;
 			mesh.colors = this.colorArray;
 		}
 

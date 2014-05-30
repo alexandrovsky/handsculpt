@@ -1,35 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Shaders/TestSurfaceShader.shader">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/SculptMesh/Sculpter.cs">
     <Files>
-      <File FileName="Assets/Scripts/Tools/ToolDispatcher.cs" Line="110" Column="20" />
-      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/PointingTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/SculptMesh.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/GrabTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/ShadowTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gui.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Menus/MenuEventHandler.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Tools/ManipulationHandTool.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Menus/MenuBehavior.cs" Line="1" Column="1" />
-      <File FileName="Assets/Shaders/TestSurfaceShader.shader" Line="37" Column="33" />
-      <File FileName="Assets/Scripts/Hands/SkeletalHand.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Hands/HandModel.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/SculptMesh/Octree.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Utils/LeapUnityExtensions.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Menus/MenuMoverBehavior.cs" Line="1" Column="1" />
-      <File FileName="Assets/Shaders/VertexSelection.shader" Line="1" Column="1" />
-      <File FileName="Assets/Shaders/Translucent.shader" Line="1" Column="1" />
-      <File FileName="Assets/JMO Assets/MatCap Shaders/Shaders/MatCap_Lit.shader" Line="1" Column="1" />
-      <File FileName="Assets/Shaders/Grid.shader" Line="267" Column="2" />
-      <File FileName="Assets/Shaders/Test.shader" Line="17" Column="20" />
+      <File FileName="Assets/Scripts/Mesh/MeshSubdivide.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/SculptMesh/Sculpter.cs" Line="120" Column="4" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
-            <Node name="Shaders" expanded="True">
-              <Node name="TestSurfaceShader.shader" selected="True" />
+            <Node name="Scripts" expanded="True">
+              <Node name="Mesh" expanded="True" />
+              <Node name="SculptMesh" expanded="True">
+                <Node name="Sculpter.cs" selected="True" />
+              </Node>
             </Node>
           </Node>
         </State>
@@ -42,8 +26,11 @@
       <Breakpoint enabled="false" file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="788" />
       <Breakpoint enabled="false" file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="796" />
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/SculptMesh.cs" line="766" />
-      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Sculpter.cs" line="473" />
+      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Sculpter.cs" line="487" />
       <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/Tools/ManipulationHandTool.cs" line="38" />
+      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Sculpter.cs" line="79" />
+      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/Topology.cs" line="55" />
+      <Breakpoint file="/Users/dimi/development/handsculpt/Assets/Scripts/SculptMesh/IcosphereBuilder.cs" line="267" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

@@ -47,8 +47,8 @@ namespace Sculpt{
 		Vector3 gizmoPos = Vector3.zero;
 		float gizmoRadius = 1.0f;
 
-		float d2Max = 0.0f; //uniform refinement of mesh (max edge length)
-		float detailSubdivision = 0.75f; //maximal edge length before we subdivide it
+		float d2Max = 0.5f; //uniform refinement of mesh (max edge length)
+		float detailSubdivision = 0.1f; //maximal edge length before we subdivide it
 
 
 
@@ -128,11 +128,18 @@ namespace Sculpt{
 
 
 			if(Input.GetMouseButtonUp(0)){
-				Debug.Log("DRAG ended");
+				// topology here....
+//				if( iTrisSelected.Count > 0 ){
+//					setAdaptiveParameters(radius);
+//					topo = new Topology(sculptMesh);
+//					topo.Subdivision(iTrisSelected, d2Max);
+//					
+//				}
+
 			}
 
-			if(Input.GetMouseButtonDown(0) ){
-			//if(Input.GetMouseButton(0) ){
+			//if(Input.GetMouseButtonDown(0) ){
+			if(Input.GetMouseButton(0) ){
 				this.activated = true;
 				this.dragInitPos = mousePos;
 			}else{
@@ -173,7 +180,9 @@ namespace Sculpt{
 			float r = this.radius; // * (mainCamera.fieldOfView/180.0f); // scale the radius depending on "distance"
 			pickedVertices = sculptMesh.pickVerticesInSphere(sculptMesh.intersectionPoint, r);
 
-			//Debug.Log("picked verticec" + pickedVertices.Count);
+
+			if(activated) Debug.Log("picked verticec" + pickedVertices.Count);
+
 			if(pickedVertices.Count > 0){
 				gizmoPos = sculptMesh.intersectionPoint;
 				gizmoRadius = radius;
@@ -199,8 +208,15 @@ namespace Sculpt{
 //			Debug.DrawLine(mainCamera.transform.position, mouseWorldPos, Color.cyan);
 //			Debug.DrawLine(center, center + dragDir, Color.cyan);
 
+			ColorizeSelectedVertices(center, sculptMesh.worldRadiusSqr, intensity, true);
+
+
 			sculpt(mainCamera.transform.forward, pickedVertices, 
 			       center, sculptMesh.worldRadiusSqr, intensity,this.tool);
+
+
+
+			
 
 			sculptMesh.updateMesh(this.iTrisSelected, !dragging);
 
@@ -259,16 +275,14 @@ namespace Sculpt{
 
 			if(iVertsInFront.Count > 0){
 
-				// topology here....
-//				if(activated){
+//				if( activated && iTrisSelected.Count > 0 ){
 //					setAdaptiveParameters(radius);
 //					topo = new Topology(sculptMesh);
-//					topo.Subdivision(iTrisSelected, d2Max);
-//
+//					iVertsInFront.AddRange( topo.Subdivision(iTrisSelected, d2Max) );
 //				}
 
-
 				switch(tool){
+
 				case Tool.BRUSH:
 					brush(center, iVertsInFront, radius, intensity);
 					break;
@@ -308,7 +322,10 @@ namespace Sculpt{
 					fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 					fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
 
-					v -= aNormal * fallOff * Time.deltaTime * 10;
+				
+					v -= -aNormal * fallOff * Time.deltaTime * 10;
+
+
 
 					sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 //					sculptMesh.colorArray[v_idx] = ACTIVATED;
@@ -401,7 +418,26 @@ namespace Sculpt{
 
 		}
 
+	
+		public void ColorizeSelectedVertices(Vector3 center, float radius, float intensity, bool flag){
+			Vector4 brushPos = new Vector4(center.x, 
+			                               center.y, 
+			                               center.z,
+			                               1.0f);
 
+			renderer.material.SetVector("_Brush1Pos", brushPos);
+			renderer.material.SetFloat("_Brush1Radius", radius);
+			renderer.material.SetFloat("_Brush1ActivationState", intensity);
+			renderer.material.SetInt("_Brush1ActivationFlag", flag ? 1 : 0);
+			
+			
+			//Debug.Log("flag:" + flag);
+			
+			//		target.renderer.material.SetColor("_BrushColorSelectedLow", Sculpter.SELECTED_LOW);
+			//		target.renderer.material.SetColor("_BrushColorSelectedHigh", Sculpter.SELECTED_HIGH);
+			//		target.renderer.material.SetColor("_BrushDirtyColor", Sculpter.ACTIVATED);
+			
+		}
 
 		
 
