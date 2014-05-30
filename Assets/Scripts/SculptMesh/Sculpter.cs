@@ -10,7 +10,8 @@ namespace Sculpt{
 		BRUSH,
 		BRUSH_SECONDARY,
 		DRAG,
-		SMOOTH
+		SMOOTH,
+		TWO_HAND_NAVIGATION
 	}
 	public class Sculpter : MonoBehaviour {
 

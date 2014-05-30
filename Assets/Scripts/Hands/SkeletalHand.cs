@@ -5,36 +5,42 @@
 \******************************************************************************/
 
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using Leap;
 
 // The model for our skeletal hand made out of various polyhedra.
 public class SkeletalHand : HandModel {
 
-  protected const float PALM_CENTER_OFFSET = 15.0f;
+	 protected const float PALM_CENTER_OFFSET = 15.0f;
 
-  public GameObject palm;
+	public GameObject palm;
+	public List<int> pickedVertices = new List<int>();
 
-  void Start() {
-    IgnoreCollisionsWithSelf();
-  }
+	void Start() {
+	 	IgnoreCollisionsWithSelf();
+	}
 
-  public override void InitHand() {
-    SetPositions();
-  }
+	public override void InitHand() {
+	   SetPositions();
+	}
 
-  public override void UpdateHand() {
-    SetPositions();
+	public override void UpdateHand() {
+    	SetPositions();
 		for (int i = 0; i < fingers.Length; ++i) {
 			if (fingers[i] != null)
 				fingers[i].UpdateFinger();
 		}
 
-  }
+  	}
 
 	public float GetPinchStrength(){
 		Hand leap_hand = GetLeapHand();
 		return leap_hand.PinchStrength;
+	}
+
+	public float GetGrabStrength(){
+		Hand leap_hand = GetLeapHand();
+		return leap_hand.GrabStrength;
 	}
 
 	public Vector3 GetSphereCenter(){
@@ -51,6 +57,14 @@ public class SkeletalHand : HandModel {
 		return leap_hand.SphereRadius;
 	}
 
+	public Vector3 GetPalmCenterSmoothed(){
+		Hand leap_hand = GetLeapHand();
+		Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
+		Vector3 local_center = leap_hand.StabilizedPalmPosition.ToUnityScaled() - offset;
+		
+		return GetController().transform.TransformPoint(local_center);
+	}
+
 	public Vector3 GetPalmCenter() {
 	    Hand leap_hand = GetLeapHand();
 	    Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
@@ -58,6 +72,13 @@ public class SkeletalHand : HandModel {
 
 	    return GetController().transform.TransformPoint(local_center);
   	}
+
+	public Vector3 GetPalmNormal(){
+		Hand leap_hand = GetLeapHand();
+		Vector3 local_normal = leap_hand.PalmNormal.ToUnity();
+		
+		return GetController().transform.TransformDirection(local_normal);
+	}
 
 	public Quaternion GetPalmRotation() {
     	return GetController().transform.rotation *

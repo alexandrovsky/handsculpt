@@ -77,7 +77,7 @@ public class MenuBehavior : MonoBehaviour {
 	public enum MenuState { INACTIVE, ACTIVATING, ACTIVE, SELECTION, DEACTIVATION, DISABLED };
 	public enum ButtonAction { 
 		NONE, 
-		TOOL_SMOOTH, TOOL_GROW, TOOL_PAINT, TOOL_PAINT_ASSISTENT 
+		TOOL_SMOOTH, TOOL_GROW, TOOL_PAINT, TOOL_PAINT_ASSISTENT, TOOL_2_HAND_NAVIGATION 
 	};
 
 	public MenuState currentState

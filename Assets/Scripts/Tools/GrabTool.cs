@@ -110,9 +110,8 @@ public class GrabTool : ManipulationHandTool
 				selectedVertices.Add(v_idx, dist);
 
 				//sculptMesh.colorArray[ iVertsSelected[i] ] = Sculpter.SELECTED_HIGH;
-
-				colorizeSelectedVertices(sculptMesh.intersectionPoint, radius, 0.0f, sculpter.activated);
 			}
+			colorizeSelectedVertices(sculptMesh.intersectionPoint, radius, 0.0f, sculpter.activated);
 		}
 
 

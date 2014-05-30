@@ -33,7 +33,7 @@ namespace Sculpt{
 		public Vector3 intersectionPoint = Vector3.zero;
 
 		List<int> pickedVertices;
-
+		public Dictionary<int, float> pickedVerticesDistances;
 		public float worldRadiusSqr = 0.0f;
 
 		public int debugTrisInOctreeCount;
@@ -211,7 +211,7 @@ namespace Sculpt{
 			iTrisInCells = new List<int>();
 			leavesUpdate = new List<Octree>();
 			pickedVertices = new List<int>();
-
+			pickedVerticesDistances = new Dictionary<int, float>();
 			initMesh();
 
 
@@ -240,7 +240,7 @@ namespace Sculpt{
 			iTrisInCells = new List<int>();
 			leavesUpdate = new List<Octree>();
 			pickedVertices = new List<int>();
-
+			pickedVerticesDistances = new Dictionary<int, float>();
 			initMesh();
 		}
 
@@ -552,6 +552,7 @@ namespace Sculpt{
 		public List<int> pickVerticesInSphere(Vector3 center, float radius){
 			this.leavesUpdate.Clear();
 			this.pickedVertices.Clear();
+			this.pickedVerticesDistances.Clear();
 
 			this.worldRadiusSqr = radius;
 			this.iTrisInCells = this.octree.intersectSphere(center, this.worldRadiusSqr, this.leavesUpdate);
@@ -566,7 +567,7 @@ namespace Sculpt{
 				if(dist < this.worldRadiusSqr){
 					vertices[idx].sculptFlag = vertexSculptMask;
 					this.pickedVertices.Add(idx);
-
+					this.pickedVerticesDistances.Add(idx, dist);
 //					colorArray[idx] = Color.red;
 
 				}
@@ -580,7 +581,7 @@ namespace Sculpt{
 				this.pickedVertices.Add(this.indexArray[j+2]);
 				                       
 			}
-			return this.pickedVertices;
+			return new List<int>( this.pickedVertices );
 		}
 
 		public List<int> getVerticesForTriangles(List<int> iTris){
