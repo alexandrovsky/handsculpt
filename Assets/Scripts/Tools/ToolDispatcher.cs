@@ -210,7 +210,7 @@ public class ToolDispatcher : MonoBehaviour {
 			fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
 			
 			
-			v -= aNormal * fallOff;
+			v -= aNormal * fallOff * 8.0f * Time.deltaTime;
 			
 			
 			
@@ -305,7 +305,7 @@ public class ToolDispatcher : MonoBehaviour {
 				
 				float fallOff = dist * dist;
 				fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
-				vertex += dragDirection * fallOff * Time.deltaTime;
+				vertex += dragDirection * fallOff;
 
 
 
@@ -314,13 +314,13 @@ public class ToolDispatcher : MonoBehaviour {
 
 
 				sculptMesh.vertexArray[v_idx] = target.transform.InverseTransformPoint(vertex);
-				ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, true, isLeft);
 			}
 
 		}else{
 
 			hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 			hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
+			ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, true, isLeft);
 		}
 	}
 
