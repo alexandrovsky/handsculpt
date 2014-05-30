@@ -215,7 +215,6 @@ public class ToolDispatcher : MonoBehaviour {
 		
 	}
 
-	Vector3 lastCenter = Vector3.zero;
 	public void UpdateDragTool(SkeletalHand hand, bool isLeft){
 
 		if(!hand.GetLeapHand().IsValid){
@@ -224,10 +223,9 @@ public class ToolDispatcher : MonoBehaviour {
 			return; // --- OUT --->
 		}
 
-		radius = hand.GetSphereRadius();
 
 		center = hand.GetPalmCenter();
-		float sphereRadius = hand.GetSphereRadius() / 100.0f;
+
 		radius = 1.0f; // 3.0f * sphereRadius * sphereRadius;
 		if( hand.GetGrabStrength() > 0.8 ){
 			// manipulate....
@@ -240,9 +238,13 @@ public class ToolDispatcher : MonoBehaviour {
 
 				
 				Vector3 vertex =  target.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
+				hand.dragRay.direction = center - hand.dragRay.origin;
+				float dragDistance = Vector3.Distance(hand.dragRay.origin, center);
 
-				float dist = Vector3.Distance(center, vertex);
-				Vector3 dragDirection = (center - vertex);
+				float dist = MathHelper.DistanceToLine(hand.dragRay, vertex);
+
+
+				Vector3 dragDirection = center - hand.GetLastPalmCenter();
 				
 				
 				float fallOff = dist * dist;
@@ -250,16 +252,21 @@ public class ToolDispatcher : MonoBehaviour {
 				vertex += dragDirection * fallOff;
 
 
+
+//				Debug.DrawRay(hand.dragRay.origin, hand.dragRay.direction, Color.green);
+//				Debug.DrawRay(vertex, hand.dragRay.direction * dragDistance * fallOff);
+
+
+
 				ColorizeSelectedVertices(center,radius, 1.0f, true, isLeft);
 				sculptMesh.vertexArray[v_idx] = target.transform.InverseTransformPoint(vertex);
 
-				lastCenter = center;
 			}
 
 		}else{
 
 			hand.pickedVertices = sculptMesh.pickVerticesInSphere(center, radius);
-
+			hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
 		}
 
 

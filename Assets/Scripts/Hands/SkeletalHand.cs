@@ -14,8 +14,12 @@ public class SkeletalHand : HandModel {
 	 protected const float PALM_CENTER_OFFSET = 15.0f;
 
 	public GameObject palm;
-	public List<int> pickedVertices = new List<int>();
 
+	Vector3 lastPalmPosition = Vector3.zero;
+	Quaternion lastPalmRotation = Quaternion.identity;
+
+	public List<int> pickedVertices = new List<int>();
+	public Ray dragRay = new Ray();
 	void Start() {
 	 	IgnoreCollisionsWithSelf();
 	}
@@ -65,6 +69,9 @@ public class SkeletalHand : HandModel {
 		return GetController().transform.TransformPoint(local_center);
 	}
 
+	public Vector3 GetLastPalmCenter() {
+		return lastPalmPosition;
+	}
 	public Vector3 GetPalmCenter() {
 	    Hand leap_hand = GetLeapHand();
 	    Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
@@ -92,6 +99,9 @@ public class SkeletalHand : HandModel {
 		}
 
     	if (palm != null) {
+			lastPalmPosition = palm.transform.position;
+			lastPalmRotation = palm.transform.rotation;
+
       		palm.transform.position = GetPalmCenter();
       		palm.transform.rotation = GetPalmRotation();
     	}
