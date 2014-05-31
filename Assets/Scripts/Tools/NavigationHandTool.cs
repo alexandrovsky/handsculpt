@@ -20,8 +20,6 @@ public class NavigationHandTool : HandTool {
 
 	Camera handCamera;
 
-	Vector3 initHandNormal = Vector3.zero;
-
 
 	NavigationMode navigationMode;
 
@@ -124,7 +122,6 @@ public class NavigationHandTool : HandTool {
 			
 			// do something here....
 
-			initHandNormal = palm.transform.up;
 			initHandPosition = palm.transform.position;
 
 		}else if(HandTool.HandToolMode.Enabled == mode){

@@ -37,7 +37,6 @@ namespace Sculpt{
 		public Tool tool;
 		Ray ray = new Ray();
 		public Vector3 dragDir = Vector3.zero;
-		Vector3 dragInitPos;
 		Vector3 center;
 		SculptMesh sculptMesh;
 
@@ -45,8 +44,7 @@ namespace Sculpt{
 
 		Camera mainCamera;
 
-		Vector3 gizmoPos = Vector3.zero;
-		float gizmoRadius = 1.0f;
+
 
 		float d2Max = 0.5f; //uniform refinement of mesh (max edge length)
 		float detailSubdivision = 0.1f; //maximal edge length before we subdivide it
@@ -142,7 +140,6 @@ namespace Sculpt{
 			//if(Input.GetMouseButtonDown(0) ){
 			if(Input.GetMouseButton(0) ){
 				this.activated = true;
-				this.dragInitPos = mousePos;
 			}else{
 				this.activated = false;
 			}
@@ -184,13 +181,7 @@ namespace Sculpt{
 
 			if(activated) Debug.Log("picked verticec" + pickedVertices.Count);
 
-			if(pickedVertices.Count > 0){
-				gizmoPos = sculptMesh.intersectionPoint;
-				gizmoRadius = radius;
-			}else{
-				gizmoPos = ray.origin + ray.direction;
-				gizmoRadius = radius * radius / mainCamera.transform.position.magnitude;
-			}
+
 
 //			if(!dragging){
 //				sculptMesh.intersectRayMesh(ray);

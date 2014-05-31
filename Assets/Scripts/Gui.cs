@@ -18,7 +18,7 @@ public class Gui : MonoBehaviour {
 	private GameObject currentManipulationTool = null;
 
 	GameObject target;
-	GameObject hands;
+
 
 
 	SculptMesh sculptMesh;
@@ -35,7 +35,6 @@ public class Gui : MonoBehaviour {
 		target = GameObject.Find("Target");
 		sculptMesh = target.GetComponent<SculptMesh>();
 		sculpter = target.GetComponent<Sculpter>();
-		hands = GameObject.Find("Leap Hands");	
 		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 	}
 	
@@ -218,6 +217,5 @@ public class Gui : MonoBehaviour {
 			GUILayout.EndArea();
 		}
 	}
-	float angleV = 0.0f;
-	float angleH = 0.0f;
+
 }

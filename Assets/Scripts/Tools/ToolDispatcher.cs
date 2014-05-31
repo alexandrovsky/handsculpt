@@ -94,7 +94,7 @@ public class ToolDispatcher : MonoBehaviour {
 	Vector3 initLeftPos = Vector3.zero;
 	Vector3 initRightPos = Vector3.zero;
 	Vector3 centerPoint = Vector3.zero;
-	Vector3 initCameraPosition = Vector3.zero;
+
 	bool isNavigating = false;
 	public void UpdateTwoHandNavigationTool(SkeletalHand leftHand, SkeletalHand rightHand){
 
@@ -120,7 +120,6 @@ public class ToolDispatcher : MonoBehaviour {
 				initLeftPos = leftPalmPos;
 				initRightPos = rightPalmPos;
 				centerPoint = (leftPalmPos + rightPalmPos) * 0.5f;
-				initCameraPosition = mainCamera.transform.position;
 				isNavigating = true;
 			}
 

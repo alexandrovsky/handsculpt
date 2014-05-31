@@ -378,7 +378,7 @@ namespace Sculpt{
 
 
 			Octree leaf;
-			List<int> trisLeaf;
+			//List<int> trisLeaf;
 			for (int i = 0; i < nbTris; ++i) //recompute position inside the octree
 			{
 				Triangle t = triangles[iTris[i]];
@@ -388,7 +388,7 @@ namespace Sculpt{
 				if ( !leaf.aabbSplit.Contains(t.aabb.center) )
 				{
 					trisToMove.Add(iTris[i]);
-					trisLeaf = leaf.iTris;
+					//trisLeaf = leaf.iTris;
 					if(leaf.iTris.Contains(t.id) ){
 						leaf.iTris.Remove(t.id);
 //						t.leaf = null;

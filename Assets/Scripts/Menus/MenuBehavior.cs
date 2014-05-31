@@ -55,7 +55,6 @@ public class MenuBehavior : MonoBehaviour {
 	private GameObject[] _buttons;
 	private MenuState _currentState;
 	private int _currentSelection = -1;
-	private Camera _mainCam;
 	private Camera _uiCam;
 	private int _closest = -1;
 	private int _lastClosest = -1;
@@ -76,8 +75,13 @@ public class MenuBehavior : MonoBehaviour {
 	public enum MenuType { ICON, TEXT, TEXTURE };
 	public enum MenuState { INACTIVE, ACTIVATING, ACTIVE, SELECTION, DEACTIVATION, DISABLED };
 	public enum ButtonAction { 
-		NONE, 
-		TOOL_SMOOTH, TOOL_DRAG, TOOL_PAINT, TOOL_PAINT_ASSISTENT, TOOL_2_HAND_NAVIGATION 
+		NONE,
+		// manipulation tools:
+		TOOL_SMOOTH, TOOL_DRAG, TOOL_PAINT, 
+		// secondary tools:
+		TOOL_PAINT_ASSISTENT,
+		//navigation tools
+		TOOL_2_HAND_NAVIGATION, TOOL_NAVIGATION_DIRECT, TOOL_NAVIGATION_GRAB 
 	};
 
 	public MenuState currentState
@@ -98,7 +102,7 @@ public class MenuBehavior : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		//Get references to the main scene and UI cameras.
-		_mainCam = (GameObject.Find("Main Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
+		//_mainCam = (GameObject.Find("Main Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
 		_uiCam = (GameObject.Find("UI Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
 		_baseLocation = gameObject.transform.parent.position;
 		_handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;

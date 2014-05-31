@@ -70,7 +70,7 @@ public abstract class HandTool : MonoBehaviour {
 		//transform.localPosition = offset;
 		target = GameObject.Find("Target");
 		
-		GameObject hands = GameObject.Find("Leap Hands");
+
 		controller = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 		palm =  (workingHandIdx == 0 ? controller.leftHand.palm : controller.rightHand.palm );
 		
