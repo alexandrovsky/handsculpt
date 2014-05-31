@@ -8,8 +8,12 @@ public class ToolDispatcher : MonoBehaviour {
 	//public Vector3 center = Vector3.zero;
 
 
-	public Sculpt.Tool currentLeftTool = Tool.TWO_HAND_NAVIGATION;
-	public Sculpt.Tool currentRightTool = Tool.TWO_HAND_NAVIGATION;
+//	public Sculpt.Tool currentLeftTool = Tool.TWO_HAND_NAVIGATION;
+//	public Sculpt.Tool currentRightTool = Tool.TWO_HAND_NAVIGATION;
+
+	public MenuBehavior.ButtonAction currentLeftTool = MenuBehavior.ButtonAction.NONE;
+	public MenuBehavior.ButtonAction currentRightTool = MenuBehavior.ButtonAction.NONE;
+
 	public bool isTwoHandTool = false;
 
 	HandController handController;
@@ -36,17 +40,17 @@ public class ToolDispatcher : MonoBehaviour {
 			if(handController.leftHand.isHandValid() ){
 
 				switch(currentLeftTool){
-				case Tool.BRUSH:
+					case MenuBehavior.ButtonAction.TOOL_PAINT:
 					UpdateBrushTool(handController.leftHand, true);
 					break;
-				case Tool.BRUSH_SECONDARY:
+				case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
 					UpdateBrushSecondaryTool(handController.leftHand, true);
 					break;
-				case Tool.SMOOTH:
+				case MenuBehavior.ButtonAction.TOOL_SMOOTH:
 					UpdateSmoothTool(handController.leftHand, true);
 					break;
-				case Tool.DRAG:
-					UpdateDragTool(handController.leftHand, true);
+				case MenuBehavior.ButtonAction.TOOL_GRAB:
+					UpdateGrabTool(handController.leftHand, true);
 					break;
 				default: break;
 				}
@@ -56,17 +60,17 @@ public class ToolDispatcher : MonoBehaviour {
 			
 			if(handController.rightHand.isHandValid() ){
 				switch(currentRightTool){
-				case Tool.BRUSH:
+				case MenuBehavior.ButtonAction.TOOL_PAINT:
 					UpdateBrushTool(handController.rightHand, false);
 					break;
-				case Tool.BRUSH_SECONDARY:
+				case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
 					UpdateBrushSecondaryTool(handController.rightHand, false);
 					break;
-				case Tool.SMOOTH:
+				case MenuBehavior.ButtonAction.TOOL_SMOOTH:
 					UpdateSmoothTool(handController.rightHand, false);
 					break;
-				case Tool.DRAG:
-					UpdateDragTool(handController.rightHand, false);
+				case MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB:
+					UpdateGrabTool(handController.rightHand, false);
 					break;
 				default: break;
 				}
@@ -77,7 +81,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 			if(handController.leftHand.GetLeapHand() != null && handController.rightHand.GetLeapHand() != null){
 				switch(currentLeftTool){
-				case Tool.TWO_HAND_NAVIGATION:
+				case MenuBehavior.ButtonAction.TOOL_2_HAND_NAVIGATION:
 					UpdateTwoHandNavigationTool(handController.leftHand, handController.rightHand);
 					break;
 				}
@@ -301,7 +305,7 @@ public class ToolDispatcher : MonoBehaviour {
 		
 	}
 
-	public void UpdateDragTool(SkeletalHand hand, bool isLeft){
+	public void UpdateGrabTool(SkeletalHand hand, bool isLeft){
 
 		if(!hand.GetLeapHand().IsValid){
 			hand.pickedVertices.Clear();
@@ -353,7 +357,7 @@ public class ToolDispatcher : MonoBehaviour {
 		}
 	}
 
-	public void SetToolForHand(Sculpt.Tool tool, SkeletalHand hand){
+	public void SetToolForHand(MenuBehavior.ButtonAction tool, SkeletalHand hand){
 
 		if(hand.GetLeapHand().IsLeft){
 			currentLeftTool = tool;

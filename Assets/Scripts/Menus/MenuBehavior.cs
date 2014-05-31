@@ -77,7 +77,7 @@ public class MenuBehavior : MonoBehaviour {
 	public enum ButtonAction { 
 		NONE,
 		// manipulation tools:
-		TOOL_SMOOTH, TOOL_DRAG, TOOL_PAINT, 
+		TOOL_SMOOTH, TOOL_GRAB, TOOL_PAINT, 
 		// secondary tools:
 		TOOL_PAINT_ASSISTENT,
 		//navigation tools
