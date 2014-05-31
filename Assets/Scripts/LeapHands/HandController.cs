@@ -46,9 +46,11 @@ public class HandController : MonoBehaviour {
 
 		leftHand = CreateHand(leftGraphicsModel) as SkeletalHand;
 		leftHand.name = "left_hand";
+
 		leftHand.transform.parent = mainCam_.transform;
 		rightHand = CreateHand(rightGraphicsModel) as SkeletalHand;
 		rightHand.name = "right_hand";
+
 		rightHand.transform.parent = mainCam_.transform;
 
 

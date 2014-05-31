@@ -9,8 +9,8 @@ public class ToolDispatcher : MonoBehaviour {
 	//public Vector3 center = Vector3.zero;
 
 
-//	public Sculpt.Tool currentLeftTool = Tool.TWO_HAND_NAVIGATION;
-//	public Sculpt.Tool currentRightTool = Tool.TWO_HAND_NAVIGATION;
+	public MenuBehavior.ButtonAction currentLeftTool = MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB;
+	public MenuBehavior.ButtonAction currentRightTool = MenuBehavior.ButtonAction.TOOL_PAINT;
 
 	HandController handController;
 	GameObject target;
@@ -25,6 +25,10 @@ public class ToolDispatcher : MonoBehaviour {
 		sculptMesh = target.GetComponent<SculptMesh>();
 		mainCamera = (GameObject.Find("Main Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
 		handCamera = (GameObject.Find("Hand Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
+
+		SetToolForHand(currentLeftTool, handController.leftHand);
+		SetToolForHand(currentRightTool, handController.rightHand);
+
 	}
 	
 	// Update is called once per frame
@@ -64,9 +68,8 @@ public class ToolDispatcher : MonoBehaviour {
 	void Update () {
 
 
-
-
-
+		handController.leftHand.tool = currentLeftTool;
+		handController.rightHand.tool = currentRightTool;
 
 		updateHandTool(handController.leftHand);
 		updateHandTool(handController.rightHand);
@@ -80,11 +83,6 @@ public class ToolDispatcher : MonoBehaviour {
 		sculptMesh.pushMeshData();
 	}
 
-	Vector3 initLeftPos = Vector3.zero;
-	Vector3 initRightPos = Vector3.zero;
-	Vector3 centerPoint = Vector3.zero;
-
-	bool isNavigating = false;
 
 	public void UpdateBrushTool(SkeletalHand hand){
 
@@ -146,79 +144,70 @@ public class ToolDispatcher : MonoBehaviour {
 	}
 
 
-	List<float> smoothedSpeed = new List<float>();
-	List<float> smoothedDistance = new List<float>();
+
 	public void UpdateSmoothTool(SkeletalHand hand){
 
 
 
-		hand.pickingCenter = hand.GetPalmCenterSmoothed();
-		float sphereRadius = hand.GetSphereRadius() / 100.0f;
+		Vector3 palmPos = hand.GetPalmCenter();
+		float sphereRadius = hand.GetSphereRadiusSmoothed() / 100.0f;
 		hand.pickingRadius = 2.0f * sphereRadius * sphereRadius;
-
-		float distance = Vector3.Distance(hand.GetLastPalmCenter(), hand.pickingCenter);
-		float speed = hand.GetLeapHand().PalmVelocity.Magnitude/100.0f;
-
-		if(smoothedSpeed.Count > 5){
-			smoothedSpeed.RemoveAt(0);
-			smoothedDistance.RemoveAt(0);
-		}
-		smoothedSpeed.Add(speed);
-		smoothedDistance.Add(distance);
-		float s_ = 0;
-		float d_ = 0;
-		for(int i = 0; i < smoothedSpeed.Count; i++){
-			s_ += smoothedSpeed[i];
-			d_ += smoothedDistance[i];
-		}
-		speed = s_/smoothedSpeed.Count;
-		distance = d_/smoothedDistance.Count;
-
 		bool activated = false;
-		if(distance < 0.15f && speed > 0.3){
 
-			//speed = Mathf.Min(speed, 2); // bring maximum 
 
-			hand.brushIntensity = 1.0f; // speed/2.0f;
-			activated = true;
-		}else{
-			hand.brushIntensity = 0.0f;
-			activated = false;
+		//Debug.Log("palm velocity" + speed + " dist: " + distance  + "intensity" + hand.brushIntensity);
+		Vector3 palmNormal = hand.GetPalmNormal();
+		Ray ray = new Ray(palmPos, palmNormal);
+
+		if(sculptMesh.intersectRayMesh(ray) ){
+			Triangle t = sculptMesh.triangles[sculptMesh.pickedTriangle];
+			if(Vector3.Dot(t.normal, ray.direction) <= 0.0f){
+				hand.pickingCenter = sculptMesh.intersectionPoint;
+
+
+				float distanceFromHit = Vector3.Distance(palmPos, hand.pickingCenter);
+				Debug.Log("distance from hit " + distanceFromHit);
+				if( distanceFromHit < hand.pickingRadius){
+					activated = true;
+					hand.brushIntensity = 1.0f;
+					hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
+
+				}else{
+					distanceFromHit = hand.pickingRadius;
+					activated = false;
+					hand.brushIntensity = 0.0f;
+					hand.pickedVertices.Clear();
+				}
+				
+
+				
+				int nbVerts = hand.pickedVertices.Count;
+				if(activated){
+					for(int i = 0; i < nbVerts; i++){
+						int v_idx = hand.pickedVertices[i];
+						Vector3 n = Vector3.zero;
+						Vertex vertex = sculptMesh.vertices[v_idx];
+						
+						Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
+						
+						if(vertex.ringVertices.Count > 0){
+							for(int j = 0; j < vertex.ringVertices.Count; j++){
+								Vector3 ringV = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[vertex.ringVertices[j]]); 
+								n += ringV;
+							}
+							n *= 1.0f/vertex.ringVertices.Count;
+							
+							Vector3 d = (n - v) * hand.brushIntensity;
+							v += d;
+							
+						}
+						sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
+					}
+				}
+			}
 		}
 
 		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, activated, hand.IsLeftHand() );
-
-		//Debug.Log("palm velocity" + speed + " dist: " + distance  + "intensity" + hand.brushIntensity);
-//		Ray ray = new Ray(
-//		sculptMesh.intersectRayMesh(ray);
-
-		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
-
-		for(int i = 0; i < hand.pickedVertices.Count; i++){
-			int v_idx = hand.pickedVertices[i];
-			Vector3 n = Vector3.zero;
-			Vertex vertex = sculptMesh.vertices[v_idx];
-			
-			Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
-			
-			if(vertex.ringVertices.Count > 0){
-				for(int j = 0; j < vertex.ringVertices.Count; j++){
-					Vector3 ringV = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[vertex.ringVertices[j]]); 
-					n += ringV;
-				}
-				n *= 1.0f/vertex.ringVertices.Count;
-				
-				Vector3 d = (n - v) * hand.brushIntensity;
-				v += d;
-				
-			}
-			sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
-		}
-
-		//
-
-
-
 		
 	}
 
@@ -233,7 +222,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 		hand.pickingCenter = hand.GetPalmCenter();
 
-		hand.pickingRadius = 2.0f;// 3.0f * sphereRadius * sphereRadius;
+		hand.pickingRadius = 1.5f;// 3.0f * sphereRadius * sphereRadius;
 		if( hand.GetGrabStrength() > 0.8f ){
 			// manipulate....
 
@@ -362,6 +351,11 @@ public class ToolDispatcher : MonoBehaviour {
 
 	public void SetToolForHand(MenuBehavior.ButtonAction tool, SkeletalHand hand){
 		hand.tool = tool;
+		if(hand.IsLeftHand()){
+			currentLeftTool = tool;
+		}else{
+			currentRightTool = tool;
+		}
 	}
 
 	public SkeletalHand OtherHand(SkeletalHand hand){
