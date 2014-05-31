@@ -15,12 +15,15 @@ public class SkeletalHand : HandModel {
 
 	public GameObject palm;
 
+
+
 	Vector3 lastPalmPosition = Vector3.zero;
 	Quaternion lastPalmRotation = Quaternion.identity;
 
 	public List<int> pickedVertices = new List<int>();
 	public List<float> smoothedRadius = new List<float>(0);
 
+	public MenuBehavior.ButtonAction tool;
 	public Vector3 pickingCenter = Vector3.zero;
 	public float pickingRadius = 0.75f;
 	public float brushIntensity = 0.25f;

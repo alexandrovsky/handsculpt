@@ -12,48 +12,47 @@ public class ToolDispatcher : MonoBehaviour {
 //	public Sculpt.Tool currentLeftTool = Tool.TWO_HAND_NAVIGATION;
 //	public Sculpt.Tool currentRightTool = Tool.TWO_HAND_NAVIGATION;
 
-	public MenuBehavior.ButtonAction currentLeftTool = MenuBehavior.ButtonAction.NONE;
-	public MenuBehavior.ButtonAction currentRightTool = MenuBehavior.ButtonAction.NONE;
-
-	public bool isTwoHandTool = false;
-
 	HandController handController;
 	GameObject target;
 
 	SculptMesh sculptMesh;
 	Camera mainCamera;
-
+	Camera handCamera;
 
 	void Start () {
 		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 		target = GameObject.Find("Target");
 		sculptMesh = target.GetComponent<SculptMesh>();
-		mainCamera = Camera.main;
+		mainCamera = (GameObject.Find("Main Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
+		handCamera = (GameObject.Find("Hand Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
 	}
 	
 	// Update is called once per frame
-
-	private void updateHandTool(MenuBehavior.ButtonAction tool, SkeletalHand hand){
+	private void setCamerasFiewOfView(float fow){
+		mainCamera.fieldOfView = fow;
+		handCamera.fieldOfView = fow;
+	}
+	private void updateHandTool(SkeletalHand hand){
 
 		if(hand.isHandValid() ){
-			switch(tool){
+			switch(hand.tool){
 			case MenuBehavior.ButtonAction.TOOL_PAINT:
-				UpdateBrushTool(hand, hand.IsLeftHand() );
+				UpdateBrushTool(hand);
 				break;
 			case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
-				UpdateBrushSecondaryTool(hand, hand.IsLeftHand() );
+				UpdateBrushSecondaryTool(hand );
 				break;
 			case MenuBehavior.ButtonAction.TOOL_SMOOTH:
-				UpdateSmoothTool(hand, hand.IsLeftHand() );
+				UpdateSmoothTool(hand);
 				break;
 			case MenuBehavior.ButtonAction.TOOL_GRAB:
-				UpdateGrabTool(hand, hand.IsLeftHand());
+				UpdateGrabTool(hand);
 				break;
 			case MenuBehavior.ButtonAction.TOOL_NAVIGATION_DIRECT:
-				UpdateNavigationDirectTool(hand, hand.IsLeftHand() );
+				UpdateNavigationDirectTool(hand);
 				break;
 			case MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB:
-				UpdateNavigationGrabTool(hand, hand.IsLeftHand() );
+				UpdateNavigationGrabTool(hand );
 				break;
 			default: break;
 			}
@@ -67,21 +66,12 @@ public class ToolDispatcher : MonoBehaviour {
 
 
 
-		if(!isTwoHandTool){
 
-			updateHandTool(currentLeftTool, handController.leftHand);
-			updateHandTool(currentRightTool, handController.rightHand);
 
-		}else{ // TwoHandTools here...
+		updateHandTool(handController.leftHand);
+		updateHandTool(handController.rightHand);
 
-			if(handController.leftHand.GetLeapHand() != null && handController.rightHand.GetLeapHand() != null){
-				switch(currentLeftTool){
-				case MenuBehavior.ButtonAction.TOOL_2_HAND_NAVIGATION:
-					UpdateTwoHandNavigationTool(handController.leftHand, handController.rightHand);
-					break;
-				}
-			}
-		}
+
 
 		List<int> iTrisSelected = new List<int>();
 		iTrisSelected.AddRange( sculptMesh.getTrianglesFromVertices(handController.leftHand.pickedVertices) );
@@ -95,85 +85,8 @@ public class ToolDispatcher : MonoBehaviour {
 	Vector3 centerPoint = Vector3.zero;
 
 	bool isNavigating = false;
-	public void UpdateTwoHandNavigationTool(SkeletalHand leftHand, SkeletalHand rightHand){
 
-		Vector3 leftPalmPos = leftHand.GetPalmCenter();
-		Vector3 leftPalmNormal = leftHand.GetPalmNormal();
-
-		Vector3 rightPalmPos = rightHand.GetPalmCenter();
-		Vector3 rightPalmNormal = rightHand.GetPalmNormal();
-
-
-
-		float angle = Vector3.Angle(leftPalmNormal, rightPalmNormal);
-		//Debug.Log("angle between hands: " + angle);
-
-		if(angle > 130){
-
-			Debug.DrawLine(leftPalmPos, leftPalmPos + leftPalmNormal, Color.green);
-			Debug.DrawLine(rightPalmPos, rightPalmPos + rightPalmNormal, Color.green);
-
-
-			if(!isNavigating){
-
-				initLeftPos = leftPalmPos;
-				initRightPos = rightPalmPos;
-				centerPoint = (leftPalmPos + rightPalmPos) * 0.5f;
-				isNavigating = true;
-			}
-
-//			Debug.DrawLine(centerPoint, initLeftPos, Color.red);
-//			Debug.DrawLine(centerPoint, initRightPos, Color.red);
-
-			Vector3 currentCenterPoint = (leftPalmPos + rightPalmPos) * 0.5f;
-
-//			Debug.DrawLine(currentCenterPoint, leftPalmPos, Color.blue);
-//			Debug.DrawLine(currentCenterPoint, rightPalmPos, Color.blue);
-
-			//Debug.DrawLine(Vector3.zero, centerPoint, Color.magenta);
-			Debug.DrawLine(centerPoint, currentCenterPoint, Color.yellow);
-			float dist = Vector3.Distance(centerPoint, currentCenterPoint);
-
-			Vector3 direction = currentCenterPoint - centerPoint;
-			Debug.DrawLine(mainCamera.transform.position, direction, Color.magenta);
-
-//			if(Vector3.Distance(mainCamera.transform.position, initCameraPosition) < direction.magnitude){ 
-//				//mainCamera.transform.position = initCameraPosition + direction * Time.deltaTime;
-//				//centerPoint += direction * Time.deltaTime;
-//				mainCamera.transform.Translate(0.5f * direction * Time.deltaTime);
-//			}
-
-			Vector3 initA = centerPoint + initLeftPos;
-			Vector3 initB = centerPoint + initRightPos;
-			Vector3 initN = Vector3.Cross(initA, initB);
-
-			Debug.DrawLine(centerPoint, initA, Color.cyan);
-			Debug.DrawLine(centerPoint, initB, Color.cyan);
-			Debug.DrawLine(centerPoint, initN, Color.green);
-
-
-			Vector3 currA = centerPoint + leftPalmPos;
-			Vector3 currB = centerPoint + rightPalmPos;
-			Vector3 currN = Vector3.Cross(currA, currB);
-			
-			Debug.DrawLine(centerPoint, currA, Color.red);
-			Debug.DrawLine(centerPoint, currB, Color.red);
-			Debug.DrawLine(centerPoint, currN, Color.blue);
-
-
-			Quaternion q = Quaternion.FromToRotation(initN, currN);
-			Vector3 rotAxis = Vector3.zero;
-			float rotAngle = 0.0f;
-			q.ToAngleAxis(out rotAngle, out rotAxis);
-			float rotationSpeed = 0.5f;
-			//mainCamera.transform.RotateAround(centerPoint, rotAxis, rotationSpeed * rotAngle * Time.deltaTime);
-		}else{
-			isNavigating = false;
-		}
-
-	}
-
-	public void UpdateBrushTool(SkeletalHand hand, bool isLeft){
+	public void UpdateBrushTool(SkeletalHand hand){
 
 
 		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
@@ -182,11 +95,14 @@ public class ToolDispatcher : MonoBehaviour {
 		hand.brushIntensity = -0.75f;
 
 
+
+
 		//---
-		Vector3 aNormal = sculptMesh.areaNormal(hand.pickedVertices);
+		Vector3 aNormal = sculptMesh.areaNormal(hand.pickedVertices).normalized;
 		Vector3 aCenter = sculptMesh.areaCenter(hand.pickedVertices);
 
-		
+		//Debug.DrawLine(aCenter, aCenter + aNormal);
+
 		float deformIntensityBrush = hand.brushIntensity * hand.pickingRadius * 0.1f;
 		float deformIntensityFlatten = hand.brushIntensity * 0.3f;
 		
@@ -197,7 +113,9 @@ public class ToolDispatcher : MonoBehaviour {
 
 			Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
 			Vector3 delta = v - hand.pickingCenter;
-			
+
+
+			//float distanceToPlane = MathHelper.SignedDistancePlanePoint(v, aCenter, aNormal);
 			float distanceToPlane = (v.x - aCenter.x) * aNormal.x + (v.y - aCenter.y) * aNormal.y + (v.z - aCenter.z) * aNormal.z;
 			float dist = delta.magnitude/hand.pickingRadius;
 			float fallOff = dist * dist;
@@ -205,30 +123,32 @@ public class ToolDispatcher : MonoBehaviour {
 			fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 			fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
 
-			v -= aNormal * fallOff * 8.0f * Time.deltaTime;
+			v -= aNormal * fallOff * 0.5f;
 
 			
 			sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
-			
 		}
 
 		//---
 
-		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, true, isLeft);
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, true, hand.IsLeftHand() );
 
 	}
 
-	public void UpdateBrushSecondaryTool(SkeletalHand hand, bool isLeft){
+	public void UpdateBrushSecondaryTool(SkeletalHand hand){
 		// update the radius of the other hand:
-		if(isLeft){
-			handController.rightHand.pickingRadius = 0.2f + (1 - hand.GetPinchStrength() );
+		float pinch = 1 - hand.GetPinchStrength();
+		if(hand.IsLeftHand() ){
+			handController.rightHand.pickingRadius = pinch * pinch;
 		}else{
-			handController.leftHand.pickingRadius = 0.2f + (1 - hand.GetPinchStrength() );
+			handController.leftHand.pickingRadius = pinch * pinch;
 		}
 	}
+
+
 	List<float> smoothedSpeed = new List<float>();
 	List<float> smoothedDistance = new List<float>();
-	public void UpdateSmoothTool(SkeletalHand hand, bool isLeft){
+	public void UpdateSmoothTool(SkeletalHand hand){
 
 
 
@@ -266,9 +186,11 @@ public class ToolDispatcher : MonoBehaviour {
 			activated = false;
 		}
 
-		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, activated, isLeft);
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, activated, hand.IsLeftHand() );
 
 		//Debug.Log("palm velocity" + speed + " dist: " + distance  + "intensity" + hand.brushIntensity);
+//		Ray ray = new Ray(
+//		sculptMesh.intersectRayMesh(ray);
 
 		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 
@@ -300,7 +222,7 @@ public class ToolDispatcher : MonoBehaviour {
 		
 	}
 
-	public void UpdateGrabTool(SkeletalHand hand, bool isLeft){
+	public void UpdateGrabTool(SkeletalHand hand){
 
 		if(!hand.isHandValid() ){
 			hand.pickedVertices.Clear();
@@ -311,8 +233,8 @@ public class ToolDispatcher : MonoBehaviour {
 
 		hand.pickingCenter = hand.GetPalmCenter();
 
-		hand.pickingRadius = 1.0f; // 3.0f * sphereRadius * sphereRadius;
-		if( hand.GetGrabStrength() > 0.8 ){
+		hand.pickingRadius = 2.0f;// 3.0f * sphereRadius * sphereRadius;
+		if( hand.GetGrabStrength() > 0.8f ){
 			// manipulate....
 
 			List<int> iVerts = hand.pickedVertices;
@@ -325,7 +247,7 @@ public class ToolDispatcher : MonoBehaviour {
 				Vector3 vertex =  target.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
 				hand.dragRay.direction = hand.pickingCenter - hand.dragRay.origin;
 
-				float dist = MathHelper.DistanceToLine(hand.dragRay, vertex);
+				float dist = MathHelper.DistanceToLine(hand.dragRay, vertex) / hand.pickingRadius;
 
 
 				Vector3 dragDirection = hand.pickingCenter - hand.GetLastPalmCenter();
@@ -348,13 +270,13 @@ public class ToolDispatcher : MonoBehaviour {
 
 			hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 			hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
-			ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, true, isLeft);
+			ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, true, hand.IsLeftHand() );
 		}
 	}
 
 	Leap.Frame directNavigationEnterFrame = Leap.Frame.Invalid;
 	bool directNavigationActivated = false;
-	public void UpdateNavigationDirectTool(SkeletalHand hand, bool isLeft){
+	public void UpdateNavigationDirectTool(SkeletalHand hand){
 
 		if( hand.GetGrabStrength() > 0.5f  ){
 			directNavigationActivated = false;
@@ -381,52 +303,72 @@ public class ToolDispatcher : MonoBehaviour {
 		axis = leapAxis.ToUnity();
 
 		axis = mainCamera.transform.TransformDirection(axis);
-		mainCamera.transform.RotateAround(target.transform.position, axis, angle * Time.deltaTime);
+		mainCamera.transform.RotateAround(target.transform.position, axis, -angle * Time.deltaTime);
 
 	}
 
 
 	Vector3 initHandPosition = Vector3.zero;
 	bool grabNavigationActivated = false;
-	public void UpdateNavigationGrabTool(SkeletalHand hand, bool isLeft){
+	//Leap.Frame grabNavigationEnterFrame = Leap.Frame.Invalid;
+	public void UpdateNavigationGrabTool(SkeletalHand hand){
 
+//		float fow = mainCamera.fieldOfView;
 		if( hand.GetGrabStrength() < 0.5f  ){
 
 			grabNavigationActivated = false;
-
+			//grabNavigationEnterFrame = Leap.Frame.Invalid;
 			return; // close hand activates ....
 
 		}
 
 		if(!grabNavigationActivated){
 			initHandPosition = hand.GetLastPalmCenter();
+			//grabNavigationEnterFrame =  handController.GetFrame(0);
 			grabNavigationActivated = true;
 		}
 
-		Vector3 palmPos = hand.GetPalmCenter();
-		
-		Quaternion rotation = Quaternion.FromToRotation(initHandPosition, palmPos);
-		float rotationSpeed = 0.5f;
-		
-		Vector3 axis = Vector3.zero; // = Vector3.Cross(a, b);
-		float angle; // = Vector3.Angle(a, b);
-		//Debug.Log("angle:" + angle);
-		rotation.ToAngleAxis(out angle, out axis);
-		
-		//		Debug.DrawLine(palmPos, palmPos + axis, Color.green);
-		
-		mainCamera.transform.RotateAround(target.transform.position, axis, rotationSpeed * -angle * Time.deltaTime);
+		if(grabNavigationActivated){
+			Vector3 palmPos = hand.GetPalmCenter();
+			
+			Quaternion rotation = Quaternion.FromToRotation(initHandPosition, palmPos);
+			float rotationSpeed = 0.5f;
+			
+			Vector3 axis = Vector3.zero; // = Vector3.Cross(a, b);
+			float angle; // = Vector3.Angle(a, b);
+			//Debug.Log("angle:" + angle);
+			rotation.ToAngleAxis(out angle, out axis);
+			
+			//		Debug.DrawLine(palmPos, palmPos + axis, Color.green);
+			
+			mainCamera.transform.RotateAround(target.transform.position, axis, rotationSpeed * -angle);
+			
+			
+			//--- scaling:
 
+//			float delta = initHandPosition.z - palmPos.z;
+//			const float MAX_OFFSET = 100;
+//			const float MIN_OFFSET = 30;
+//			float offset = fow + delta * 10 * Time.deltaTime;
+//			//if(offset > MAX_OFFSET) offset = fow;
+//			//else if(offset < MAX_OFFSET) offset = fow;
+//
+//			setCamerasFiewOfView(offset);
+//			Debug.DrawLine(initHandPosition, palmPos, Color.red);
+			
+		}
 
 	}
 
 	public void SetToolForHand(MenuBehavior.ButtonAction tool, SkeletalHand hand){
+		hand.tool = tool;
+	}
 
-		if(hand.GetLeapHand().IsLeft){
-			currentLeftTool = tool;
-		}else{
-			currentRightTool = tool;
+	public SkeletalHand OtherHand(SkeletalHand hand){
+		if(hand.IsLeftHand()){
+			return handController.rightHand;
 		}
+		return handController.leftHand;
 	}
 
 	public void ColorizeSelectedVertices(Vector3 center, float radius, float intensity, bool flag, bool isLeft){
