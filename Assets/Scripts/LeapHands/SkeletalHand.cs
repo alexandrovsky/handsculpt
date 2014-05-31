@@ -21,14 +21,17 @@ public class SkeletalHand : HandModel {
 	Quaternion lastPalmRotation = Quaternion.identity;
 
 	public List<int> pickedVertices = new List<int>();
+	public List<int> pickedVerticesSymmetry = new List<int>();
 	public List<float> smoothedRadius = new List<float>(0);
 
 	public MenuBehavior.ButtonAction tool;
 	public Vector3 pickingCenter = Vector3.zero;
+	public Vector3 pickingCenterSymmetry = Vector3.zero;
 	public float pickingRadius = 0.75f;
 	public float brushIntensity = 0.25f;
 
 	public Ray dragRay = new Ray();
+	public Ray dragRaySymmetry = new Ray();
 	void Start() {
 	 	IgnoreCollisionsWithSelf();
 
@@ -44,7 +47,7 @@ public class SkeletalHand : HandModel {
 			if (fingers[i] != null)
 				fingers[i].UpdateFinger();
 		}
-		if(smoothedRadius.Count > 10){
+		if(smoothedRadius.Count > 5){
 			smoothedRadius.RemoveAt(0);
 		}
 		smoothedRadius.Add(GetSphereRadius());

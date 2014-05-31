@@ -1,6 +1,7 @@
 ﻿
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using Sculpt;
 using Leap;
 
@@ -11,7 +12,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 	public MenuBehavior.ButtonAction currentLeftTool = MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB;
 	public MenuBehavior.ButtonAction currentRightTool = MenuBehavior.ButtonAction.TOOL_PAINT;
-
+	public bool symmetry = true;
 	HandController handController;
 	GameObject target;
 
@@ -25,9 +26,6 @@ public class ToolDispatcher : MonoBehaviour {
 		sculptMesh = target.GetComponent<SculptMesh>();
 		mainCamera = (GameObject.Find("Main Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
 		handCamera = (GameObject.Find("Hand Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
-
-		SetToolForHand(currentLeftTool, handController.leftHand);
-		SetToolForHand(currentRightTool, handController.rightHand);
 
 	}
 	
@@ -143,7 +141,29 @@ public class ToolDispatcher : MonoBehaviour {
 		}
 	}
 
-
+	private void smoothVerts(List<int> iVerts, Vector3 center, float intensity){
+		int nbVerts = iVerts.Count;
+		for(int i = 0; i < nbVerts; i++){
+			int v_idx = iVerts[i];
+			Vector3 n = Vector3.zero;
+			Vertex vertex = sculptMesh.vertices[v_idx];
+			
+			Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
+			
+			if(vertex.ringVertices.Count > 0){
+				for(int j = 0; j < vertex.ringVertices.Count; j++){
+					Vector3 ringV = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[vertex.ringVertices[j]]); 
+					n += ringV;
+				}
+				n *= 1.0f/vertex.ringVertices.Count;
+				
+				Vector3 d = (n - v) * intensity;
+				v += d;
+				
+			}
+			sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
+		}
+	}
 
 	public void UpdateSmoothTool(SkeletalHand hand){
 
@@ -151,7 +171,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 		Vector3 palmPos = hand.GetPalmCenter();
 		float sphereRadius = hand.GetSphereRadiusSmoothed() / 100.0f;
-		hand.pickingRadius = 2.0f * sphereRadius * sphereRadius;
+		hand.pickingRadius = 1.5f * sphereRadius;
 		bool activated = false;
 
 
@@ -163,15 +183,20 @@ public class ToolDispatcher : MonoBehaviour {
 			Triangle t = sculptMesh.triangles[sculptMesh.pickedTriangle];
 			if(Vector3.Dot(t.normal, ray.direction) <= 0.0f){
 				hand.pickingCenter = sculptMesh.intersectionPoint;
-
+				if(symmetry){
+					hand.pickingCenterSymmetry = GetSymmetryPoint(hand.pickingCenter);
+				}
 
 				float distanceFromHit = Vector3.Distance(palmPos, hand.pickingCenter);
-				Debug.Log("distance from hit " + distanceFromHit);
 				if( distanceFromHit < hand.pickingRadius){
 					activated = true;
 					hand.brushIntensity = 1.0f;
 					hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
-
+					if(symmetry){
+						hand.pickedVerticesSymmetry = sculptMesh.pickVerticesInSphere(hand.pickingCenterSymmetry, hand.pickingRadius);
+						hand.pickedVertices.Where(i => !hand.pickedVerticesSymmetry.Remove(i));
+						hand.pickedVerticesSymmetry.Where(i => !hand.pickedVertices.Remove(i));
+					}
 				}else{
 					distanceFromHit = hand.pickingRadius;
 					activated = false;
@@ -183,32 +208,66 @@ public class ToolDispatcher : MonoBehaviour {
 				
 				int nbVerts = hand.pickedVertices.Count;
 				if(activated){
-					for(int i = 0; i < nbVerts; i++){
-						int v_idx = hand.pickedVertices[i];
-						Vector3 n = Vector3.zero;
-						Vertex vertex = sculptMesh.vertices[v_idx];
-						
-						Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
-						
-						if(vertex.ringVertices.Count > 0){
-							for(int j = 0; j < vertex.ringVertices.Count; j++){
-								Vector3 ringV = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[vertex.ringVertices[j]]); 
-								n += ringV;
-							}
-							n *= 1.0f/vertex.ringVertices.Count;
-							
-							Vector3 d = (n - v) * hand.brushIntensity;
-							v += d;
-							
-						}
-						sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
+					smoothVerts(hand.pickedVertices, hand.pickingCenter, hand.brushIntensity);
+					if(symmetry){
+						smoothVerts(hand.pickedVerticesSymmetry, hand.pickingCenterSymmetry, hand.brushIntensity);
 					}
+//					for(int i = 0; i < nbVerts; i++){
+//						int v_idx = hand.pickedVertices[i];
+//						Vector3 n = Vector3.zero;
+//						Vertex vertex = sculptMesh.vertices[v_idx];
+//						
+//						Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
+//						
+//						if(vertex.ringVertices.Count > 0){
+//							for(int j = 0; j < vertex.ringVertices.Count; j++){
+//								Vector3 ringV = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[vertex.ringVertices[j]]); 
+//								n += ringV;
+//							}
+//							n *= 1.0f/vertex.ringVertices.Count;
+//							
+//							Vector3 d = (n - v) * hand.brushIntensity;
+//							v += d;
+//							
+//						}
+//						sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
+//					}
 				}
 			}
 		}
 
 		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, activated, hand.IsLeftHand() );
-		
+		if(symmetry){
+			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, activated, !hand.IsLeftHand() );
+		}
+	}
+
+	private void dragVerts(List<int> iVerts, Vector3 from, Vector3 to, Ray ray, float radius){
+		for(int i = 0; i< iVerts.Count; i++  ){
+			int v_idx = iVerts[i];
+			Vector3 vertex =  target.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
+			ray.direction = from - ray.origin;
+			
+			float dist = MathHelper.DistanceToLine(ray, vertex) / radius;
+			
+			
+			Vector3 dragDirection = from - to;
+			float fallOff = dist * dist;
+			fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
+
+			Vector3 dir = dragDirection * fallOff;
+			if(dir.magnitude > 1.0f) dir *= 1/dir.magnitude;
+
+			vertex += dir;
+			
+			sculptMesh.vertexArray[v_idx] = target.transform.InverseTransformPoint(vertex);
+		}
+	}
+
+	public Vector3 GetSymmetryPoint(Vector3 point){
+		Vector3 cymmetry_local_point = target.transform.InverseTransformPoint(point);
+		cymmetry_local_point.x =  -cymmetry_local_point.x;
+		return target.transform.TransformPoint(cymmetry_local_point);
 	}
 
 	public void UpdateGrabTool(SkeletalHand hand){
@@ -222,44 +281,55 @@ public class ToolDispatcher : MonoBehaviour {
 
 		hand.pickingCenter = hand.GetPalmCenter();
 
+		if(symmetry){
+			hand.pickingCenterSymmetry = GetSymmetryPoint(hand.pickingCenter);
+		}
+
 		hand.pickingRadius = 1.5f;// 3.0f * sphereRadius * sphereRadius;
 		if( hand.GetGrabStrength() > 0.8f ){
 			// manipulate....
 
-			List<int> iVerts = hand.pickedVertices;
 
 
-			for(int i = 0; i< iVerts.Count; i++  ){
-				int v_idx = iVerts[i];
-
-				
-				Vector3 vertex =  target.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
-				hand.dragRay.direction = hand.pickingCenter - hand.dragRay.origin;
-
-				float dist = MathHelper.DistanceToLine(hand.dragRay, vertex) / hand.pickingRadius;
-
-
-				Vector3 dragDirection = hand.pickingCenter - hand.GetLastPalmCenter();
-				
-				
-				float fallOff = dist * dist;
-				fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
-				vertex += dragDirection * fallOff;
-
-
-
-//				Debug.DrawRay(hand.dragRay.origin, hand.dragRay.direction, Color.green);
-//				Debug.DrawRay(vertex, hand.dragRay.direction * dragDistance * fallOff);
-
-
-				sculptMesh.vertexArray[v_idx] = target.transform.InverseTransformPoint(vertex);
+			dragVerts(hand.pickedVertices, hand.pickingCenter, hand.GetLastPalmCenter(), hand.dragRay, hand.pickingRadius);
+			if(symmetry){
+				Vector3 lastSymmmetryPoint = GetSymmetryPoint(hand.GetLastPalmCenter() );
+				dragVerts(hand.pickedVerticesSymmetry, hand.pickingCenterSymmetry, lastSymmmetryPoint, hand.dragRaySymmetry, hand.pickingRadius);
 			}
+
+//			for(int i = 0; i< iVerts.Count; i++  ){
+//				int v_idx = iVerts[i];
+//				Vector3 vertex =  target.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
+//				hand.dragRay.direction = hand.pickingCenter - hand.dragRay.origin;
+//
+//				float dist = MathHelper.DistanceToLine(hand.dragRay, vertex) / hand.pickingRadius;
+//
+//
+//				Vector3 dragDirection = hand.pickingCenter - hand.GetLastPalmCenter();
+//				float fallOff = dist * dist;
+//				fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
+//				vertex += dragDirection * fallOff;
+//
+//				sculptMesh.vertexArray[v_idx] = target.transform.InverseTransformPoint(vertex);
+//			}
 
 		}else{
 
 			hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 			hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
 			ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, true, hand.IsLeftHand() );
+			if(symmetry){
+				hand.pickedVerticesSymmetry = sculptMesh.pickVerticesInSphere(hand.pickingCenterSymmetry, hand.pickingRadius);
+//				List<int> intersection = hand.pickedVerticesSymmetry.Intersect(hand.pickedVertices);
+//				hand.pickedVertices.
+
+				hand.pickedVertices.Where(i => !hand.pickedVerticesSymmetry.Remove(i));
+				hand.pickedVerticesSymmetry.Where(i => !hand.pickedVertices.Remove(i));
+
+
+				ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, 1.0f, true, !hand.IsLeftHand() );
+				hand.dragRaySymmetry.origin = sculptMesh.areaCenter(hand.pickedVerticesSymmetry);
+			}
 		}
 	}
 
