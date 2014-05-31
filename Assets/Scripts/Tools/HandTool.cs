@@ -52,7 +52,7 @@ public abstract class HandTool : MonoBehaviour {
 	protected Vector3 lastPalmPosition = Vector3.zero;
 
 
-	protected LeapUnityHandController controller = null;
+	protected HandController controller = null;
 	
 	public Leap.Hand hand = Leap.Hand.Invalid;
 	protected GameObject palm = null;
@@ -71,49 +71,22 @@ public abstract class HandTool : MonoBehaviour {
 		target = GameObject.Find("Target");
 		
 		GameObject hands = GameObject.Find("Leap Hands");
-		controller = hands.GetComponent<LeapUnityHandController>();
-		palm = controller.m_palms[workingHandIdx];
+		controller = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
+		palm =  (workingHandIdx == 0 ? controller.leftHand.palm : controller.rightHand.palm );
 		
-		LeapInput.HandUpdated += new LeapInput.HandUpdatedHandler(OnHandUpdated);
-		LeapInput.HandLost += new LeapInput.ObjectLostHandler(OnHandLost);
-		LeapInput.HandFound += new LeapInput.HandFoundHandler(OnHandFound);
-	}
-
-
-	void OnHandUpdated( Hand hand ){
-
-		if(activationDelay < ACTIVATION_DELAY_TIME_IN_SECS){
-			return; // OUT -->
-		}
-
-		if(hand.Id == controller.HandIdForIndex(workingHandIdx) ){
-			this.hand = hand;
-		} 	
-	}
-
-	void OnHandFound( Hand h ){
-
-		if(hand.Id == controller.HandIdForIndex(workingHandIdx) ){
-			activationDelay = 0.0f;
-		}
 
 	}
 
-	void OnHandLost(int lostID){
-		if(hand.Id == lostID ){
-			this.hand = Leap.Hand.Invalid;
-		} 	
-	}
 
 	public abstract void CostumGUI();
 
 	public void activatePalm(){
 
-		controller.m_hands[workingHandIdx].SetActive(true);
+		palm.SetActive(true);
 	}
 
 	public void deactivatePalm(){
-		controller.m_hands[workingHandIdx].SetActive(false);
+		palm.SetActive(false);
 
 	}
 

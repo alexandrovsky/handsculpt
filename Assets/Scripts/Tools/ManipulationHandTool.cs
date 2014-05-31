@@ -132,7 +132,7 @@ public abstract class ManipulationHandTool : HandTool
 
 
 	public Ray CalculateRay(Leap.Vector pos){
-		Leap.InteractionBox iBox = LeapInput.Frame.InteractionBox;
+		Leap.InteractionBox iBox = controller.GetFrame(0).InteractionBox;
 		Leap.Vector normalizedPosition = iBox.NormalizePoint(pos);
 		Vector3 screenPos = new Vector3(UnityEngine.Screen.width * normalizedPosition.x,
 		                                UnityEngine.Screen.height * normalizedPosition.y,

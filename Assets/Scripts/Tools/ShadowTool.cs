@@ -55,7 +55,7 @@ public class ShadowTool : ManipulationHandTool
 
 
 
-		Leap.InteractionBox iBox = LeapInput.Frame.InteractionBox;
+		Leap.InteractionBox iBox = controller.GetFrame(0).InteractionBox;
 		Vector3 iBoxCenter = iBox.Center.ToUnityTranslated();
 		Vector3 handPos = hand.PalmPosition.ToUnityTranslated();
 

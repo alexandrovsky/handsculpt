@@ -23,7 +23,7 @@ public class Gui : MonoBehaviour {
 
 	SculptMesh sculptMesh;
 	Sculpter sculpter;
-	LeapUnityHandController handController;
+	HandController handController;
 	public string objectExportFilepath = "/Users/dimi/Desktop/target.obj";
 	
 	private bool m_DisplayGui = true;
@@ -36,7 +36,7 @@ public class Gui : MonoBehaviour {
 		sculptMesh = target.GetComponent<SculptMesh>();
 		sculpter = target.GetComponent<Sculpter>();
 		hands = GameObject.Find("Leap Hands");	
-		handController = hands.GetComponent<LeapUnityHandController>();
+		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 	}
 	
 	void Update()
@@ -142,23 +142,7 @@ public class Gui : MonoBehaviour {
 			}
 			GUILayout.Label("-----");
 			if(!mouseMode){
-				GUILayout.Label("Hand assign " + handController.assignMode );
-				GUILayout.BeginHorizontal();
-				bool bDynamic = GUILayout.Button("dynamic");
-				if(bDynamic){
-					handController.assignMode = LeapUnityHandController.HandAssignMode.Dynamic;
-				}
-				bool bLeft = GUILayout.Button("left");
-				if(bLeft){
-					handController.assignMode = LeapUnityHandController.HandAssignMode.Left;
-				}
-				bool bRight = GUILayout.Button("right");
-				if(bRight){
-					handController.assignMode = LeapUnityHandController.HandAssignMode.Right;
-				}
-				GUILayout.EndHorizontal();
 
-				GUILayout.Label("-----");
 
 				if( GUILayout.Button( "pointing") ){
 					instantiateManipulationTool(m_pointingToolPrefab);

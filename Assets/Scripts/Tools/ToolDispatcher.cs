@@ -270,7 +270,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, activated, isLeft);
 
-		Debug.Log("palm velocity" + speed + " dist: " + distance  + "intensity" + hand.brushIntensity);
+		//Debug.Log("palm velocity" + speed + " dist: " + distance  + "intensity" + hand.brushIntensity);
 
 		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 
