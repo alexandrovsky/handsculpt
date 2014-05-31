@@ -92,6 +92,7 @@ public class SkeletalHand : HandModel {
 		return r/smoothedRadius.Count;
 	}
 
+
 	public Vector3 GetPalmCenterSmoothed(){
 		Hand leap_hand = GetLeapHand();
 		Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
@@ -111,6 +112,20 @@ public class SkeletalHand : HandModel {
 	    return GetController().transform.TransformPoint(local_center);
   	}
 
+
+	public Vector3 GetPalmVelocity(){
+		Hand leap_hand = GetLeapHand();
+		Vector3 local_velocity = leap_hand.PalmVelocity.ToUnity();
+		
+		return GetController().transform.TransformDirection(local_velocity);
+	}
+
+	public Vector3 GetPalmDirection(){
+		Hand leap_hand = GetLeapHand();
+		Vector3 local_direction = leap_hand.Direction.ToUnity();
+		
+		return GetController().transform.TransformDirection(local_direction);
+	}
 	public Vector3 GetPalmNormal(){
 		Hand leap_hand = GetLeapHand();
 		Vector3 local_normal = leap_hand.PalmNormal.ToUnity();

@@ -30,12 +30,12 @@ public class HandController : MonoBehaviour {
 //	public RigidHand rightRigidHand;
 
   	private Controller leap_controller_;
-  	
+	private Camera mainCam_;
 
 
 
   	void Start() {
-
+		mainCam_ = (GameObject.Find("Main Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
     	leap_controller_ = new Controller();
 
 //		leap_controller_.EnableGesture(Gesture.GestureType.TYPE_SCREEN_TAP, true);
@@ -46,8 +46,10 @@ public class HandController : MonoBehaviour {
 
 		leftHand = CreateHand(leftGraphicsModel) as SkeletalHand;
 		leftHand.name = "left_hand";
+		leftHand.transform.parent = mainCam_.transform;
 		rightHand = CreateHand(rightGraphicsModel) as SkeletalHand;
 		rightHand.name = "right_hand";
+		rightHand.transform.parent = mainCam_.transform;
 
 
 //		leftRigidHand = CreateHand(leftPhysicsModel) as RigidHand;

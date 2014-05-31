@@ -72,12 +72,8 @@
      <Compile Include="Assets\Scripts\SculptMesh\Topology.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\Triangle.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\Vertex.cs" />
-     <Compile Include="Assets\Scripts\Tools\GrabTool.cs" />
      <Compile Include="Assets\Scripts\Tools\HandTool.cs" />
-     <Compile Include="Assets\Scripts\Tools\ManipulationHandTool.cs" />
      <Compile Include="Assets\Scripts\Tools\NavigationHandTool.cs" />
-     <Compile Include="Assets\Scripts\Tools\PointingTool.cs" />
-     <Compile Include="Assets\Scripts\Tools\ShadowTool.cs" />
      <Compile Include="Assets\Scripts\Tools\ToolDispatcher.cs" />
      <Compile Include="Assets\Scripts\Utils\Geometry.cs" />
      <Compile Include="Assets\Scripts\Utils\LeapUnityExtensions.cs" />

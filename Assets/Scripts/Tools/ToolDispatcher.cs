@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Sculpt;
+using Leap;
 
 public class ToolDispatcher : MonoBehaviour {
 
@@ -31,52 +32,46 @@ public class ToolDispatcher : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
+
+	private void updateHandTool(MenuBehavior.ButtonAction tool, SkeletalHand hand){
+
+		if(hand.isHandValid() ){
+			switch(tool){
+			case MenuBehavior.ButtonAction.TOOL_PAINT:
+				UpdateBrushTool(hand, hand.IsLeftHand() );
+				break;
+			case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
+				UpdateBrushSecondaryTool(hand, hand.IsLeftHand() );
+				break;
+			case MenuBehavior.ButtonAction.TOOL_SMOOTH:
+				UpdateSmoothTool(hand, hand.IsLeftHand() );
+				break;
+			case MenuBehavior.ButtonAction.TOOL_GRAB:
+				UpdateGrabTool(hand, hand.IsLeftHand());
+				break;
+			case MenuBehavior.ButtonAction.TOOL_NAVIGATION_DIRECT:
+				UpdateNavigationDirectTool(hand, hand.IsLeftHand() );
+				break;
+			case MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB:
+				UpdateNavigationGrabTool(hand, hand.IsLeftHand() );
+				break;
+			default: break;
+			}
+		}else{
+			handController.leftHand.pickedVertices.Clear();
+		}
+	}
+	
 	void Update () {
 
 
 
 
 		if(!isTwoHandTool){
-			if(handController.leftHand.isHandValid() ){
 
-				switch(currentLeftTool){
-					case MenuBehavior.ButtonAction.TOOL_PAINT:
-					UpdateBrushTool(handController.leftHand, true);
-					break;
-				case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
-					UpdateBrushSecondaryTool(handController.leftHand, true);
-					break;
-				case MenuBehavior.ButtonAction.TOOL_SMOOTH:
-					UpdateSmoothTool(handController.leftHand, true);
-					break;
-				case MenuBehavior.ButtonAction.TOOL_GRAB:
-					UpdateGrabTool(handController.leftHand, true);
-					break;
-				default: break;
-				}
-			}else{
-				handController.leftHand.pickedVertices.Clear();
-			}
-			
-			if(handController.rightHand.isHandValid() ){
-				switch(currentRightTool){
-				case MenuBehavior.ButtonAction.TOOL_PAINT:
-					UpdateBrushTool(handController.rightHand, false);
-					break;
-				case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
-					UpdateBrushSecondaryTool(handController.rightHand, false);
-					break;
-				case MenuBehavior.ButtonAction.TOOL_SMOOTH:
-					UpdateSmoothTool(handController.rightHand, false);
-					break;
-				case MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB:
-					UpdateGrabTool(handController.rightHand, false);
-					break;
-				default: break;
-				}
-			}else{
-				handController.rightHand.pickedVertices.Clear();
-			}
+			updateHandTool(currentLeftTool, handController.leftHand);
+			updateHandTool(currentRightTool, handController.rightHand);
+
 		}else{ // TwoHandTools here...
 
 			if(handController.leftHand.GetLeapHand() != null && handController.rightHand.GetLeapHand() != null){
@@ -307,7 +302,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 	public void UpdateGrabTool(SkeletalHand hand, bool isLeft){
 
-		if(!hand.GetLeapHand().IsValid){
+		if(!hand.isHandValid() ){
 			hand.pickedVertices.Clear();
 
 			return; // --- OUT --->
@@ -355,6 +350,74 @@ public class ToolDispatcher : MonoBehaviour {
 			hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
 			ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, true, isLeft);
 		}
+	}
+
+	Leap.Frame directNavigationEnterFrame = Leap.Frame.Invalid;
+	bool directNavigationActivated = false;
+	public void UpdateNavigationDirectTool(SkeletalHand hand, bool isLeft){
+
+		if( hand.GetGrabStrength() > 0.5f  ){
+			directNavigationActivated = false;
+
+			return; //open hand activates ....
+
+		}
+
+		if(!directNavigationActivated){
+			directNavigationEnterFrame = handController.GetFrame(0);
+			directNavigationActivated = true;
+		}
+
+
+
+		Vector3 axis = Vector3.zero;
+		float angle = 0.0f;
+		hand.GetPalmRotation().ToAngleAxis(out angle, out axis);
+
+		Leap.Hand leap_hand = hand.GetLeapHand();
+
+		Leap.Vector leapAxis = leap_hand.RotationAxis(directNavigationEnterFrame);
+		angle = leap_hand.RotationAngle(directNavigationEnterFrame) * Mathf.Rad2Deg;
+		axis = leapAxis.ToUnity();
+
+		axis = mainCamera.transform.TransformDirection(axis);
+		mainCamera.transform.RotateAround(target.transform.position, axis, angle * Time.deltaTime);
+
+	}
+
+
+	Vector3 initHandPosition = Vector3.zero;
+	bool grabNavigationActivated = false;
+	public void UpdateNavigationGrabTool(SkeletalHand hand, bool isLeft){
+
+		if( hand.GetGrabStrength() < 0.5f  ){
+
+			grabNavigationActivated = false;
+
+			return; // close hand activates ....
+
+		}
+
+		if(!grabNavigationActivated){
+			initHandPosition = hand.GetLastPalmCenter();
+			grabNavigationActivated = true;
+		}
+
+		Vector3 palmPos = hand.GetPalmCenter();
+		
+		Quaternion rotation = Quaternion.FromToRotation(initHandPosition, palmPos);
+		float rotationSpeed = 0.5f;
+		
+		Vector3 axis = Vector3.zero; // = Vector3.Cross(a, b);
+		float angle; // = Vector3.Angle(a, b);
+		//Debug.Log("angle:" + angle);
+		rotation.ToAngleAxis(out angle, out axis);
+		
+		//		Debug.DrawLine(palmPos, palmPos + axis, Color.green);
+		
+		mainCamera.transform.RotateAround(target.transform.position, axis, rotationSpeed * -angle * Time.deltaTime);
+
+
 	}
 
 	public void SetToolForHand(MenuBehavior.ButtonAction tool, SkeletalHand hand){
