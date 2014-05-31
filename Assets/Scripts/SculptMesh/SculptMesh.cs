@@ -747,7 +747,7 @@ namespace Sculpt{
 //				Vector3 v = transform.TransformPoint(vertexArray[iVerts[i]]);
 //				Debug.DrawLine(v, v + normal* 0.001f, Color.cyan);
 
-               aNormal += normal.normalized;
+               aNormal += normal;
        		}
        		return aNormal.normalized;
        	}

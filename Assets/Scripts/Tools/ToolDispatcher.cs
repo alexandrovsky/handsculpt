@@ -65,7 +65,6 @@ public class ToolDispatcher : MonoBehaviour {
 	
 	void Update () {
 
-
 		handController.leftHand.tool = currentLeftTool;
 		handController.rightHand.tool = currentRightTool;
 
@@ -81,53 +80,73 @@ public class ToolDispatcher : MonoBehaviour {
 		sculptMesh.pushMeshData();
 	}
 
-
-	public void UpdateBrushTool(SkeletalHand hand){
-
-
-		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
-		hand.pickingCenter = finger.bones[3].transform.position;
-		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
-		hand.brushIntensity = -0.75f;
-
-
-
-
-		//---
-		Vector3 aNormal = sculptMesh.areaNormal(hand.pickedVertices).normalized;
-		Vector3 aCenter = sculptMesh.areaCenter(hand.pickedVertices);
-
-		//Debug.DrawLine(aCenter, aCenter + aNormal);
-
-		float deformIntensityBrush = hand.brushIntensity * hand.pickingRadius * 0.1f;
-		float deformIntensityFlatten = hand.brushIntensity * 0.3f;
-		
-		int nbVerts = hand.pickedVertices.Count;
+	private void brushVerts(List<int> iVerts, Vector3 aCenter, Vector3 aNormal, float radius, float deformIntensityFlatten, float deformIntensityBrush){
+		int nbVerts = iVerts.Count;
 		for(int i = 0; i < nbVerts; i++){
-
-			int v_idx = hand.pickedVertices[i];
-
+			
+			int v_idx = iVerts[i];
+			
 			Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
-			Vector3 delta = v - hand.pickingCenter;
-
-
+			Vector3 delta = v - aCenter;
+			
+			
 			//float distanceToPlane = MathHelper.SignedDistancePlanePoint(v, aCenter, aNormal);
 			float distanceToPlane = (v.x - aCenter.x) * aNormal.x + (v.y - aCenter.y) * aNormal.y + (v.z - aCenter.z) * aNormal.z;
-			float dist = delta.magnitude/hand.pickingRadius;
+			float dist = delta.magnitude/radius;
 			float fallOff = dist * dist;
 			
 			fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 			fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
-
+			//if(fallOff > 1.0f) fallOff = 1.0f; 
 			v -= aNormal * fallOff * 0.5f;
-
+			
 			
 			sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
 		}
+	}
 
-		//---
+
+	public void UpdateBrushTool(SkeletalHand hand){
+
+		hand.brushIntensity = 0.1f;
+
+		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
+		hand.pickingCenter = finger.bones[3].transform.position;
+		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
+
+		if(symmetry){
+			hand.pickingCenterSymmetry = GetSymmetryPoint(hand.pickingCenter);
+			hand.pickedVerticesSymmetry = sculptMesh.pickVerticesInSphere(hand.pickingCenterSymmetry, hand.pickingRadius);
+			hand.pickedVertices.Where(i => !hand.pickedVerticesSymmetry.Remove(i));
+			hand.pickedVerticesSymmetry.Where(i => !hand.pickedVertices.Remove(i));
+		}
+
+
+		hand.pickingAreaNormal = sculptMesh.areaNormal(hand.pickedVertices).normalized;
+		hand.pickingAreaCenter = sculptMesh.areaCenter(hand.pickedVertices);
+
+
+		if(symmetry){
+			hand.pickingAreaNormalSymmetry = sculptMesh.areaNormal(hand.pickedVerticesSymmetry).normalized;
+			hand.pickingAreaCenterSymmetry = sculptMesh.areaCenter(hand.pickedVerticesSymmetry);
+		}
+
+
+
+		float deformIntensityBrush = hand.brushIntensity * hand.pickingRadius * 0.1f;
+		float deformIntensityFlatten = hand.brushIntensity * 0.3f;
+		brushVerts(hand.pickedVertices, hand.pickingAreaCenter, hand.pickingAreaNormal,
+		           hand.pickingRadius, deformIntensityBrush, deformIntensityFlatten);
+		if(symmetry){
+			brushVerts(hand.pickedVerticesSymmetry, hand.pickingAreaCenterSymmetry, hand.pickingAreaNormalSymmetry,
+			           hand.pickingRadius, deformIntensityBrush, deformIntensityFlatten);
+		}
+
 
 		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, true, hand.IsLeftHand() );
+		if(symmetry){
+			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, true, !hand.IsLeftHand() );
+		}
 
 	}
 
@@ -212,26 +231,6 @@ public class ToolDispatcher : MonoBehaviour {
 					if(symmetry){
 						smoothVerts(hand.pickedVerticesSymmetry, hand.pickingCenterSymmetry, hand.brushIntensity);
 					}
-//					for(int i = 0; i < nbVerts; i++){
-//						int v_idx = hand.pickedVertices[i];
-//						Vector3 n = Vector3.zero;
-//						Vertex vertex = sculptMesh.vertices[v_idx];
-//						
-//						Vector3 v = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
-//						
-//						if(vertex.ringVertices.Count > 0){
-//							for(int j = 0; j < vertex.ringVertices.Count; j++){
-//								Vector3 ringV = sculptMesh.transform.TransformPoint(sculptMesh.vertexArray[vertex.ringVertices[j]]); 
-//								n += ringV;
-//							}
-//							n *= 1.0f/vertex.ringVertices.Count;
-//							
-//							Vector3 d = (n - v) * hand.brushIntensity;
-//							v += d;
-//							
-//						}
-//						sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
-//					}
 				}
 			}
 		}
@@ -254,9 +253,9 @@ public class ToolDispatcher : MonoBehaviour {
 			Vector3 dragDirection = from - to;
 			float fallOff = dist * dist;
 			fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
-
+			if(fallOff > 1.0f) fallOff = 1.0f; 
 			Vector3 dir = dragDirection * fallOff;
-			if(dir.magnitude > 1.0f) dir *= 1/dir.magnitude;
+			//if(dir.magnitude > 1.0f) dir *= 1/dir.magnitude;
 
 			vertex += dir;
 			
@@ -459,5 +458,7 @@ public class ToolDispatcher : MonoBehaviour {
 		//		target.renderer.material.SetColor("_BrushDirtyColor", Sculpter.ACTIVATED);
 		
 	}
+
+
 
 }

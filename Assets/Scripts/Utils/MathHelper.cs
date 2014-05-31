@@ -37,6 +37,14 @@ public class MathHelper
 	}
 
 
+	public static float LinearFalloff(float distance, float radius) {
+		return Mathf.Clamp01(1.0f - distance / radius);
+	}
+	
+	public static float GaussFalloff(float distance, float radius) {
+		return Mathf.Clamp01 (Mathf.Pow (360.0f, -Mathf.Pow (distance / radius, 2.5f) - 0.01f));
+	}
+
 	//caclulate the rotational difference from A to B
 	public static Quaternion SubtractRotation(Quaternion B, Quaternion A){
 		

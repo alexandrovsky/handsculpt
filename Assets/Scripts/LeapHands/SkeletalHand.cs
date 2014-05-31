@@ -27,6 +27,13 @@ public class SkeletalHand : HandModel {
 	public MenuBehavior.ButtonAction tool;
 	public Vector3 pickingCenter = Vector3.zero;
 	public Vector3 pickingCenterSymmetry = Vector3.zero;
+
+	public Vector3 pickingAreaCenter = Vector3.zero;
+	public Vector3 pickingAreaCenterSymmetry = Vector3.zero;
+
+	public Vector3 pickingAreaNormal = Vector3.zero;
+	public Vector3 pickingAreaNormalSymmetry = Vector3.zero;
+
 	public float pickingRadius = 0.75f;
 	public float brushIntensity = 0.25f;
 
