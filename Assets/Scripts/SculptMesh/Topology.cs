@@ -16,8 +16,6 @@ namespace Sculpt
 {
 	public class Topology
 	{
-		Dictionary<int, int> verticesMap = new Dictionary<int, int>(); //to detect new vertices at the middle of edge (for subdivision)
-
 
 		List<Vertex> vertices = null;
 		List<Triangle> triangles = null;
@@ -34,7 +32,7 @@ namespace Sculpt
 
 
 		int[] indexArray = null;
-		Dictionary<uint,int> newVectices = null;
+		Dictionary<uint,int> newVectices = null;//to detect new vertices at the middle of edge (for subdivision)
 
 		public Topology (SculptMesh mesh)
 		{

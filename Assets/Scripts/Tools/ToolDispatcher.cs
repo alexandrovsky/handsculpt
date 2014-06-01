@@ -7,8 +7,6 @@ using Leap;
 
 public class ToolDispatcher : MonoBehaviour {
 
-	//public Vector3 center = Vector3.zero;
-
 
 	public MenuBehavior.ButtonAction currentLeftTool = MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB;
 	public MenuBehavior.ButtonAction currentRightTool = MenuBehavior.ButtonAction.TOOL_PAINT;
@@ -98,7 +96,7 @@ public class ToolDispatcher : MonoBehaviour {
 			fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 			fallOff = fallOff * (distanceToPlane * deformIntensityFlatten - deformIntensityBrush);
 			//if(fallOff > 1.0f) fallOff = 1.0f; 
-			v -= aNormal * fallOff * 0.5f;
+			v -= aNormal * fallOff * 0.5f; // * Time.deltaTime;
 			
 			
 			sculptMesh.vertexArray[v_idx] = sculptMesh.transform.InverseTransformPoint(v);
@@ -108,7 +106,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 	public void UpdateBrushTool(SkeletalHand hand){
 
-		hand.brushIntensity = 0.1f;
+		hand.brushIntensity = -0.1f;
 
 		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
 		hand.pickingCenter = finger.bones[3].transform.position;
@@ -225,7 +223,7 @@ public class ToolDispatcher : MonoBehaviour {
 				
 
 				
-				int nbVerts = hand.pickedVertices.Count;
+
 				if(activated){
 					smoothVerts(hand.pickedVertices, hand.pickingCenter, hand.brushIntensity);
 					if(symmetry){

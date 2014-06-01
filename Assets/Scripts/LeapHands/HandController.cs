@@ -33,6 +33,20 @@ public class HandController : MonoBehaviour {
 	private Camera mainCam_;
 
 
+	private void SetupLight(SkeletalHand hand){
+
+		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
+		hand.fingerLight = finger.bones[3].gameObject.AddComponent<Light>();
+		hand.fingerLight.color = Color.red;
+		hand.fingerLight.intensity = 2.0f; // hand.brushIntensity;
+		hand.fingerLight.range = 4.0f;// hand.pickingRadius;
+
+
+		hand.palmLight = hand.palm.AddComponent<Light>();
+		hand.palmLight.color = Color.red;
+		hand.palmLight.intensity = 2.0f;
+		hand.palmLight.range = 4.0f;
+	}
 
   	void Start() {
 		mainCam_ = (GameObject.Find("Main Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
@@ -46,12 +60,15 @@ public class HandController : MonoBehaviour {
 
 		leftHand = CreateHand(leftGraphicsModel) as SkeletalHand;
 		leftHand.name = "left_hand";
-
 		leftHand.transform.parent = mainCam_.transform;
+		SetupLight(leftHand);
+
+
 		rightHand = CreateHand(rightGraphicsModel) as SkeletalHand;
 		rightHand.name = "right_hand";
-
 		rightHand.transform.parent = mainCam_.transform;
+		SetupLight(rightHand);
+
 
 
 //		leftRigidHand = CreateHand(leftPhysicsModel) as RigidHand;
@@ -88,7 +105,7 @@ public class HandController : MonoBehaviour {
     	hand_model.gameObject.SetActive(true);
 		IgnoreHandCollisions(hand_model);
 
-    	return hand_model;
+		return hand_model;
   	}	
 
   	

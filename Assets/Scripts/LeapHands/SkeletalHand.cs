@@ -15,7 +15,8 @@ public class SkeletalHand : HandModel {
 
 	public GameObject palm;
 
-
+	public Light fingerLight = null;
+	public Light palmLight = null;
 
 	Vector3 lastPalmPosition = Vector3.zero;
 	Quaternion lastPalmRotation = Quaternion.identity;
@@ -24,7 +25,32 @@ public class SkeletalHand : HandModel {
 	public List<int> pickedVerticesSymmetry = new List<int>();
 	public List<float> smoothedRadius = new List<float>(0);
 
-	public MenuBehavior.ButtonAction tool;
+	private MenuBehavior.ButtonAction tool_;
+	public MenuBehavior.ButtonAction tool{
+		get{
+			return tool_;
+		}
+		set{
+			tool_ = value;
+			switch(tool_){
+			
+			case MenuBehavior.ButtonAction.TOOL_GRAB:
+			case MenuBehavior.ButtonAction.TOOL_SMOOTH:
+				palmLight.enabled = true;
+				fingerLight.enabled = false;
+				break;
+			case MenuBehavior.ButtonAction.TOOL_PAINT:
+				fingerLight.enabled = true;
+				palmLight.enabled = false;
+				break;
+
+			default:
+				palmLight.enabled = false;
+				fingerLight.enabled = false;
+				break;
+			}
+		}
+	}
 	public Vector3 pickingCenter = Vector3.zero;
 	public Vector3 pickingCenterSymmetry = Vector3.zero;
 
@@ -34,8 +60,30 @@ public class SkeletalHand : HandModel {
 	public Vector3 pickingAreaNormal = Vector3.zero;
 	public Vector3 pickingAreaNormalSymmetry = Vector3.zero;
 
-	public float pickingRadius = 0.75f;
-	public float brushIntensity = 0.25f;
+	private float pickingRadius_ =1.0f;
+	private float brushIntensity_ = 0.5f;
+
+	public float pickingRadius{
+		get{
+			return pickingRadius_;
+		}
+		set{
+			pickingRadius_ = value;
+//			fingerLight.range = pickingRadius_ * pickingRadius_;
+//			palmLight.range = pickingRadius_ * pickingRadius_;
+		}
+	}
+	public float brushIntensity{
+		get{
+			return brushIntensity_;
+		}
+		set{
+			brushIntensity_ = value;
+//			fingerLight.intensity = brushIntensity_ * brushIntensity_;
+//			palmLight.intensity = brushIntensity_ * brushIntensity_;
+		}
+	}
+
 
 	public Ray dragRay = new Ray();
 	public Ray dragRaySymmetry = new Ray();
@@ -45,7 +93,16 @@ public class SkeletalHand : HandModel {
 	}
 
 	public override void InitHand() {
-	   SetPositions();
+
+	   	SetPositions();
+
+		GameObject lightGameObject = new GameObject("Palm Light");
+		palm.AddComponent<Light>();
+		palm.light.color = Color.red;
+		palm.light.intensity = 2.0f;
+		palm.light.range = 4.0f;
+
+
 	}
 
 	public override void UpdateHand() {

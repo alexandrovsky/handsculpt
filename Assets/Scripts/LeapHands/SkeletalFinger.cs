@@ -13,6 +13,9 @@ public class SkeletalFinger : FingerModel {
 
   	public Transform[] bones = new Transform[NUM_BONES];
 
+
+
+
   	public override void InitFinger() {
     	SetPositions(GetController().transform);
   	}	
