@@ -69,8 +69,8 @@ public class SkeletalHand : HandModel {
 		}
 		set{
 			pickingRadius_ = value;
-//			fingerLight.range = pickingRadius_ * pickingRadius_;
-//			palmLight.range = pickingRadius_ * pickingRadius_;
+			fingerLight.range = 2.0f + pickingRadius_ * pickingRadius_;
+			palmLight.range =   2.0f + pickingRadius_ * pickingRadius_;
 		}
 	}
 	public float brushIntensity{
