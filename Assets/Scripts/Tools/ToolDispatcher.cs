@@ -18,6 +18,8 @@ public class ToolDispatcher : MonoBehaviour {
 	Camera mainCamera;
 	Camera handCamera;
 
+	public bool toolsEnabled; // Flag for the GUI
+
 	void Start () {
 		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 		target = GameObject.Find("Target");
@@ -63,19 +65,23 @@ public class ToolDispatcher : MonoBehaviour {
 	
 	void Update () {
 
-		handController.leftHand.tool = currentLeftTool;
-		handController.rightHand.tool = currentRightTool;
+		if(toolsEnabled){
+			handController.leftHand.tool = currentLeftTool;
+			handController.rightHand.tool = currentRightTool;
+			
+			updateHandTool(handController.leftHand);
+			updateHandTool(handController.rightHand);
+			
+			
+			
+			List<int> iTrisSelected = new List<int>();
+			iTrisSelected.AddRange( sculptMesh.getTrianglesFromVertices(handController.leftHand.pickedVertices) );
+			iTrisSelected.AddRange( sculptMesh.getTrianglesFromVertices(handController.rightHand.pickedVertices) );
+			sculptMesh.updateMesh(iTrisSelected, true);
+			sculptMesh.pushMeshData();
+		}
 
-		updateHandTool(handController.leftHand);
-		updateHandTool(handController.rightHand);
 
-
-
-		List<int> iTrisSelected = new List<int>();
-		iTrisSelected.AddRange( sculptMesh.getTrianglesFromVertices(handController.leftHand.pickedVertices) );
-		iTrisSelected.AddRange( sculptMesh.getTrianglesFromVertices(handController.rightHand.pickedVertices) );
-		sculptMesh.updateMesh(iTrisSelected, true);
-		sculptMesh.pushMeshData();
 	}
 
 	private void brushVerts(List<int> iVerts, Vector3 aCenter, Vector3 aNormal, float radius, float deformIntensityFlatten, float deformIntensityBrush){

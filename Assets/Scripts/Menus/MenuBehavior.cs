@@ -50,6 +50,7 @@ public class MenuBehavior : MonoBehaviour {
 
 
 	private HandController _handController;
+	private ToolDispatcher _toolDispatcher;
 
 	private int _buttonCount;
 	private GameObject[] _buttons;
@@ -74,6 +75,7 @@ public class MenuBehavior : MonoBehaviour {
 
 	public enum MenuType { ICON, TEXT, TEXTURE };
 	public enum MenuState { INACTIVE, ACTIVATING, ACTIVE, SELECTION, DEACTIVATION, DISABLED };
+
 	public enum ButtonAction { 
 		NONE,
 		// manipulation tools:
@@ -102,11 +104,10 @@ public class MenuBehavior : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		//Get references to the main scene and UI cameras.
-		//_mainCam = (GameObject.Find("Main Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
 		_uiCam = (GameObject.Find("UI Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
 		_baseLocation = gameObject.transform.parent.position;
 		_handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
-//		_leapManager._mainCam = _mainCam;
+		_toolDispatcher = (GameObject.Find("GuiEventListener ") as GameObject).GetComponent(typeof(ToolDispatcher)) as ToolDispatcher;
 
 
 
@@ -185,7 +186,24 @@ public class MenuBehavior : MonoBehaviour {
 
 	// Update is called once per frame
 
+	private void SetVisibility(bool visible){
+		transform.parent.renderer.enabled = visible;
+		if(_hasSubLabel){
+			_subLabel.renderer.enabled = visible;
+		}
+		_toolDispatcher.toolsEnabled = !visible;
+	}
+
 	void Update(){
+
+//		if(_handController.leftHand.palm.transform.position.z  < transform.position.z ||
+//		   _handController.rightHand.palm.transform.position.z < transform.position.z){
+//			gameObject.transform.parent.gameObject.SetActive(true);
+//		}else{
+//			gameObject.transform.parent.gameObject.SetActive(false);
+//		}
+		SetVisibility(false);
+
 		if(_currentHand == CurrentHand.NONE || _currentHand == CurrentHand.LEFT){
 			CheckHand(_handController.leftHand);
 		}
@@ -197,9 +215,16 @@ public class MenuBehavior : MonoBehaviour {
 
 	void CheckHand(SkeletalHand hand) 
 	{
+
 		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
 		Vector3 pointerPositionWorld = finger == null ? Vector3.zero : finger.bones[3].transform.position;
 		Vector3 pointerPositionScreen = Camera.main.WorldToScreenPoint( pointerPositionWorld );
+
+
+		if(pointerPositionScreen.z  < 5){
+			SetVisibility(true);
+		}
+
 
 
 
@@ -220,7 +245,10 @@ public class MenuBehavior : MonoBehaviour {
 		{
 		case MenuState.INACTIVE:
 
-			if(parentToFinger.magnitude < _activation_radius && pointerPositionWorld.z > _deactivate_z) 
+
+			if(parentToFinger.magnitude < _activation_radius 
+			   && pointerPositionWorld.z > _deactivate_z 
+			   && !_toolDispatcher.toolsEnabled) 
 			{
 				_activationStartTime = Time.time;
 				_currentState = MenuState.ACTIVATING;

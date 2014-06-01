@@ -96,12 +96,10 @@ public class SkeletalHand : HandModel {
 
 	   	SetPositions();
 
-		GameObject lightGameObject = new GameObject("Palm Light");
-		palm.AddComponent<Light>();
-		palm.light.color = Color.red;
-		palm.light.intensity = 2.0f;
-		palm.light.range = 4.0f;
-
+//		palm.AddComponent<Light>();
+//		palm.light.color = Color.red;
+//		palm.light.intensity = 2.0f;
+//		palm.light.range = 4.0f;
 
 	}
 
@@ -176,10 +174,12 @@ public class SkeletalHand : HandModel {
 	}
 	public Vector3 GetPalmCenter() {
 	    Hand leap_hand = GetLeapHand();
+
 		Vector3 offset = leap_hand.Direction.ToUnityScaled() * PALM_CENTER_OFFSET;
 	    Vector3 local_center = leap_hand.PalmPosition.ToUnityScaled() - offset;
 
 	    return GetController().transform.TransformPoint(local_center);
+
   	}
 
 

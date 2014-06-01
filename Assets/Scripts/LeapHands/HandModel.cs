@@ -20,7 +20,7 @@ public abstract class HandModel : MonoBehaviour {
   	private HandController controller_;
 
   	public Hand GetLeapHand() {
-    	return hand_;
+		return hand_; // == null ? hand_ : Leap.Hand.Invalid;
   	}
 
   public void SetLeapHand(Hand hand) {
