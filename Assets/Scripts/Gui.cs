@@ -8,15 +8,6 @@ public class Gui : MonoBehaviour {
 	public Texture2D m_greenTexture = null;
 	public Texture2D m_greyTexture = null;
 
-
-	public GameObject m_navigationToolPrefab = null;
-	public GameObject m_grabToolPrefab = null;
-	public GameObject m_pointingToolPrefab = null;
-	public GameObject m_shadowToolPrefab = null;
-
-	private GameObject currentNavigationTool = null;
-	private GameObject currentManipulationTool = null;
-
 	GameObject target;
 
 
@@ -24,6 +15,7 @@ public class Gui : MonoBehaviour {
 	SculptMesh sculptMesh;
 	Sculpter sculpter;
 	HandController handController;
+	ToolDispatcher toolDispatcher;
 	public string objectExportFilepath = "/Users/dimi/Desktop/target.obj";
 	
 	private bool m_DisplayGui = true;
@@ -36,6 +28,7 @@ public class Gui : MonoBehaviour {
 		sculptMesh = target.GetComponent<SculptMesh>();
 		sculpter = target.GetComponent<Sculpter>();
 		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
+		toolDispatcher = (GameObject.Find("GuiEventListener ") as GameObject).GetComponent(typeof(ToolDispatcher)) as ToolDispatcher;
 	}
 	
 	void Update()
@@ -59,19 +52,7 @@ public class Gui : MonoBehaviour {
 	
 	
 	
-	void instantiateManipulationTool(GameObject tool){
-		if(currentManipulationTool != null) {// only one tool should exist at a time.
-			GameObject.Destroy(currentManipulationTool);
-		}
-		currentManipulationTool = Instantiate(tool) as GameObject;
-	}
 
-	void instantiateNavigationTool(GameObject tool){
-		if(currentNavigationTool != null) {// only one tool should exist at a time.
-			GameObject.Destroy(currentNavigationTool);
-		}
-		currentNavigationTool = Instantiate(tool) as GameObject;
-	}
 
 
 
@@ -125,53 +106,87 @@ public class Gui : MonoBehaviour {
 			{
 				mouseMode = GUILayout.Toggle(mouseMode, "mouse enabled");
 				sculpter.isEnabled = mouseMode;
-				GUILayout.Label("Current Tool " + sculpter.tool );
+				GUILayout.Label("Current Tool left" + toolDispatcher.currentLeftTool );
+				GUILayout.Label("Current Tool right" + toolDispatcher.currentRightTool );
 				GUILayout.BeginVertical();{
-					GUILayout.TextField("intesity:" + sculpter.intensity);
-					sculpter.intensity = GUILayout.HorizontalSlider(sculpter.intensity, 0.01f, 1.0f);
+					GUILayout.TextField("intesity:" + toolDispatcher.intensity);
+					toolDispatcher.intensity = GUILayout.HorizontalSlider(toolDispatcher.intensity, 0.0f, 1.0f);
 				}GUILayout.EndVertical();
 				
 				
 				GUILayout.BeginVertical();{
-					GUILayout.TextField("radius: " + sculpter.radius);
-					sculpter.radius = GUILayout.HorizontalSlider(sculpter.radius, 0.01f, 12.0f);
+					GUILayout.TextField("radius: " + toolDispatcher.radius);
+					toolDispatcher.radius = GUILayout.HorizontalSlider(toolDispatcher.radius, 0.01f, 12.0f);
 				}GUILayout.EndVertical();
+
+				GUILayout.BeginHorizontal();{
+					toolDispatcher.symmetry = GUILayout.Toggle(toolDispatcher.symmetry, "symmetry");
+					toolDispatcher.inverted = GUILayout.Toggle(toolDispatcher.inverted, "inverted");
+				}GUILayout.EndHorizontal();
 
 
 			}
 			GUILayout.Label("-----");
 			if(!mouseMode){
 
+				GUILayout.Label("Pointing Tool");
+				GUILayout.BeginHorizontal();
+				if( GUILayout.Button( "Left") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT, handController.leftHand);
+				}
+				if( GUILayout.Button( "Right") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT, handController.rightHand);
+				}
+				GUILayout.EndHorizontal();
 
-				if( GUILayout.Button( "pointing") ){
-					instantiateManipulationTool(m_pointingToolPrefab);
-				}
-				if( GUILayout.Button( "shadow") ){
-					instantiateManipulationTool(m_shadowToolPrefab);
-				}
-				if( GUILayout.Button("grab") ){
-					instantiateManipulationTool(m_grabToolPrefab);
-				}
 
-				if( GUILayout.Button( "Apply Navigation Tool") )
-				{
-					instantiateNavigationTool(m_navigationToolPrefab);
-				}
-				GUILayout.Label("-----");
-				if(currentNavigationTool != null){
-					HandTool handTool = currentNavigationTool.GetComponent<HandTool>();
-					GUILayout.BeginVertical();{
-						handTool.CostumGUI();
-					}GUILayout.EndVertical();
-				}
 
-				if(currentManipulationTool != null){
-					HandTool handTool = currentManipulationTool.GetComponent<HandTool>();
-					GUILayout.BeginVertical();{
-						handTool.CostumGUI();
-					}GUILayout.EndVertical();
-					
+				GUILayout.Label("Shadow Tool");
+				GUILayout.BeginHorizontal();
+				if( GUILayout.Button( "Left") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_SMOOTH, handController.leftHand);
 				}
+				if( GUILayout.Button( "Right") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_SMOOTH, handController.rightHand);
+				}
+				GUILayout.EndHorizontal();
+
+				GUILayout.Label("Grab Tool");
+				GUILayout.BeginHorizontal();
+				if( GUILayout.Button( "Left") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_GRAB, handController.leftHand);
+				}
+				if( GUILayout.Button( "Right") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_GRAB, handController.rightHand);
+				}
+				GUILayout.EndHorizontal();
+
+
+				GUILayout.Label("Pointing Assistent Tool");
+				GUILayout.BeginHorizontal();
+				if( GUILayout.Button( "Left") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT, handController.leftHand);
+				}
+				if( GUILayout.Button( "Right") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT, handController.rightHand);
+				}
+				GUILayout.EndHorizontal();
+
+
+				GUILayout.Label("Naigation Grab");
+				GUILayout.BeginHorizontal();
+				if( GUILayout.Button( "Left") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB, handController.leftHand);
+				}
+				if( GUILayout.Button( "Right") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB, handController.rightHand);
+				}
+				GUILayout.EndHorizontal();
+
+
+
+
+
 
 			}else{
 				// set the tool with the mouse
@@ -189,31 +204,21 @@ public class Gui : MonoBehaviour {
 			GUILayout.EndArea();
 
 			// hand status:
-			GUILayout.BeginArea(new Rect(Screen.width/2, Screen.height-100, 50, 50));
-
-			//GUILayout.BeginHorizontal();
-			if(currentNavigationTool != null){
-				HandTool handTool = currentNavigationTool.GetComponent<HandTool>();
-				if(handTool.hand.IsValid){
+			GUILayout.BeginArea(new Rect(Screen.width/2, Screen.height-100, 50, 50));{
+				if(handController.rightHand.isHandValid()){
 					GUILayout.Label(m_greenTexture);
-
 				}else{
 					GUILayout.Label(m_greyTexture);
 				}
-			}
-			GUILayout.EndArea();
+			}GUILayout.EndArea();
 
 			GUILayout.BeginArea(new Rect(Screen.width/2-50, Screen.height-100, 50, 50));
-			if(currentManipulationTool != null){
-				HandTool handTool = currentManipulationTool.GetComponent<HandTool>();
-				if(handTool.hand.IsValid){
-					GUILayout.Label(m_redTexture);
-				}else{
-					GUILayout.Label(m_greyTexture);
-				}
-			}
 
-			//GUILayout.EndHorizontal();
+			if(handController.leftHand.isHandValid()){
+				GUILayout.Label(m_greenTexture);
+			}else{
+				GUILayout.Label(m_greyTexture);
+			}
 			GUILayout.EndArea();
 		}
 	}

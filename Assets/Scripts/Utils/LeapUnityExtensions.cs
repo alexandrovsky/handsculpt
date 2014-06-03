@@ -43,7 +43,7 @@ namespace Leap {
 		public static Vector3 InputOffset = new Vector3(0, 0, -4);
 
 		// Leap coordinates are in mm and Unity is in meters. So scale by 1000.
-		public const float INPUT_SCALE = 0.0015f;// 0.001f;
+		public const float INPUT_SCALE =  0.0015f;// 0.001f;
 		public static readonly Vector3 Z_FLIP = new Vector3(1, 1, -1);
 		
 		// For directions.

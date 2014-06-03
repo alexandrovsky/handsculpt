@@ -141,9 +141,9 @@ public class HandController : MonoBehaviour {
 	}
 	
 	void FixedUpdate() {
-		if (leap_controller_ == null)
-	    return;
-
+//		if (leap_controller_ == null)
+//	    return;
+//
 //		Frame frame = leap_controller_.Frame();
 //		foreach(Hand hand in frame.Hands){
 //			if(hand.IsLeft){

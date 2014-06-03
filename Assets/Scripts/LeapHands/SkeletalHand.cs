@@ -104,7 +104,7 @@ public class SkeletalHand : HandModel {
 	}
 
 	public override void UpdateHand() {
-    	SetPositions();
+		SetPositions();
 		for (int i = 0; i < fingers.Length; ++i) {
 			if (fingers[i] != null)
 				fingers[i].UpdateFinger();

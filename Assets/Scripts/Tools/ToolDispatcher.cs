@@ -11,6 +11,7 @@ public class ToolDispatcher : MonoBehaviour {
 	public MenuBehavior.ButtonAction currentLeftTool = MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB;
 	public MenuBehavior.ButtonAction currentRightTool = MenuBehavior.ButtonAction.TOOL_PAINT;
 	public bool symmetry = true;
+	public bool inverted = true;
 	HandController handController;
 	GameObject target;
 
@@ -19,6 +20,8 @@ public class ToolDispatcher : MonoBehaviour {
 	Camera handCamera;
 
 	public bool toolsEnabled; // Flag for the GUI
+	public float radius = 1.0f;
+	public float intensity = 0.0f;
 
 	void Start () {
 		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
@@ -112,7 +115,9 @@ public class ToolDispatcher : MonoBehaviour {
 
 	public void UpdateBrushTool(SkeletalHand hand){
 
-		hand.brushIntensity = -0.1f;
+		hand.brushIntensity =  this.inverted? -this.intensity : this.intensity;
+		hand.pickingRadius = this.radius;
+
 
 		SkeletalFinger finger = hand.GetFingerWithType(Leap.Finger.FingerType.TYPE_INDEX) as SkeletalFinger;
 		hand.pickingCenter = finger.bones[3].transform.position;
@@ -157,11 +162,12 @@ public class ToolDispatcher : MonoBehaviour {
 	public void UpdateBrushSecondaryTool(SkeletalHand hand){
 		// update the radius of the other hand:
 		float pinch = 1 - hand.GetPinchStrength();
-		if(hand.IsLeftHand() ){
-			handController.rightHand.pickingRadius = pinch * pinch;
-		}else{
-			handController.leftHand.pickingRadius = pinch * pinch;
-		}
+		this.radius = 0.5f + 2.0f * pinch * pinch;
+//		if(hand.IsLeftHand() ){
+//			handController.rightHand.pickingRadius = pinch * pinch;
+//		}else{
+//			handController.leftHand.pickingRadius = pinch * pinch;
+//		}
 	}
 
 	private void smoothVerts(List<int> iVerts, Vector3 center, float intensity){
@@ -190,11 +196,15 @@ public class ToolDispatcher : MonoBehaviour {
 
 	public void UpdateSmoothTool(SkeletalHand hand){
 
-
-
+		SkeletalHand otherHand = OtherHand(hand);
+		if(otherHand.tool != MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT){
+			float sphereRadius = hand.GetSphereRadiusSmoothed() / 100.0f;
+			hand.pickingRadius = 1.5f * sphereRadius;
+		}else{
+			hand.pickingRadius = this.radius;
+		}
 		Vector3 palmPos = hand.GetPalmCenter();
-		float sphereRadius = hand.GetSphereRadiusSmoothed() / 100.0f;
-		hand.pickingRadius = 1.5f * sphereRadius;
+
 		bool activated = false;
 
 
@@ -213,7 +223,7 @@ public class ToolDispatcher : MonoBehaviour {
 				float distanceFromHit = Vector3.Distance(palmPos, hand.pickingCenter);
 				if( distanceFromHit < hand.pickingRadius){
 					activated = true;
-					hand.brushIntensity = 1.0f;
+					hand.brushIntensity = this.intensity;
 					hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 					if(symmetry){
 						hand.pickedVerticesSymmetry = sculptMesh.pickVerticesInSphere(hand.pickingCenterSymmetry, hand.pickingRadius);
@@ -273,6 +283,9 @@ public class ToolDispatcher : MonoBehaviour {
 		return target.transform.TransformPoint(cymmetry_local_point);
 	}
 
+	bool grabbed = false;
+	float grabReleaseTime = 0.0f;
+	float grabReleaseDelay = 1.0f;
 	public void UpdateGrabTool(SkeletalHand hand){
 
 		if(!hand.isHandValid() ){
@@ -288,48 +301,38 @@ public class ToolDispatcher : MonoBehaviour {
 			hand.pickingCenterSymmetry = GetSymmetryPoint(hand.pickingCenter);
 		}
 
-		hand.pickingRadius = 1.5f;// 3.0f * sphereRadius * sphereRadius;
+		hand.pickingRadius = this.radius; // 1.5f;// 3.0f * sphereRadius * sphereRadius;
 		if( hand.GetGrabStrength() > 0.8f ){
-			// manipulate....
 
-
-
-			dragVerts(hand.pickedVertices, hand.pickingCenter, hand.GetLastPalmCenter(), hand.dragRay, hand.pickingRadius);
-			if(symmetry){
-				Vector3 lastSymmmetryPoint = GetSymmetryPoint(hand.GetLastPalmCenter() );
-				dragVerts(hand.pickedVerticesSymmetry, hand.pickingCenterSymmetry, lastSymmmetryPoint, hand.dragRaySymmetry, hand.pickingRadius);
+			if(!grabbed){
+				grabbed = true;
+			}else{
+				dragVerts(hand.pickedVertices, hand.pickingCenter, hand.GetLastPalmCenter(), hand.dragRay, hand.pickingRadius);
+				if(symmetry){
+					Vector3 lastSymmmetryPoint = GetSymmetryPoint(hand.GetLastPalmCenter() );
+					dragVerts(hand.pickedVerticesSymmetry, hand.pickingCenterSymmetry, lastSymmmetryPoint, hand.dragRaySymmetry, hand.pickingRadius);
+				}
 			}
 
-//			for(int i = 0; i< iVerts.Count; i++  ){
-//				int v_idx = iVerts[i];
-//				Vector3 vertex =  target.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
-//				hand.dragRay.direction = hand.pickingCenter - hand.dragRay.origin;
-//
-//				float dist = MathHelper.DistanceToLine(hand.dragRay, vertex) / hand.pickingRadius;
-//
-//
-//				Vector3 dragDirection = hand.pickingCenter - hand.GetLastPalmCenter();
-//				float fallOff = dist * dist;
-//				fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
-//				vertex += dragDirection * fallOff;
-//
-//				sculptMesh.vertexArray[v_idx] = target.transform.InverseTransformPoint(vertex);
-//			}
-
 		}else{
+
+			if(grabbed){
+				grabReleaseTime = Time.time;
+			}
+			if(Time.time > grabReleaseTime + grabReleaseDelay){
+				// released:
+				grabbed = false;
+			} 
+
+
 
 			hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 			hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
 			ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, true, hand.IsLeftHand() );
 			if(symmetry){
 				hand.pickedVerticesSymmetry = sculptMesh.pickVerticesInSphere(hand.pickingCenterSymmetry, hand.pickingRadius);
-//				List<int> intersection = hand.pickedVerticesSymmetry.Intersect(hand.pickedVertices);
-//				hand.pickedVertices.
-
 				hand.pickedVertices.Where(i => !hand.pickedVerticesSymmetry.Remove(i));
 				hand.pickedVerticesSymmetry.Where(i => !hand.pickedVertices.Remove(i));
-
-
 				ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, 1.0f, true, !hand.IsLeftHand() );
 				hand.dragRaySymmetry.origin = sculptMesh.areaCenter(hand.pickedVerticesSymmetry);
 			}
@@ -372,8 +375,10 @@ public class ToolDispatcher : MonoBehaviour {
 
 	Vector3 initHandPosition = Vector3.zero;
 	bool grabNavigationActivated = false;
+
 	//Leap.Frame grabNavigationEnterFrame = Leap.Frame.Invalid;
 	public void UpdateNavigationGrabTool(SkeletalHand hand){
+
 
 //		float fow = mainCamera.fieldOfView;
 		if( hand.GetGrabStrength() < 0.5f  ){
