@@ -116,7 +116,7 @@ public class Gui : MonoBehaviour {
 				
 				GUILayout.BeginVertical();{
 					GUILayout.TextField("radius: " + toolDispatcher.radius);
-					toolDispatcher.radius = GUILayout.HorizontalSlider(toolDispatcher.radius, 0.01f, 12.0f);
+					toolDispatcher.radius = GUILayout.HorizontalSlider(toolDispatcher.radius, 0.01f, 3.0f);
 				}GUILayout.EndVertical();
 
 				GUILayout.BeginHorizontal();{

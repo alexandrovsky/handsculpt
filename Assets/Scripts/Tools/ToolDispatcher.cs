@@ -146,9 +146,11 @@ public class ToolDispatcher : MonoBehaviour {
 		float deformIntensityFlatten = hand.brushIntensity * 0.3f;
 		brushVerts(hand.pickedVertices, hand.pickingAreaCenter, hand.pickingAreaNormal,
 		           hand.pickingRadius, deformIntensityBrush, deformIntensityFlatten);
+		smoothVerts(hand.pickedVertices, hand.pickingAreaCenter, 0.5f * this.intensity);
 		if(symmetry){
 			brushVerts(hand.pickedVerticesSymmetry, hand.pickingAreaCenterSymmetry, hand.pickingAreaNormalSymmetry,
 			           hand.pickingRadius, deformIntensityBrush, deformIntensityFlatten);
+			smoothVerts(hand.pickedVerticesSymmetry, hand.pickingAreaCenterSymmetry , 0.5f * this.intensity);
 		}
 
 
@@ -374,7 +376,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 	Vector3 initHandPosition = Vector3.zero;
 	bool grabNavigationActivated = false;
-
+	Vector3 initCameraPosition = Vector3.zero;
 	//Leap.Frame grabNavigationEnterFrame = Leap.Frame.Invalid;
 	public void UpdateNavigationGrabTool(SkeletalHand hand){
 
@@ -392,6 +394,7 @@ public class ToolDispatcher : MonoBehaviour {
 		if(!grabNavigationActivated){
 			initHandPosition = hand.GetLastPalmCenter();
 			//grabNavigationEnterFrame =  handController.GetFrame(0);
+			initCameraPosition = mainCamera.transform.position;
 			grabNavigationActivated = true;
 		}
 
@@ -409,20 +412,29 @@ public class ToolDispatcher : MonoBehaviour {
 			//		Debug.DrawLine(palmPos, palmPos + axis, Color.green);
 			
 			mainCamera.transform.RotateAround(target.transform.position, axis, rotationSpeed * -angle);
-			
-			
+		}else{
 			//--- scaling:
 
-//			float delta = initHandPosition.z - palmPos.z;
-//			const float MAX_OFFSET = 100;
-//			const float MIN_OFFSET = 30;
-//			float offset = fow + delta * 10 * Time.deltaTime;
-//			//if(offset > MAX_OFFSET) offset = fow;
-//			//else if(offset < MAX_OFFSET) offset = fow;
+//			Vector3 palmNormal = hand.GetPalmNormal();
+//			Vector3 palmPos = hand.GetPalmCenter();
+//			Vector3 fwd = mainCamera.transform.forward;
 //
-//			setCamerasFiewOfView(offset);
-//			Debug.DrawLine(initHandPosition, palmPos, Color.red);
-			
+			//if(Vector3.Angle(palmNormal, fwd) < 30 )
+			{
+
+
+//				float delta = initHandPosition.z - palmPos.z;
+//
+//				Vector3 offset = mainCamera.transform.forward * delta * Time.deltaTime;
+//
+//				mainCamera.transform.Translate(offset);
+//				handCamera.transform. position = mainCamera.transform.position;
+//				mainCamera.transform.LookAt(target.transform.position);
+//
+//				handController.gameObject.transform.Translate(-offset);
+
+//				Debug.DrawLine(initHandPosition, palmPos, Color.red);
+			}
 		}
 
 	}
