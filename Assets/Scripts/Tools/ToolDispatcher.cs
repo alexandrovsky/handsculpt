@@ -255,7 +255,7 @@ public class ToolDispatcher : MonoBehaviour {
 		}
 	}
 
-	private void dragVerts(List<int> iVerts, Vector3 from, Vector3 to, Ray ray, float radius){
+	private void dragVerts(List<int> iVerts, Vector3 from, Vector3 to, Ray ray, float radius, float intensity){
 		for(int i = 0; i< iVerts.Count; i++  ){
 			int v_idx = iVerts[i];
 			Vector3 vertex =  target.transform.TransformPoint(sculptMesh.vertexArray[v_idx]);
@@ -268,7 +268,7 @@ public class ToolDispatcher : MonoBehaviour {
 			float fallOff = dist * dist;
 			fallOff = 3.0f * fallOff * fallOff - 4.0f * fallOff * dist + 1.0f;
 			if(fallOff > 1.0f) fallOff = 1.0f; 
-			Vector3 dir = dragDirection * fallOff;
+			Vector3 dir = dragDirection * fallOff * intensity;
 			//if(dir.magnitude > 1.0f) dir *= 1/dir.magnitude;
 
 			vertex += dir;
@@ -283,9 +283,7 @@ public class ToolDispatcher : MonoBehaviour {
 		return target.transform.TransformPoint(cymmetry_local_point);
 	}
 
-	bool grabbed = false;
-	float grabReleaseTime = 0.0f;
-	float grabReleaseDelay = 1.0f;
+	static float grabReleaseDelay = 1.0f;
 	public void UpdateGrabTool(SkeletalHand hand){
 
 		if(!hand.isHandValid() ){
@@ -302,26 +300,27 @@ public class ToolDispatcher : MonoBehaviour {
 		}
 
 		hand.pickingRadius = this.radius; // 1.5f;// 3.0f * sphereRadius * sphereRadius;
+		hand.brushIntensity = this.intensity;
 		if( hand.GetGrabStrength() > 0.8f ){
 
-			if(!grabbed){
-				grabbed = true;
+			if(!hand.grabbed){
+				hand.grabbed = true;
 			}else{
-				dragVerts(hand.pickedVertices, hand.pickingCenter, hand.GetLastPalmCenter(), hand.dragRay, hand.pickingRadius);
+				dragVerts(hand.pickedVertices, hand.pickingCenter, hand.GetLastPalmCenter(), hand.dragRay, hand.pickingRadius, hand.brushIntensity);
 				if(symmetry){
 					Vector3 lastSymmmetryPoint = GetSymmetryPoint(hand.GetLastPalmCenter() );
-					dragVerts(hand.pickedVerticesSymmetry, hand.pickingCenterSymmetry, lastSymmmetryPoint, hand.dragRaySymmetry, hand.pickingRadius);
+					dragVerts(hand.pickedVerticesSymmetry, hand.pickingCenterSymmetry, lastSymmmetryPoint, hand.dragRaySymmetry, hand.pickingRadius, hand.brushIntensity);
 				}
 			}
 
 		}else{
 
-			if(grabbed){
-				grabReleaseTime = Time.time;
+			if(hand.grabbed){
+				hand.grabReleaseTime = Time.time;
 			}
-			if(Time.time > grabReleaseTime + grabReleaseDelay){
+			if(Time.time > hand.grabReleaseTime + grabReleaseDelay){
 				// released:
-				grabbed = false;
+				hand.grabbed = false;
 			} 
 
 
@@ -380,8 +379,9 @@ public class ToolDispatcher : MonoBehaviour {
 	public void UpdateNavigationGrabTool(SkeletalHand hand){
 
 
+
 //		float fow = mainCamera.fieldOfView;
-		if( hand.GetGrabStrength() < 0.5f  ){
+		if( hand.GetGrabStrength() < 0.8f  ){
 
 			grabNavigationActivated = false;
 			//grabNavigationEnterFrame = Leap.Frame.Invalid;

@@ -85,6 +85,8 @@ public class SkeletalHand : HandModel {
 	}
 
 
+	public bool grabbed = false;
+	public float grabReleaseTime = 0.0f;
 	public Ray dragRay = new Ray();
 	public Ray dragRaySymmetry = new Ray();
 	void Start() {
