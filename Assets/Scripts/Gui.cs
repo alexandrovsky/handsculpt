@@ -173,6 +173,17 @@ public class Gui : MonoBehaviour {
 				GUILayout.EndHorizontal();
 
 
+				GUILayout.Label("Dynamic Assistent Tool");
+				GUILayout.BeginHorizontal();
+				if( GUILayout.Button( "Left") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.DYNAMIC_SCECONDARY, handController.leftHand);
+				}
+				if( GUILayout.Button( "Right") ){
+					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.DYNAMIC_SCECONDARY, handController.rightHand);
+				}
+				GUILayout.EndHorizontal();
+
+
 				GUILayout.Label("Naigation Grab");
 				GUILayout.BeginHorizontal();
 				if( GUILayout.Button( "Left") ){

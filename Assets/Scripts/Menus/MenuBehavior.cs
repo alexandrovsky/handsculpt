@@ -83,7 +83,8 @@ public class MenuBehavior : MonoBehaviour {
 		// secondary tools:
 		TOOL_PAINT_ASSISTENT,
 		//navigation tools
-		TOOL_2_HAND_NAVIGATION, TOOL_NAVIGATION_DIRECT, TOOL_NAVIGATION_GRAB 
+		TOOL_2_HAND_NAVIGATION, TOOL_NAVIGATION_DIRECT, TOOL_NAVIGATION_GRAB,
+		DYNAMIC_SCECONDARY
 	};
 
 	public MenuState currentState

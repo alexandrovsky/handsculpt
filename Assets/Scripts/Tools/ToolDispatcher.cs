@@ -8,6 +8,10 @@ using Leap;
 public class ToolDispatcher : MonoBehaviour {
 
 
+	Color navigatorColor = Color.blue;
+	Color brushAsisstColor = Color.yellow;
+	Color brushColor = Color.red;
+
 	public MenuBehavior.ButtonAction currentLeftTool = MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB;
 	public MenuBehavior.ButtonAction currentRightTool = MenuBehavior.ButtonAction.TOOL_PAINT;
 	public bool symmetry = true;
@@ -58,6 +62,9 @@ public class ToolDispatcher : MonoBehaviour {
 				break;
 			case MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB:
 				UpdateNavigationGrabTool(hand );
+				break;
+			case MenuBehavior.ButtonAction.DYNAMIC_SCECONDARY:
+				UpdateNavigationDynamicAssistent(hand);
 				break;
 			default: break;
 			}
@@ -251,9 +258,9 @@ public class ToolDispatcher : MonoBehaviour {
 			}
 		}
 
-		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, activated, hand.IsLeftHand() );
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, true, hand.IsLeftHand() );
 		if(symmetry){
-			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, activated, !hand.IsLeftHand() );
+			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, true, !hand.IsLeftHand() );
 		}
 	}
 
@@ -373,6 +380,18 @@ public class ToolDispatcher : MonoBehaviour {
 
 	}
 
+	float DYNAMIC_ASSISTENT_Z_OFFSET = -3.0f;
+	public void UpdateNavigationDynamicAssistent(SkeletalHand hand){
+		Vector3 palmPos = hand.GetPalmCenter();
+		Debug.Log(palmPos);
+		if( grabNavigationActivated || palmPos.z < DYNAMIC_ASSISTENT_Z_OFFSET){
+			Debug.Log("navigate");
+			UpdateNavigationGrabTool(hand);
+		}else{
+			Debug.Log("scale param");
+			UpdateBrushSecondaryTool(hand);
+		}
+	}
 
 	Vector3 initHandPosition = Vector3.zero;
 	bool grabNavigationActivated = false;
@@ -441,6 +460,21 @@ public class ToolDispatcher : MonoBehaviour {
 
 	public void SetToolForHand(MenuBehavior.ButtonAction tool, SkeletalHand hand){
 		hand.tool = tool;
+
+		switch(tool){
+		case(MenuBehavior.ButtonAction.TOOL_PAINT):
+		case(MenuBehavior.ButtonAction.TOOL_SMOOTH):
+		case(MenuBehavior.ButtonAction.TOOL_GRAB):
+			hand.palm.renderer.material.color = brushColor;
+			break;
+		case MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB:
+			hand.palm.renderer.material.color = navigatorColor;
+			break;
+		case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
+			hand.palm.renderer.material.color = brushAsisstColor;
+			break;
+		}
+
 		if(hand.IsLeftHand()){
 			currentLeftTool = tool;
 		}else{
