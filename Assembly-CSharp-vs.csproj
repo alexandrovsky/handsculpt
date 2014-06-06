@@ -63,6 +63,7 @@
      <Compile Include="Assets\Scripts\Menus\MenuEventHandler.cs" />
      <Compile Include="Assets\Scripts\Menus\MenuMoverBehavior.cs" />
      <Compile Include="Assets\Scripts\Menus\ScaleManager.cs" />
+     <Compile Include="Assets\Scripts\Menus\TouchableMenu.cs" />
      <Compile Include="Assets\Scripts\ObjExporter.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\Icosphere.cs" />
      <Compile Include="Assets\Scripts\SculptMesh\IcosphereBuilder.cs" />
