@@ -261,13 +261,13 @@ public class ToolDispatcher : MonoBehaviour {
 		SkeletalHand otherHand = OtherHand(hand);
 		if(otherHand.tool != MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT){
 			float sphereRadius = hand.GetSphereRadiusSmoothed() / 100.0f;
-			hand.pickingRadius = 1.5f * sphereRadius;
+			hand.pickingRadius =  0.5f + this.radius * sphereRadius;
 		}else{
 			hand.pickingRadius = this.radius;
 		}
 		Vector3 palmPos = hand.GetPalmCenter();
 
-		bool activated = false;
+
 
 
 		//Debug.Log("palm velocity" + speed + " dist: " + distance  + "intensity" + hand.brushIntensity);
@@ -284,7 +284,7 @@ public class ToolDispatcher : MonoBehaviour {
 
 				float distanceFromHit = Vector3.Distance(palmPos, hand.pickingCenter);
 				if( distanceFromHit < hand.pickingRadius){
-					activated = true;
+					hand.toolIsActivated = true;
 					hand.brushIntensity = this.intensity;
 					hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
 					if(symmetry){
@@ -294,15 +294,20 @@ public class ToolDispatcher : MonoBehaviour {
 					}
 				}else{
 					distanceFromHit = hand.pickingRadius;
-					activated = false;
+
+					if(hand.toolIsActivated){
+						if(undoStepAddTime + UNDO_MIN_TIME_DELTA < Time.time){
+							Mesh m = MeshSubdivide.DuplicateMesh(sculptMesh.mesh);
+							addToQueue(m);
+						}
+						hand.toolIsActivated = false;
+					}
+
 					hand.brushIntensity = 0.0f;
 					hand.pickedVertices.Clear();
 				}
-				
 
-				
-
-				if(activated){
+				if(hand.toolIsActivated){
 					smoothVerts(hand.pickedVertices, hand.pickingCenter, hand.brushIntensity);
 					if(symmetry){
 						smoothVerts(hand.pickedVerticesSymmetry, hand.pickingCenterSymmetry, hand.brushIntensity);
@@ -311,9 +316,9 @@ public class ToolDispatcher : MonoBehaviour {
 			}
 		}
 
-		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, activated, hand.IsLeftHand() );
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, hand.toolIsActivated, hand.IsLeftHand() );
 		if(symmetry){
-			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, activated, !hand.IsLeftHand() );
+			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, hand.toolIsActivated, !hand.IsLeftHand() );
 		}
 	}
 
