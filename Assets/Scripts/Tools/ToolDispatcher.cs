@@ -261,9 +261,9 @@ public class ToolDispatcher : MonoBehaviour {
 			}
 		}
 
-		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, true, hand.IsLeftHand() );
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, activated, hand.IsLeftHand() );
 		if(symmetry){
-			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, true, !hand.IsLeftHand() );
+			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, activated, !hand.IsLeftHand() );
 		}
 	}
 
