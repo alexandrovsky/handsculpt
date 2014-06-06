@@ -116,24 +116,48 @@ public class HandController : MonoBehaviour {
 
 	    Frame frame = leap_controller_.Frame();
 
-		if(!frame.Hands.Leftmost.IsLeft ){
-			if(!leftHand.lost){
+		if(frame.Hands.Count == 0){
+			leftHand.lost = true;
+			rightHand.lost = true;
+		}else if(frame.Hands.Count == 1){
+			if(frame.Hands[0].IsLeft){
+				rightHand.lost = true;
+				if(leftHand.lost){
+					leftHand.lost = false;
+				}
+			}else{
 				leftHand.lost = true;
+				if(rightHand.lost){
+					rightHand.lost = false;
+				}
 			}
 		}else{
 			if(leftHand.lost){
 				leftHand.lost = false;
 			}
-		}
-		if(!frame.Hands.Rightmost.IsRight ){
-			if(!rightHand.lost){
-				rightHand.lost = true;
-			}
-		}else{
 			if(rightHand.lost){
 				rightHand.lost = false;
 			}
 		}
+
+//		if(!frame.Hands.Leftmost.IsLeft ){
+//			if(!leftHand.lost){
+//				leftHand.lost = true;
+//			}
+//		}else{
+//			if(leftHand.lost){
+//				leftHand.lost = false;
+//			}
+//		}
+//		if(!frame.Hands.Rightmost.IsRight ){
+//			if(!rightHand.lost){
+//				rightHand.lost = true;
+//			}
+//		}else{
+//			if(rightHand.lost){
+//				rightHand.lost = false;
+//			}
+//		}
 
 
 		foreach(Hand hand in frame.Hands){
@@ -145,9 +169,9 @@ public class HandController : MonoBehaviour {
 		}
 
 
-		foreach(Gesture g in frame.Gestures() ){
-			Debug.Log("gesture:" +  g.ToString() );
-		}
+//		foreach(Gesture g in frame.Gestures() ){
+//			Debug.Log("gesture:" +  g.ToString() );
+//		}
 
 	   	
   	}

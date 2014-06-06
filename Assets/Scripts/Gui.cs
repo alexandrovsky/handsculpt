@@ -109,6 +109,7 @@ public class Gui : MonoBehaviour {
 			}
 		}
 
+		// intensity scale with [alt]  [+] | [alt]  [-]
 		if(Input.GetKey(KeyCode.LeftAlt) ){
 			float step = 0.015f;
 			if(Input.GetKey(KeyCode.Plus) ){
@@ -126,6 +127,18 @@ public class Gui : MonoBehaviour {
 				}
 			}
 		}
+
+
+		// undo redo [ctrg] + [z] | [ctrg] + [y]
+		if(Input.GetKey(KeyCode.LeftControl) ){
+			if(Input.GetKey(KeyCode.Z) ){
+				toolDispatcher.undo();
+			}
+			if(Input.GetKey(KeyCode.Y) ){
+				toolDispatcher.redo();
+			}
+		}
+
 
 	}
 	/*
@@ -172,10 +185,10 @@ public class Gui : MonoBehaviour {
 			}
 
 			GUILayout.BeginHorizontal();
-			if( GUILayout.Button("Undo") ){
+			if( GUILayout.Button("Undo \n [ctrl] + [z]") ){
 				toolDispatcher.undo();
 			}
-			if( GUILayout.Button("Redo") ){
+			if( GUILayout.Button("Redo \n [ctrl]  + [y]") ){
 				toolDispatcher.redo();
 			}
 			GUILayout.EndHorizontal();
@@ -305,19 +318,19 @@ public class Gui : MonoBehaviour {
 
 			// hand status:
 			GUILayout.BeginArea(new Rect(Screen.width/2, Screen.height-100, 50, 50));{
-				if(handController.rightHand.isHandValid()){
-					GUILayout.Label(m_greenTexture);
-				}else{
+				if(handController.rightHand.lost){
 					GUILayout.Label(m_greyTexture);
+				}else{
+					GUILayout.Label(m_greenTexture);
 				}
 			}GUILayout.EndArea();
 
 			GUILayout.BeginArea(new Rect(Screen.width/2-50, Screen.height-100, 50, 50));
 
-			if(handController.leftHand.isHandValid()){
-				GUILayout.Label(m_greenTexture);
-			}else{
+			if(handController.leftHand.lost){
 				GUILayout.Label(m_greyTexture);
+			}else{
+				GUILayout.Label(m_greenTexture);
 			}
 			GUILayout.EndArea();
 		}

@@ -78,8 +78,8 @@ public class ToolDispatcher : MonoBehaviour {
 		} 
 
 		undoQueue.Insert(0, m);
-		if(undoQueue.Count >= UNDO_STEPS_COUNT){
-			undoQueue.RemoveAt(UNDO_STEPS_COUNT);
+		if(undoQueue.Count == UNDO_STEPS_COUNT){
+			undoQueue.RemoveAt(UNDO_STEPS_COUNT-1);
 		}
 	}
 
