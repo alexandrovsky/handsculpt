@@ -86,6 +86,7 @@ public class SkeletalHand : HandModel {
 
 
 	public bool grabbed = false;
+	public bool released = true;
 	public float grabReleaseTime = 0.0f;
 	public Ray dragRay = new Ray();
 	public Ray dragRaySymmetry = new Ray();
@@ -104,6 +105,20 @@ public class SkeletalHand : HandModel {
 //		palm.light.range = 4.0f;
 
 	}
+	bool isLost;
+	public bool lost{
+		get{
+			return isLost;
+		}
+		set{
+			Renderer[] childRenderer = gameObject.GetComponentsInChildren<Renderer>();
+			for(int i = 0; i < childRenderer.Length; i++){
+				childRenderer[i].enabled = !value;
+				isLost = value;
+			}
+		}
+	}
+
 
 	public override void UpdateHand() {
 		SetPositions();
@@ -115,6 +130,32 @@ public class SkeletalHand : HandModel {
 			smoothedRadius.RemoveAt(0);
 		}
 		smoothedRadius.Add(GetSphereRadius());
+
+		Hand leap_hand = GetLeapHand();
+
+		if(1 == 0){
+
+		}else{
+			Renderer[] childRenderer = gameObject.GetComponentsInChildren<Renderer>();
+			for(int i = 0; i < childRenderer.Length; i++){
+				childRenderer[i].enabled = true;
+			}
+		}
+
+//		if(enabled && !isHandValid()){
+//			Renderer[] childRenderer = gameObject.GetComponentsInChildren<Renderer>();
+//			for(int i = 0; i < childRenderer.Length; i++){
+//				childRenderer[i].enabled = false;
+//				enabled = false;
+//			}
+//		}
+//		if(!enabled && isHandValid() ){
+//			Renderer[] childRenderer = gameObject.GetComponentsInChildren<Renderer>();
+//			for(int i = 0; i < childRenderer.Length; i++){
+//				childRenderer[i].enabled = true;
+//				enabled = true;
+//			}
+//		}
   	}
 
 	public bool IsLeftHand(){

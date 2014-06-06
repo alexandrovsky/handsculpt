@@ -115,6 +115,27 @@ public class HandController : MonoBehaviour {
 	      		return;
 
 	    Frame frame = leap_controller_.Frame();
+
+		if(!frame.Hands.Leftmost.IsLeft ){
+			if(!leftHand.lost){
+				leftHand.lost = true;
+			}
+		}else{
+			if(leftHand.lost){
+				leftHand.lost = false;
+			}
+		}
+		if(!frame.Hands.Rightmost.IsRight ){
+			if(!rightHand.lost){
+				rightHand.lost = true;
+			}
+		}else{
+			if(rightHand.lost){
+				rightHand.lost = false;
+			}
+		}
+
+
 		foreach(Hand hand in frame.Hands){
 			if(hand.IsLeft){
 				updateHand(hand, leftHand);

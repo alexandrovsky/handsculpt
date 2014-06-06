@@ -147,25 +147,28 @@ public class ToolDispatcher : MonoBehaviour {
 			hand.pickingAreaCenterSymmetry = sculptMesh.areaCenter(hand.pickedVerticesSymmetry);
 		}
 
-
-
-		float deformIntensityBrush = hand.brushIntensity * hand.pickingRadius * 0.1f;
-		float deformIntensityFlatten = hand.brushIntensity * 0.3f;
-		brushVerts(hand.pickedVertices, hand.pickingAreaCenter, hand.pickingAreaNormal,
-		           hand.pickingRadius, deformIntensityBrush, deformIntensityFlatten);
-		smoothVerts(hand.pickedVertices, hand.pickingAreaCenter, 0.5f * this.intensity);
-		if(symmetry){
-			brushVerts(hand.pickedVerticesSymmetry, hand.pickingAreaCenterSymmetry, hand.pickingAreaNormalSymmetry,
+		Vector3 delta = hand.pickingAreaCenter - hand.pickingCenter;
+		bool bActivated = false;
+		if(delta.magnitude < hand.pickingRadius/2.0f){
+			bActivated = true;
+			float deformIntensityBrush = hand.brushIntensity * hand.pickingRadius * 0.1f;
+			float deformIntensityFlatten = hand.brushIntensity * 0.3f;
+			brushVerts(hand.pickedVertices, hand.pickingAreaCenter, hand.pickingAreaNormal,
 			           hand.pickingRadius, deformIntensityBrush, deformIntensityFlatten);
-			smoothVerts(hand.pickedVerticesSymmetry, hand.pickingAreaCenterSymmetry , 0.5f * this.intensity);
+			smoothVerts(hand.pickedVertices, hand.pickingAreaCenter, 0.5f * this.intensity);
+			if(symmetry){
+				brushVerts(hand.pickedVerticesSymmetry, hand.pickingAreaCenterSymmetry, hand.pickingAreaNormalSymmetry,
+				           hand.pickingRadius, deformIntensityBrush, deformIntensityFlatten);
+				smoothVerts(hand.pickedVerticesSymmetry, hand.pickingAreaCenterSymmetry , 0.5f * this.intensity);
+			}
 		}
 
-
-		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, true, hand.IsLeftHand() );
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, bActivated, hand.IsLeftHand() );
 		if(symmetry){
-			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, true, !hand.IsLeftHand() );
+			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, bActivated, !hand.IsLeftHand() );
 		}
-
+		
+		
 	}
 
 	public void UpdateBrushSecondaryTool(SkeletalHand hand){
@@ -312,9 +315,11 @@ public class ToolDispatcher : MonoBehaviour {
 		hand.brushIntensity = this.intensity;
 		if( hand.GetGrabStrength() > 0.8f ){
 
-			if(!hand.grabbed){
-				hand.grabbed = true;
-			}else{
+			if(hand.released){
+				if(!hand.grabbed){
+					hand.grabbed = true;
+					//Debug.Log("hand grabbed");
+				}
 				dragVerts(hand.pickedVertices, hand.pickingCenter, hand.GetLastPalmCenter(), hand.dragRay, hand.pickingRadius, hand.brushIntensity);
 				if(symmetry){
 					Vector3 lastSymmmetryPoint = GetSymmetryPoint(hand.GetLastPalmCenter() );
@@ -325,28 +330,32 @@ public class ToolDispatcher : MonoBehaviour {
 		}else{
 
 			if(hand.grabbed){
+				hand.grabbed = false;
 				hand.grabReleaseTime = Time.time;
+				//Debug.Log("hand opened");
 			}
 			if(Time.time > hand.grabReleaseTime + grabReleaseDelay){
 				// released:
-				hand.grabbed = false;
-			} 
-
-
-
-			hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
-			hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
-			ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, true, hand.IsLeftHand() );
-			if(symmetry){
-				hand.pickedVerticesSymmetry = sculptMesh.pickVerticesInSphere(hand.pickingCenterSymmetry, hand.pickingRadius);
-				hand.pickedVertices.Where(i => !hand.pickedVerticesSymmetry.Remove(i));
-				hand.pickedVerticesSymmetry.Where(i => !hand.pickedVertices.Remove(i));
-				ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, 1.0f, true, !hand.IsLeftHand() );
-				hand.dragRaySymmetry.origin = sculptMesh.areaCenter(hand.pickedVerticesSymmetry);
+				hand.released = true;
+				//Debug.Log("hand released");
 			}
 		}
-	}
 
+		//Debug.Log("is hand grabbed:" +hand.grabbed);
+		
+		
+		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
+		hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, hand.grabbed, hand.IsLeftHand() );
+		if(symmetry){
+			hand.pickedVerticesSymmetry = sculptMesh.pickVerticesInSphere(hand.pickingCenterSymmetry, hand.pickingRadius);
+			hand.pickedVertices.Where(i => !hand.pickedVerticesSymmetry.Remove(i));
+			hand.pickedVerticesSymmetry.Where(i => !hand.pickedVertices.Remove(i));
+			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, 1.0f, hand.grabbed, !hand.IsLeftHand() );
+			hand.dragRaySymmetry.origin = sculptMesh.areaCenter(hand.pickedVerticesSymmetry);
+		}
+	}
+	
 	Leap.Frame directNavigationEnterFrame = Leap.Frame.Invalid;
 	bool directNavigationActivated = false;
 	public void UpdateNavigationDirectTool(SkeletalHand hand){
@@ -383,7 +392,6 @@ public class ToolDispatcher : MonoBehaviour {
 	float DYNAMIC_ASSISTENT_Z_OFFSET = -3.0f;
 	public void UpdateNavigationDynamicAssistent(SkeletalHand hand){
 		Vector3 palmPos = hand.GetPalmCenter();
-		Debug.Log(palmPos);
 		if( grabNavigationActivated || palmPos.z < DYNAMIC_ASSISTENT_Z_OFFSET){
 			Debug.Log("navigate");
 			UpdateNavigationGrabTool(hand);
@@ -461,19 +469,19 @@ public class ToolDispatcher : MonoBehaviour {
 	public void SetToolForHand(MenuBehavior.ButtonAction tool, SkeletalHand hand){
 		hand.tool = tool;
 
-		switch(tool){
-		case(MenuBehavior.ButtonAction.TOOL_PAINT):
-		case(MenuBehavior.ButtonAction.TOOL_SMOOTH):
-		case(MenuBehavior.ButtonAction.TOOL_GRAB):
-			hand.palm.renderer.material.color = brushColor;
-			break;
-		case MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB:
-			hand.palm.renderer.material.color = navigatorColor;
-			break;
-		case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
-			hand.palm.renderer.material.color = brushAsisstColor;
-			break;
-		}
+//		switch(tool){
+//		case(MenuBehavior.ButtonAction.TOOL_PAINT):
+//		case(MenuBehavior.ButtonAction.TOOL_SMOOTH):
+//		case(MenuBehavior.ButtonAction.TOOL_GRAB):
+//			hand.palm.renderer.material.color = brushColor;
+//			break;
+//		case MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB:
+//			hand.palm.renderer.material.color = navigatorColor;
+//			break;
+//		case MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT:
+//			hand.palm.renderer.material.color = brushAsisstColor;
+//			break;
+//		}
 
 		if(hand.IsLeftHand()){
 			currentLeftTool = tool;

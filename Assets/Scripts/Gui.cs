@@ -33,10 +33,100 @@ public class Gui : MonoBehaviour {
 	
 	void Update()
 	{
+		//display whole gui:
 		if( Input.GetKeyDown(KeyCode.H) )
 		{
 			m_DisplayGui = !m_DisplayGui;
 		}
+
+		// tool parameters:
+		if( Input.GetKeyUp(KeyCode.S) )
+		{
+			toolDispatcher.symmetry = !toolDispatcher.symmetry;
+		}
+
+		if( Input.GetKeyUp(KeyCode.I) )
+		{
+			toolDispatcher.inverted = !toolDispatcher.inverted;
+		}
+
+
+		if( Input.GetKeyUp(KeyCode.I) )
+		{
+			toolDispatcher.inverted = !toolDispatcher.inverted;
+		}
+
+		// tool assignment:
+		if( Input.GetKeyUp(KeyCode.Alpha1) )
+		{
+			toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT, handController.leftHand);
+		}
+		if( Input.GetKeyUp(KeyCode.Alpha2) )
+		{
+			toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT, handController.rightHand);
+		}
+		if( Input.GetKeyUp(KeyCode.Alpha3) )
+		{
+			toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_SMOOTH, handController.leftHand);
+		}
+		if( Input.GetKeyUp(KeyCode.Alpha4) )
+		{
+			toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_SMOOTH, handController.rightHand);
+		}
+		if( Input.GetKeyUp(KeyCode.Alpha5) )
+		{
+			toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_GRAB, handController.leftHand);
+		}
+		if( Input.GetKeyUp(KeyCode.Alpha6) )
+		{
+			toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_GRAB, handController.rightHand);
+		}
+		if( Input.GetKeyUp(KeyCode.Alpha7) )
+		{
+			toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB, handController.leftHand);
+		}
+		if( Input.GetKeyUp(KeyCode.Alpha8) )
+		{
+			toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB, handController.rightHand);
+		}
+
+		// radius scale with [ctrl]  [+] | [ctrl]  [-]
+		if(Input.GetKey(KeyCode.LeftControl) ){
+			float step = 0.05f;
+			if(Input.GetKey(KeyCode.Plus) ){
+				if( (toolDispatcher.radius + step) < 3.0f){
+					toolDispatcher.radius += step;
+				}else{
+					toolDispatcher.radius = 3.0f;
+				}
+			}
+			if(Input.GetKey(KeyCode.Minus) ){
+				if( (toolDispatcher.radius - step) > 0.01f){
+					toolDispatcher.radius -= step;
+				}else{
+					toolDispatcher.radius = 0.01f;
+				}
+			}
+		}
+
+		if(Input.GetKey(KeyCode.LeftAlt) ){
+			float step = 0.015f;
+			if(Input.GetKey(KeyCode.Plus) ){
+				if( (toolDispatcher.intensity + step) < 1.0f){
+					toolDispatcher.intensity += step;
+				}else{
+					toolDispatcher.intensity = 1.0f;
+				}
+			}
+			if(Input.GetKey(KeyCode.Minus) ){
+				if( (toolDispatcher.radius - step) > 0.0f){
+					toolDispatcher.intensity -= step;
+				}else{
+					toolDispatcher.intensity = 0.0f;
+				}
+			}
+		}
+
 	}
 	/*
 	void OnDrawGizmos()
@@ -120,8 +210,8 @@ public class Gui : MonoBehaviour {
 				}GUILayout.EndVertical();
 
 				GUILayout.BeginHorizontal();{
-					toolDispatcher.symmetry = GUILayout.Toggle(toolDispatcher.symmetry, "symmetry");
-					toolDispatcher.inverted = GUILayout.Toggle(toolDispatcher.inverted, "inverted");
+					toolDispatcher.symmetry = GUILayout.Toggle(toolDispatcher.symmetry, "[s]ymmetry");
+					toolDispatcher.inverted = GUILayout.Toggle(toolDispatcher.inverted, "[i]nverted");
 				}GUILayout.EndHorizontal();
 
 
@@ -131,10 +221,10 @@ public class Gui : MonoBehaviour {
 
 				GUILayout.Label("Pointing Tool");
 				GUILayout.BeginHorizontal();
-				if( GUILayout.Button( "Left") ){
+				if( GUILayout.Button( "Left [1]") ){
 					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT, handController.leftHand);
 				}
-				if( GUILayout.Button( "Right") ){
+				if( GUILayout.Button( "Right [2]") ){
 					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT, handController.rightHand);
 				}
 				GUILayout.EndHorizontal();
@@ -143,53 +233,53 @@ public class Gui : MonoBehaviour {
 
 				GUILayout.Label("Shadow Tool");
 				GUILayout.BeginHorizontal();
-				if( GUILayout.Button( "Left") ){
+				if( GUILayout.Button( "Left [3]") ){
 					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_SMOOTH, handController.leftHand);
 				}
-				if( GUILayout.Button( "Right") ){
+				if( GUILayout.Button( "Right [4]") ){
 					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_SMOOTH, handController.rightHand);
 				}
 				GUILayout.EndHorizontal();
 
 				GUILayout.Label("Grab Tool");
 				GUILayout.BeginHorizontal();
-				if( GUILayout.Button( "Left") ){
+				if( GUILayout.Button( "Left [5]") ){
 					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_GRAB, handController.leftHand);
 				}
-				if( GUILayout.Button( "Right") ){
+				if( GUILayout.Button( "Right [6]") ){
 					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_GRAB, handController.rightHand);
 				}
 				GUILayout.EndHorizontal();
 
 
-				GUILayout.Label("Pointing Assistent Tool");
-				GUILayout.BeginHorizontal();
-				if( GUILayout.Button( "Left") ){
-					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT, handController.leftHand);
-				}
-				if( GUILayout.Button( "Right") ){
-					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT, handController.rightHand);
-				}
-				GUILayout.EndHorizontal();
+//				GUILayout.Label("Pointing Assistent Tool");
+//				GUILayout.BeginHorizontal();
+//				if( GUILayout.Button( "Left") ){
+//					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT, handController.leftHand);
+//				}
+//				if( GUILayout.Button( "Right") ){
+//					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_PAINT_ASSISTENT, handController.rightHand);
+//				}
+//				GUILayout.EndHorizontal();
 
 
-				GUILayout.Label("Dynamic Assistent Tool");
-				GUILayout.BeginHorizontal();
-				if( GUILayout.Button( "Left") ){
-					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.DYNAMIC_SCECONDARY, handController.leftHand);
-				}
-				if( GUILayout.Button( "Right") ){
-					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.DYNAMIC_SCECONDARY, handController.rightHand);
-				}
-				GUILayout.EndHorizontal();
+//				GUILayout.Label("Dynamic Assistent Tool");
+//				GUILayout.BeginHorizontal();
+//				if( GUILayout.Button( "Left") ){
+//					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.DYNAMIC_SCECONDARY, handController.leftHand);
+//				}
+//				if( GUILayout.Button( "Right") ){
+//					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.DYNAMIC_SCECONDARY, handController.rightHand);
+//				}
+//				GUILayout.EndHorizontal();
 
 
 				GUILayout.Label("Naigation Grab");
 				GUILayout.BeginHorizontal();
-				if( GUILayout.Button( "Left") ){
+				if( GUILayout.Button( "Left [7]") ){
 					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB, handController.leftHand);
 				}
-				if( GUILayout.Button( "Right") ){
+				if( GUILayout.Button( "Right [8]") ){
 					toolDispatcher.SetToolForHand(MenuBehavior.ButtonAction.TOOL_NAVIGATION_GRAB, handController.rightHand);
 				}
 				GUILayout.EndHorizontal();

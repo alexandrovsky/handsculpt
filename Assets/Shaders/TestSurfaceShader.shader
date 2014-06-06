@@ -87,16 +87,16 @@ Shader "Custom/TestSurfaceShader" {
 	            if(1 == _Brush1ActivationFlag){
 	            	o.Albedo.rgb = _Brush1DirtyColor.rgb;
 	            }else{
-	            	half4 dirtyColor = lerp(_Brush1ColorSelectedLow, _Brush1ColorSelectedHigh, _Brush1ActivationState);
-	            	o.Albedo.rgb = dirtyColor.rgb;
+	            	//half4 dirtyColor = lerp(_Brush1ColorSelectedLow, _Brush1ColorSelectedHigh, _Brush1ActivationState);
+	            	o.Albedo.rgb = _Brush1ColorSelectedLow.rgb; // dirtyColor.rgb;
 	            }
 	            o.Alpha = 1.0;
 			}else if(curDistance2 < _Brush2Radius){
-				if(1 == _Brush1ActivationFlag){
+				if(1 == _Brush2ActivationFlag){
 	            	o.Albedo.rgb = _Brush2DirtyColor.rgb;
 	            }else{
-	            	half4 dirtyColor = lerp(_Brush2ColorSelectedLow, _Brush2ColorSelectedHigh, _Brush2ActivationState);
-	            	o.Albedo.rgb = dirtyColor.rgb;
+	            	//half4 dirtyColor = lerp(_Brush2ColorSelectedLow, _Brush2ColorSelectedHigh, _Brush2ActivationState);
+	            	o.Albedo.rgb = _Brush1ColorSelectedLow.rgb; // dirtyColor.rgb;
 	            }
 			
 				o.Alpha = 1.0;
