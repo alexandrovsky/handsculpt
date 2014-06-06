@@ -27,12 +27,20 @@ public class ToolDispatcher : MonoBehaviour {
 	public float radius = 1.0f;
 	public float intensity = 0.0f;
 
+	public  const int UNDO_STEPS_COUNT = 10;
+	int undoCounter = 0;
+	List<Mesh> undoQueue = new List<Mesh>();
+
+
+
 	void Start () {
 		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 		target = GameObject.Find("Target");
 		sculptMesh = target.GetComponent<SculptMesh>();
 		mainCamera = (GameObject.Find("Main Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
 		handCamera = (GameObject.Find("Hand Camera") as GameObject).GetComponent(typeof(Camera)) as Camera;
+//		Mesh m = MeshSubdivide.DuplicateMesh(sculptMesh.mesh);
+//		addToQueue(m);
 
 	}
 	
@@ -41,6 +49,37 @@ public class ToolDispatcher : MonoBehaviour {
 		mainCamera.fieldOfView = fow;
 		handCamera.fieldOfView = fow;
 	}
+
+	public void undo(){
+		if(   undoCounter < UNDO_STEPS_COUNT 
+		   && undoCounter < undoQueue.Count-1){
+			undoCounter++;
+			sculptMesh.replaceMesh(undoQueue[undoCounter]);
+
+		}
+	}
+
+	public void redo(){
+		if(undoCounter > 0){
+			undoCounter--;
+			sculptMesh.replaceMesh(undoQueue[undoCounter]);
+			
+		}
+	}
+
+	public void addToQueue(Mesh m){
+
+		while(undoCounter > 0){
+			undoQueue.RemoveAt(0);
+			--undoCounter;
+		} 
+
+		undoQueue.Insert(0, m);
+		if(undoQueue.Count >= UNDO_STEPS_COUNT){
+			undoQueue.RemoveAt(UNDO_STEPS_COUNT);
+		}
+	}
+
 	private void updateHandTool(SkeletalHand hand){
 
 		if(hand.isHandValid() ){
@@ -318,8 +357,10 @@ public class ToolDispatcher : MonoBehaviour {
 			if(hand.released){
 				if(!hand.grabbed){
 					hand.grabbed = true;
+					hand.released = false;
 					//Debug.Log("hand grabbed");
 				}
+			}else{
 				dragVerts(hand.pickedVertices, hand.pickingCenter, hand.GetLastPalmCenter(), hand.dragRay, hand.pickingRadius, hand.brushIntensity);
 				if(symmetry){
 					Vector3 lastSymmmetryPoint = GetSymmetryPoint(hand.GetLastPalmCenter() );
@@ -328,24 +369,26 @@ public class ToolDispatcher : MonoBehaviour {
 			}
 
 		}else{
-
+			hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
+			hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
 			if(hand.grabbed){
 				hand.grabbed = false;
 				hand.grabReleaseTime = Time.time;
 				//Debug.Log("hand opened");
 			}
-			if(Time.time > hand.grabReleaseTime + grabReleaseDelay){
-				// released:
-				hand.released = true;
-				//Debug.Log("hand released");
+			if(!hand.released){
+				if(Time.time > hand.grabReleaseTime + grabReleaseDelay){
+					// released:
+					hand.released = true;
+					Mesh m = MeshSubdivide.DuplicateMesh(sculptMesh.mesh);
+					addToQueue(m);
+					//Debug.Log("hand released");
+				}
 			}
 		}
-
-		//Debug.Log("is hand grabbed:" +hand.grabbed);
 		
-		
-		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
-		hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
+//		hand.pickedVertices = sculptMesh.pickVerticesInSphere(hand.pickingCenter, hand.pickingRadius);
+//		hand.dragRay.origin = sculptMesh.areaCenter(hand.pickedVertices);
 		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, 1.0f, hand.grabbed, hand.IsLeftHand() );
 		if(symmetry){
 			hand.pickedVerticesSymmetry = sculptMesh.pickVerticesInSphere(hand.pickingCenterSymmetry, hand.pickingRadius);

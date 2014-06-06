@@ -227,6 +227,23 @@ namespace Sculpt{
 
 		}
 
+		public void replaceMesh(Mesh inMesh){
+
+			mesh.vertices = inMesh.vertices;
+			mesh.colors = inMesh.colors;
+			mesh.normals = inMesh.normals;
+			mesh.triangles = inMesh.triangles;
+			
+			vertices = new List<Vertex>();
+			triangles = new List<Triangle>();
+			iTrisCandidates = new List<int>();
+			iTrisInCells = new List<int>();
+			leavesUpdate = new List<Octree>();
+			pickedVertices = new List<int>();
+			pickedVerticesDistances = new Dictionary<int, float>();
+			initMesh();
+		} 
+
 		public void resetMesh(){
 
 			mesh.vertices = this.vertexArrayReset;

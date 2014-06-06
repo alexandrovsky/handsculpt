@@ -138,16 +138,6 @@ public class Gui : MonoBehaviour {
 	*/
 	
 
-
-	
-	
-	
-
-
-
-
-
-
 	void OnGUI(){
 
 		if(m_DisplayGui)
@@ -180,6 +170,15 @@ public class Gui : MonoBehaviour {
 
 				GUILayout.TextField( "scale: " + target.transform.localScale);
 			}
+
+			GUILayout.BeginHorizontal();
+			if( GUILayout.Button("Undo") ){
+				toolDispatcher.undo();
+			}
+			if( GUILayout.Button("Redo") ){
+				toolDispatcher.redo();
+			}
+			GUILayout.EndHorizontal();
 
 			sculptMesh.drawDebug = GUILayout.Toggle(sculptMesh.drawDebug, "Debug");
 
