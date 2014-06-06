@@ -27,7 +27,10 @@ public class ToolDispatcher : MonoBehaviour {
 	public float radius = 1.0f;
 	public float intensity = 0.0f;
 
-	public  const int UNDO_STEPS_COUNT = 10;
+
+	public const float UNDO_MIN_TIME_DELTA = 0.5f;
+	float undoStepAddTime = 0.0f;
+	public const int UNDO_STEPS_COUNT = 10;
 	int undoCounter = 0;
 	List<Mesh> undoQueue = new List<Mesh>();
 
@@ -68,7 +71,7 @@ public class ToolDispatcher : MonoBehaviour {
 	}
 
 	public void addToQueue(Mesh m){
-
+		undoStepAddTime = Time.time;
 		while(undoCounter > 0){
 			undoQueue.RemoveAt(0);
 			--undoCounter;
@@ -187,9 +190,9 @@ public class ToolDispatcher : MonoBehaviour {
 		}
 
 		Vector3 delta = hand.pickingAreaCenter - hand.pickingCenter;
-		bool bActivated = false;
+
 		if(delta.magnitude < hand.pickingRadius/2.0f){
-			bActivated = true;
+			hand.toolIsActivated = true;
 			float deformIntensityBrush = hand.brushIntensity * hand.pickingRadius * 0.1f;
 			float deformIntensityFlatten = hand.brushIntensity * 0.3f;
 			brushVerts(hand.pickedVertices, hand.pickingAreaCenter, hand.pickingAreaNormal,
@@ -200,11 +203,19 @@ public class ToolDispatcher : MonoBehaviour {
 				           hand.pickingRadius, deformIntensityBrush, deformIntensityFlatten);
 				smoothVerts(hand.pickedVerticesSymmetry, hand.pickingAreaCenterSymmetry , 0.5f * this.intensity);
 			}
+		}else{
+			if(hand.toolIsActivated){
+				if(undoStepAddTime + UNDO_MIN_TIME_DELTA < Time.time){
+					Mesh m = MeshSubdivide.DuplicateMesh(sculptMesh.mesh);
+					addToQueue(m);
+				}
+				hand.toolIsActivated = false;
+			}
 		}
 
-		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, bActivated, hand.IsLeftHand() );
+		ColorizeSelectedVertices(hand.pickingCenter, hand.pickingRadius, hand.brushIntensity, hand.toolIsActivated, hand.IsLeftHand() );
 		if(symmetry){
-			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, bActivated, !hand.IsLeftHand() );
+			ColorizeSelectedVertices(hand.pickingCenterSymmetry, hand.pickingRadius, hand.brushIntensity, hand.toolIsActivated, !hand.IsLeftHand() );
 		}
 		
 		

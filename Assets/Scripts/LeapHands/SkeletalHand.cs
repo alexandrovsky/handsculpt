@@ -84,7 +84,7 @@ public class SkeletalHand : HandModel {
 		}
 	}
 
-
+	public bool toolIsActivated = false;
 	public bool grabbed = false;
 	public bool released = true;
 	public float grabReleaseTime = 0.0f;
