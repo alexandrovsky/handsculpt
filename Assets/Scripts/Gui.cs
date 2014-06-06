@@ -155,7 +155,7 @@ public class Gui : MonoBehaviour {
 
 
 		// hand status:
-		GUILayout.BeginArea(new Rect(Screen.width/2, 20, 50, 50));{
+		GUILayout.BeginArea(new Rect(Screen.width/2 +10, 20, 50, 50));{
 			if(handController.rightHand.lost){
 				GUILayout.Label(m_greyTexture);
 			}else{
@@ -163,7 +163,7 @@ public class Gui : MonoBehaviour {
 			}
 		}GUILayout.EndArea();
 		
-		GUILayout.BeginArea(new Rect(Screen.width/2-50, 20, 50, 50));
+		GUILayout.BeginArea(new Rect(Screen.width/2-50 -10, 20, 50, 50));
 		
 		if(handController.leftHand.lost){
 			GUILayout.Label(m_greyTexture);
