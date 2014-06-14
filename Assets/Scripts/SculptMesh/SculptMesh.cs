@@ -41,11 +41,9 @@ namespace Sculpt{
 
 
 
-		void OnApplicationQuit(){
-			
-			resetMesh();
-			
-		}
+//		void OnApplicationQuit(){
+//			resetMesh();
+//		}
 
 
 		void OnDrawGizmos()

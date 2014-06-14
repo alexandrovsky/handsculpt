@@ -16,8 +16,10 @@ public class Gui : MonoBehaviour {
 	Sculpter sculpter;
 	HandController handController;
 	ToolDispatcher toolDispatcher;
-	public string objectExportFilepath = "/Users/dimi/Desktop/target.obj";
-	
+	public string objectExportFilepath = "/Users/dimi/Desktop/";
+	public string objectExportFilename = "target";
+	public string objectExportFileextension = ".obj";
+
 	private bool m_DisplayGui = true;
 
 	bool mouseMode;
@@ -50,11 +52,6 @@ public class Gui : MonoBehaviour {
 			toolDispatcher.inverted = !toolDispatcher.inverted;
 		}
 
-
-		if( Input.GetKeyUp(KeyCode.I) )
-		{
-			toolDispatcher.inverted = !toolDispatcher.inverted;
-		}
 
 		// tool assignment:
 		if( Input.GetKeyUp(KeyCode.Alpha1) )
@@ -139,6 +136,14 @@ public class Gui : MonoBehaviour {
 			}
 		}
 
+		// export object [ctrg] + [e]
+		if(Input.GetKey(KeyCode.LeftControl) ){
+			if(Input.GetKey(KeyCode.E) ){
+				MeshFilter objMeshFilter = target.GetComponent<MeshFilter>();
+				ObjExporter.MeshToFile(objMeshFilter, generateExportFilePath() );
+			}
+
+		}
 
 	}
 	/*
@@ -149,7 +154,23 @@ public class Gui : MonoBehaviour {
 		Gizmos.DrawWireCube(obj.transform.position, obj.transform.renderer.bounds.size);
 	}
 	*/
-	
+
+	string generateExportFilePath(){
+		string result = objectExportFilepath + objectExportFilename
+			+ "_" + System.DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss")			
+			+ "_left_" + toolDispatcher.currentLeftTool.ToString() 
+			+ "_right_" + toolDispatcher.currentRightTool.ToString() 
+			+ objectExportFileextension;
+		return result;
+	}
+
+
+	void OnApplicationQuit(){
+		MeshFilter objMeshFilter = target.GetComponent<MeshFilter>();
+		ObjExporter.MeshToFile(objMeshFilter, generateExportFilePath() );
+		sculptMesh.resetMesh();
+	}
+
 
 	void OnGUI(){
 
@@ -194,11 +215,13 @@ public class Gui : MonoBehaviour {
 
 	private void meshControlGui(){
 
+		objectExportFilepath = GUILayout.TextField(objectExportFilepath);
+		objectExportFilename = GUILayout.TextField(objectExportFilename);
 		if( GUILayout.Button("Object Export") ){
 			MeshFilter objMeshFilter = target.GetComponent<MeshFilter>();
-			ObjExporter.MeshToFile(objMeshFilter, objectExportFilepath);
+			ObjExporter.MeshToFile(objMeshFilter, generateExportFilePath());
 		}
-		objectExportFilepath = GUILayout.TextField(objectExportFilepath);
+
 		
 		if( GUILayout.Button("Subdivide") ){
 			sculptMesh.subdivideMesh();
