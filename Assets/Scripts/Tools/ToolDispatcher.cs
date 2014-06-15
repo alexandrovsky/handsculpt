@@ -34,7 +34,7 @@ public class ToolDispatcher : MonoBehaviour {
 	int undoCounter = 0;
 	List<Mesh> undoQueue = new List<Mesh>();
 
-
+	static float grabReleaseDelay = 1.0f;
 
 	void Start () {
 		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
@@ -350,7 +350,7 @@ public class ToolDispatcher : MonoBehaviour {
 		return target.transform.TransformPoint(cymmetry_local_point);
 	}
 
-	static float grabReleaseDelay = 1.0f;
+
 	public void UpdateGrabTool(SkeletalHand hand){
 
 		if(!hand.isHandValid() ){
@@ -460,70 +460,120 @@ public class ToolDispatcher : MonoBehaviour {
 		}
 	}
 
-	Vector3 initHandPosition = Vector3.zero;
-	bool grabNavigationActivated = false;
-	Vector3 initCameraPosition = Vector3.zero;
-	//Leap.Frame grabNavigationEnterFrame = Leap.Frame.Invalid;
+
 	public void UpdateNavigationGrabTool(SkeletalHand hand){
 
-
-
-//		float fow = mainCamera.fieldOfView;
-		if( hand.GetGrabStrength() < 0.8f  ){
-
-			grabNavigationActivated = false;
-			//grabNavigationEnterFrame = Leap.Frame.Invalid;
-			return; // close hand activates ....
-
+		if(!hand.isHandValid() ){
+			hand.pickedVertices.Clear();			
+			return; // --- OUT --->
 		}
 
-		if(!grabNavigationActivated){
-			initHandPosition = hand.GetLastPalmCenter();
-			//grabNavigationEnterFrame =  handController.GetFrame(0);
-			initCameraPosition = mainCamera.transform.position;
-			grabNavigationActivated = true;
-		}
+		if( hand.GetGrabStrength() > 0.8f ){
+			
+			if(hand.released){
+				if(!hand.grabbed){
+					hand.grabbed = true;
+					hand.released = false;
+					hand.pickingCenter = hand.GetPalmCenter();
+				}
+			}else{
 
-		if(grabNavigationActivated){
-			Vector3 palmPos = hand.GetPalmCenter();
+				// drag here...
+
+				Vector3 palmPos = hand.GetPalmCenter();
 			
-			Quaternion rotation = Quaternion.FromToRotation(initHandPosition, palmPos);
-			float rotationSpeed = 0.5f;
-			
-			Vector3 axis = Vector3.zero; // = Vector3.Cross(a, b);
-			float angle; // = Vector3.Angle(a, b);
-			//Debug.Log("angle:" + angle);
-			rotation.ToAngleAxis(out angle, out axis);
-			
-			//		Debug.DrawLine(palmPos, palmPos + axis, Color.green);
-			
-			mainCamera.transform.RotateAround(target.transform.position, axis, rotationSpeed * -angle);
+				Quaternion rotation = Quaternion.FromToRotation(hand.pickingCenter, palmPos);
+				float rotationSpeed = 0.5f;
+	
+				Vector3 axis = Vector3.zero; // = Vector3.Cross(a, b);
+				float angle; // = Vector3.Angle(a, b);
+				//Debug.Log("angle:" + angle);
+				rotation.ToAngleAxis(out angle, out axis);
+	
+				//Debug.DrawLine(palmPos, palmPos + axis, Color.green);
+				mainCamera.transform.RotateAround(target.transform.position, axis, rotationSpeed * -angle);
+
+			}
 		}else{
-			//--- scaling:
-
-//			Vector3 palmNormal = hand.GetPalmNormal();
-//			Vector3 palmPos = hand.GetPalmCenter();
-//			Vector3 fwd = mainCamera.transform.forward;
-//
-			//if(Vector3.Angle(palmNormal, fwd) < 30 )
-			{
-
-
-//				float delta = initHandPosition.z - palmPos.z;
-//
-//				Vector3 offset = mainCamera.transform.forward * delta * Time.deltaTime;
-//
-//				mainCamera.transform.Translate(offset);
-//				handCamera.transform. position = mainCamera.transform.position;
-//				mainCamera.transform.LookAt(target.transform.position);
-//
-//				handController.gameObject.transform.Translate(-offset);
-
-//				Debug.DrawLine(initHandPosition, palmPos, Color.red);
+			if(hand.grabbed){
+				hand.grabbed = false;
+				hand.grabReleaseTime = Time.time;
+				//Debug.Log("hand opened");
+			}
+			if(!hand.released){
+				if(Time.time > hand.grabReleaseTime + grabReleaseDelay){
+					// released:
+					hand.released = true;
+										//Debug.Log("hand released");
+				}
 			}
 		}
-
 	}
+
+//	Vector3 initHandPosition = Vector3.zero;
+	bool grabNavigationActivated = false;
+//	Vector3 initCameraPosition = Vector3.zero;
+//	//Leap.Frame grabNavigationEnterFrame = Leap.Frame.Invalid;
+//	public void UpdateNavigationGrabTool(SkeletalHand hand){
+//
+//
+//
+////		float fow = mainCamera.fieldOfView;
+//		if( hand.GetGrabStrength() < 0.8f  ){
+//
+//			grabNavigationActivated = false;
+//			//grabNavigationEnterFrame = Leap.Frame.Invalid;
+//			return; // close hand activates ....
+//
+//		}
+//
+//		if(!grabNavigationActivated){
+//			initHandPosition = hand.GetLastPalmCenter();
+//			//grabNavigationEnterFrame =  handController.GetFrame(0);
+//			initCameraPosition = mainCamera.transform.position;
+//			grabNavigationActivated = true;
+//		}
+//
+//		if(grabNavigationActivated){
+//			Vector3 palmPos = hand.GetPalmCenter();
+//			
+//			Quaternion rotation = Quaternion.FromToRotation(initHandPosition, palmPos);
+//			float rotationSpeed = 0.5f;
+//			
+//			Vector3 axis = Vector3.zero; // = Vector3.Cross(a, b);
+//			float angle; // = Vector3.Angle(a, b);
+//			//Debug.Log("angle:" + angle);
+//			rotation.ToAngleAxis(out angle, out axis);
+//			
+//			//		Debug.DrawLine(palmPos, palmPos + axis, Color.green);
+//			
+//			mainCamera.transform.RotateAround(target.transform.position, axis, rotationSpeed * -angle);
+//		}else{
+//			//--- scaling:
+//
+////			Vector3 palmNormal = hand.GetPalmNormal();
+////			Vector3 palmPos = hand.GetPalmCenter();
+////			Vector3 fwd = mainCamera.transform.forward;
+////
+//			//if(Vector3.Angle(palmNormal, fwd) < 30 )
+//			{
+//
+//
+////				float delta = initHandPosition.z - palmPos.z;
+////
+////				Vector3 offset = mainCamera.transform.forward * delta * Time.deltaTime;
+////
+////				mainCamera.transform.Translate(offset);
+////				handCamera.transform. position = mainCamera.transform.position;
+////				mainCamera.transform.LookAt(target.transform.position);
+////
+////				handController.gameObject.transform.Translate(-offset);
+//
+////				Debug.DrawLine(initHandPosition, palmPos, Color.red);
+//			}
+//		}
+//
+//	}
 
 	public void SetToolForHand(MenuBehavior.ButtonAction tool, SkeletalHand hand){
 		hand.tool = tool;
