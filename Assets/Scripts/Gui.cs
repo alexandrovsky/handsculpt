@@ -117,7 +117,7 @@ public class Gui : MonoBehaviour {
 				}
 			}
 			if(Input.GetKey(KeyCode.Minus) ){
-				if( (toolDispatcher.radius - step) > 0.0f){
+				if( (toolDispatcher.intensity - step) > 0.0f){
 					toolDispatcher.intensity -= step;
 				}else{
 					toolDispatcher.intensity = 0.0f;
@@ -259,7 +259,7 @@ public class Gui : MonoBehaviour {
 		
 		GUILayout.BeginVertical();{
 			GUILayout.TextField("radius: " + toolDispatcher.radius);
-			toolDispatcher.radius = GUILayout.HorizontalSlider(toolDispatcher.radius, 0.01f, 3.0f);
+			toolDispatcher.radius = GUILayout.HorizontalSlider(toolDispatcher.radius, 0.0f, 2.5f);
 		}GUILayout.EndVertical();
 		
 		GUILayout.BeginHorizontal();{
