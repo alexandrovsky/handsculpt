@@ -120,9 +120,15 @@ public class ToolDispatcher : MonoBehaviour {
 		if(toolsEnabled){
 			handController.leftHand.tool = currentLeftTool;
 			handController.rightHand.tool = currentRightTool;
-			
-			updateHandTool(handController.leftHand);
-			updateHandTool(handController.rightHand);
+			if(handController.leftHand != null && handController.leftHand.GetLeapHand() != null){
+				updateHandTool(handController.leftHand);
+			}
+			if(handController.rightHand != null && handController.rightHand.GetLeapHand() != null){
+				updateHandTool(handController.rightHand);
+			}
+
+
+
 			
 			
 			
@@ -304,6 +310,7 @@ public class ToolDispatcher : MonoBehaviour {
 							addToQueue(m);
 						}
 						hand.toolIsActivated = false;
+						sculptMesh.mesh.RecalculateNormals();
 					}
 
 					hand.brushIntensity = 0.0f;

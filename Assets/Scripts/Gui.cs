@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.IO;
 using Sculpt;
 
 public class Gui : MonoBehaviour {
@@ -31,6 +32,10 @@ public class Gui : MonoBehaviour {
 		sculpter = target.GetComponent<Sculpter>();
 		handController = (GameObject.Find("LeapManager") as GameObject).GetComponent(typeof(HandController)) as HandController;
 		toolDispatcher = (GameObject.Find("GuiEventListener ") as GameObject).GetComponent(typeof(ToolDispatcher)) as ToolDispatcher;
+		objectExportFilepath = "/Users/dimi/Desktop/handsculptExport" + System.DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss" + "/");
+		Directory.CreateDirectory(objectExportFilepath);
+
+
 	}
 	
 	void Update()
